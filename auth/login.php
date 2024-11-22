@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login - SMEC</title>
 
     <link rel="stylesheet" href="../assets/css/styles.css">
-
+    <link rel="icon" type="png" href="../assets/images/logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@heroicons/react@2.0.16/dist/outline/index.js" type="module"></script>
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
@@ -22,7 +22,7 @@
     <div class="flex flex-col  justify-between p-4 space-y-12">
 
         
-        <a class="flex items-center gap-4" href="./dashboard.php">
+        <a class="flex items-center gap-4" href="../index.php">
        
             <img src="../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
          
@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="!mt-8">
-                            <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                            <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-colors">
                             Sign in
                             </button>
                         </div>
