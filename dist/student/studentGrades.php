@@ -23,7 +23,7 @@
     <html data-theme="light"></html>
    
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 h-full flex flex-col">
 
 
     <?php include './layouts/navbar.php' ?>
@@ -58,7 +58,7 @@
 
     </div>
 
-    <div class="p-7 bg-white rounded-md space-y-6 mt-7">
+    <div class="p-7 bg-white rounded-md space-y-6 mt-7 flex-grow overflow-y-auto">
 
             <div class="border border-gray-100 p-4 space-y-2">
                     <p class="text-xl font-semibold">Grade 1 - First Quarter</p>
@@ -113,6 +113,18 @@
 
                     </div>
             </div>
+
+            
+            
+          
+
+            
+
+
+        
+               
+      
+            
 
     </div>
 
