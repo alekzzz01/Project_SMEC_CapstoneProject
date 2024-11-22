@@ -23,12 +23,12 @@
     <html data-theme="light"></html>
    
 </head>
-<body class="bg-gray-100 h-screen">
+<body class="bg-gray-100">
 
 
     <?php include './layouts/navbar.php' ?>
 
-    <div class="container mx-auto py-14 px-4">
+    <div class="container mx-auto py-14 px-4 lg:px-12">
 
 
     <div class="flex items-center justify-between w-full ">
@@ -64,13 +64,15 @@
                     <p class="text-xl font-semibold">Grade 1 - First Quarter</p>
                     <p>A.Y. 2023-2024</p>
                     <div class="flex items-center justify-between">
-                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-sm">Section A</p>
-
-                        <button class="btn btn-ghost">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
-                        </button>
+                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm">Section A</p>
+                       
+                        <div class="tooltip" data-tip="Download Grade">
+                            <button class="btn btn-ghost">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                            </button>
+                        </div>
 
                     </div>
             </div>
@@ -80,13 +82,15 @@
                     <p class="text-xl font-semibold">Grade 1 - Second Quarter</p>
                     <p>A.Y. 2023-2024</p>
                     <div class="flex items-center justify-between">
-                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-sm">Section A</p>
+                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm">Section A</p>
 
-                        <button class="btn btn-ghost">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
-                        </button>
+                        <div class="tooltip" data-tip="Download Grade">
+                            <button class="btn btn-ghost">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                            </button>
+                        </div>
 
                     </div>
             </div>
@@ -96,13 +100,16 @@
                     <p class="text-xl font-semibold">Grade 1 - Third Quarter</p>
                     <p>A.Y. 2023-2024</p>
                     <div class="flex items-center justify-between">
-                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-sm">Section A</p>
+                        <p class="px-3 py-2 bg-blue-50 text-blue-600 rounded-xl text-sm">Section A</p>
 
-                        <button class="btn btn-ghost">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                            </svg>
-                        </button>
+            
+                        <div class="tooltip" data-tip="Download Grade">
+                            <button class="btn btn-ghost">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                </svg>
+                            </button>
+                        </div>
 
                     </div>
             </div>

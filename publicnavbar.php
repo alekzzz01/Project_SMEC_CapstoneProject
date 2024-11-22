@@ -16,7 +16,7 @@
             <li><a href="">PROGRAMS</a></li>
             <li><a href="">NEWS & EVENTS</a></li>
             <li><a href="admission.php">ADMISSION</a></li>
-            <li><a href="">LOGIN</a></li>
+            <li><a href="./auth/login.php">LOGIN</a></li>
 
        
             <!-- <div class="relative max-w-sm ml-4">

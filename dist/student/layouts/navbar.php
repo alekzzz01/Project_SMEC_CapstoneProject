@@ -15,7 +15,7 @@
             <li><a href="studentSubjects.php">Subjects</a></li>
             <li><a href="studentSchedules.php">Schedules</a></li>
             <li><a href="studentEnrollment.php">Enrollment</a></li>
-            <li><a href="#">Notifications</a></li>
+            <li><a href="studentNotification.php">Notifications</a></li>
             </ul>
 
             <!-- Small Screen Menu -->

@@ -28,7 +28,7 @@
 
     <?php include './layouts/navbar.php' ?>
 
-    <div class="container mx-auto py-14 px-4">
+    <div class="container mx-auto py-14 px-4 lg:px-12">
 
 
    
@@ -42,7 +42,7 @@
         </div>
 
 
-    <div class="p-7 bg-white rounded-md mt-7 flex flex-col lg:flex-row gap-7">
+    <div class="p-7 bg-white rounded-md mt-7 flex flex-col xl:flex-row gap-7">
 
 
         <!-- Navigation -->
@@ -62,7 +62,7 @@
                     <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
                     </svg>
 
-                    <a>Enrollment Status</a>
+                    <a href="studentEnrollmentStatus.php">Enrollment Status</a>
                 </div>
 
             
@@ -99,44 +99,55 @@
         </div>
 
         <!-- Contents -->
-        <div class="col-span-2 flex flex-col gap-7">
+        <div class="col-span-2 flex flex-col gap-7 w-full">
 
             <!-- Basic Information -->
             <section class="border-gray-100 border rounded" id="basicinfo">
 
                 <div class=" px-7 py-6 bg-blue-50">
                     <p class="text-lg font-medium">Basic Information</p>
+             
+                    
                 </div>
 
                 <div class=" px-7 py-6  space-y-12">
 
-                    <div class="flex items-center gap-7">
+                    <div class="flex flex-wrap items-center justify-between gap-7">
 
-                        <div class="relative w-[80px] h-[80px]">
-                            <!-- Profile Image -->
-                            <img class="rounded-full w-full h-full" 
-                                src="https://static.vecteezy.com/system/resources/previews/001/840/612/non_2x/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg" 
-                                alt="Profile Picture">
+                        <div class="flex items-center gap-7">
 
-                            <!-- Icon -->
-                            <div class="absolute bottom-2 right-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" 
-                                    class="bg-blue-500 rounded w-4 h-4 p-1">
-                                    <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
-                                </svg>
+                            <div class="relative w-[80px] h-[80px]">
+                                <!-- Profile Image -->
+                                <img class="rounded-full w-full h-full" 
+                                    src="https://static.vecteezy.com/system/resources/previews/001/840/612/non_2x/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg" 
+                                    alt="Profile Picture">
+
+                                <!-- Icon -->
+                                <div class="absolute bottom-2 right-0">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" 
+                                        class="bg-blue-500 rounded w-4 h-4 p-1">
+                                        <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                                    </svg>
+                                </div>
                             </div>
+
+                            <div class="mt-4">
+                            
+                                <p class="font-medium">Profile photo</p>
+                                <p class="font-medium text-gray-400 text-sm">This will be displayed on your profile.</p>
+                            </div>
+
+               
+
+
                         </div>
 
-                        <div class="mt-4">
-                         
-                            <p class="font-medium">Profile photo</p>
-                            <p class="font-medium text-gray-400 text-sm">This will be displayed on your profile.</p>
-                        </div>
-
+                        <span class="inline-flex items-center text-sm rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 ">Current enrolled in Grade 1</span>
 
                     </div>
 
 
+            
                    <form action="" class="space-y-6">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
@@ -214,15 +225,14 @@
 
             </section>
 
-            
-
+            <!-- Notifications -->
             <section class="border-gray-100 border rounded" id="notifications">
                 <div class=" px-7 py-6 bg-blue-50">
                     <p class="text-lg font-medium">Notifications</p>
                 </div>
 
 
-                <div class=" px-7 py-6 flex justify-between gap-12">
+                <div class=" px-7 py-6 flex flex-col xl:flex-row justify-between gap-12">
 
                     <div class="space-y-7">
                         <div>
@@ -254,7 +264,7 @@
                         </div>
                     </div>
 
-                    <div class="border-r border-gray-100"></div>
+                    <div class="border-b xl:border-r border-gray-100"></div>
 
                     <div class="space-y-7">
                         <div>
@@ -292,6 +302,7 @@
 
             </section>
 
+            <!-- Password and Security -->
             <section class="border-gray-100 border rounded" id="password">
                 <div class=" px-7 py-6 bg-blue-50">
                     <p class="text-lg font-medium">Password & Security</p>

@@ -35,7 +35,7 @@
 <?php include './layouts/navbar.php' ?>
 
   
-    <div class="py-16 px-4 border-b border-gray-100 "> 
+    <div class="py-16 px-4 lg:px-12 border-b border-gray-100 "> 
             
             <div class="space-y-6 container mx-auto ">
                 <div>
@@ -48,7 +48,7 @@
 
     </div>
 
-    <div class="py-16 px-4"> 
+    <div class="py-16 px-4 lg:px-12"> 
             
             <div class="container mx-auto space-y-7">
 
@@ -181,6 +181,8 @@
                     
                     <h1 class="text-lg font-bold">Academic <span class="text-red-500">*</span></h1>
 
+                    <!-- Student Type -->
+
                     <div class="flex flex-col gap-4">
 
                             <div class="flex items-center gap-3">
@@ -200,14 +202,11 @@
 
                     </div>
                     
-                
-                    <div>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+            
+                    <!-- Grade level, School year, Last School Attended -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
 
-                           
-                            
-                
+                        
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Grade Level</label>
                                 <div class="relative flex items-center">
@@ -259,8 +258,52 @@
                         
 
                     
-                        </div>
                     </div>
+
+                    <!-- File Inputs -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+
+                            <div>
+                                <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Certificate</label>
+                                    <div class="relative flex items-center">
+                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+    
+                                    </div>
+                            </div>
+
+                            <div>
+                                <label class="text-gray-800 text-sm font-medium mb-6 block">Report Card</label>
+                                    <div class="relative flex items-center">
+                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+    
+                                    </div>
+                            </div>
+
+                            <div>
+                                <label class="text-gray-800 text-sm font-medium mb-6 block">Good Moral Certificate</label>
+                                    <div class="relative flex items-center">
+                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+    
+                                    </div>
+                            </div>
+
+                            <p class="text-gray-400 text-sm">*Note: New student should submit their birth certificate, report card and good moral certificate.</p>
+
+
+
+                    </div>
+
+                    <div class="border-gray-100 border-b"></div>
+
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" checked="checked" class="checkbox" />
+                            <p class="font-medium text-sm">I confirm that the information provided is accurate.</p>
+                        </div>
+                        <p class="text-gray-400 text-sm">By checking this box, you agree to our <a class="text-black hover:underline">Terms and Conditions</a> and <a class="text-black hover:underline">Privacy Policy.</a></p>
+                    </div>
+
+                    
 
 
                 </form>
@@ -272,9 +315,50 @@
                     <button class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
                 </div>
 
+                <!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
+
 
 
             </div>
+
+    </div>
+
+    <!-- Modal For Success of submission of the form -->
+   
+    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-lg font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+            Enrollment Submitted Successfully!</h3>
+
+            <p class="py-4 text-gray-400 text-sm">Thank you for submitting your enrollment form. Please follow these next steps:</p>
+
+
+            <!-- Instructions -->
+            <div className="py-4">
+                <ol class="list-decimal list-inside space-y-2">
+                <li>Visit the school registrar&apos;s office within the next 5 business days.</li>
+                <li>Bring the following documents:
+                    <ul class="list-disc list-inside ml-4 mt-1">
+                    <li>Valid ID</li>
+                    <li>Original and photocopy of your diploma or transcript</li>
+                    <li>2 recent passport-sized photos</li>
+                    </ul>
+                </li>
+                <li>Be prepared to pay the enrollment fee at the cashier&apos;s office.</li>
+                <li>Collect your student ID and class schedule from the registrar.</li>
+                </ol>
+            </div>
+
+      
+
+            <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button class="btn">Close</button>
+            </form>
+            </div>
+        </div>
+    </dialog>
 
 
         

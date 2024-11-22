@@ -29,7 +29,7 @@
 
     <?php include './layouts/navbar.php' ?>
 
-    <div class="container mx-auto py-14 px-4">
+    <div class="container mx-auto py-14 px-4 lg:px-12">
         
 
         <div class="space-y-7">
