@@ -1,12 +1,58 @@
+<?php
+session_start();
+
+include '../config/db.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $sql = "SELECT * FROM users WHERE email = ?";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+ 
+        $user = $result->fetch_assoc();
+        
+    
+        if (password_verify($password, $user['password'])) {
+     
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['user_role'] = $user['role']; 
+
+            if ($_SESSION['user_role'] == 'admin') {
+                header('Location: ../dist/admin/dashboard.php');
+            } elseif ($_SESSION['user_role'] == 'teacher') {
+                header('Location: ../dist/teacher/dashboard.php');
+            } elseif ($_SESSION['user_role'] == 'student') {
+                header('Location: ../dist/student/dashboard.php');
+            }
+            exit();
+        } else {
+          
+            echo "<p>Invalid password.</p>";
+        }
+    } else {
+       
+        echo "<p>User not found.</p>";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SMEC</title>
+    <title>Document</title>
 
     <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="icon" type="png" href="../assets/images/logo.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@heroicons/react@2.0.16/dist/outline/index.js" type="module"></script>
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
@@ -14,7 +60,11 @@
 
 
 </head>
+
+
+
 <body class="h-screen">
+    
 
 
     <div class="grid grid-cols-1 xl:grid-cols-2 h-full gap-2">
@@ -22,7 +72,7 @@
     <div class="flex flex-col  justify-between p-4 space-y-12">
 
         
-        <a class="flex items-center gap-4" href="../index.php">
+        <a class="flex items-center gap-4" href="./dashboard.php">
        
             <img src="../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
          
@@ -68,7 +118,7 @@
                         </div>
 
                         <div class="!mt-8">
-                            <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition-colors">
+                            <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
                             Sign in
                             </button>
                         </div>
@@ -98,8 +148,6 @@
 
 
     </div>
-
-
 
 
 
