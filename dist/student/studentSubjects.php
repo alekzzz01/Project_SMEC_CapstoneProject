@@ -23,7 +23,7 @@
     <html data-theme="light"></html>
    
 </head>
-<body class="bg-gray-100 h-screen">
+<body class="bg-gray-100 h-full flex flex-col">
 
 
     <?php include './layouts/navbar.php' ?>

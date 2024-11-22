@@ -2,7 +2,8 @@
     <div class=" flex items-center justify-between">
 
         <a class="flex items-center gap-4" href="./dashboard.php">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTejSwyvHeui4gyY6btIs-IlMMOqncLlOk3UQ&s" alt="" class="w-10 h-10 object-cover">
+            <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTejSwyvHeui4gyY6btIs-IlMMOqncLlOk3UQ&s" alt="" class="w-10 h-10 object-cover"> -->
+            <img src="./assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
             <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
         </a>
 
