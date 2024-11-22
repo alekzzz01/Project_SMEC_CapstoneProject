@@ -35,37 +35,5 @@ PHP
 MySQL
 Local Development Environment:
 XAMPP (for running PHP and MySQL locally)
-Installation Instructions
-To set up the AN MIS website on your local machine:
-Clone the repository:
-bash
-git clone https://github.com/yourusername/an-mis-website.git
-cd an-mis-website
 
-Set up XAMPP:
-Download and install XAMPP.
-Start the Apache and MySQL modules from the XAMPP control panel.
-Create a database:
-Open phpMyAdmin by navigating to http://localhost/phpmyadmin.
-Create a new database (e.g., an_mis_db).
-Import database schema:
-Import the SQL file located in the database folder into your newly created database.
-Configure database connection:
-Open config.php in the root directory of your project.
-Update with your database credentials.
-Run the application:
-Place the project folder in the htdocs directory of XAMPP (e.g., C:\xampp\htdocs\an-mis-website).
-Access it via http://localhost/an-mis-website.
-Usage
-After setting up the application:
-Register as a new user (Admin/Teacher/Student).
-Log in to your account.
-Navigate through sections like Enrollment Management, Admission Management, Academic Performance Tracking, etc.
-Utilize the Student Portal for accessing personal academic data.
-Contributing
-Contributions are welcome! To contribute:
-Fork the repository.
-Create a new branch (git checkout -b feature/YourFeature).
-Make changes and commit (git commit -m 'Add some feature').
-Push to your branch (git push origin feature/YourFeature).
-Open a pull request.
+
