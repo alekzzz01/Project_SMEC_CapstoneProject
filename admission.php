@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admission</title>
 
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="./assets/css/styles.css">
      
      <script src="../assets/js/script.js"></script>
  
@@ -34,7 +34,7 @@
     <?php include './publicnavbar.php' ?>
 
   
-    <div class="py-16 px-4 border-b border-gray-100 "> 
+    <div class="py-16  px-4 lg:px-12 border-b border-gray-100 "> 
             
             <div class="space-y-6 container mx-auto ">
                 <div>
@@ -47,7 +47,7 @@
 
     </div>
 
-    <div class="py-16 px-4 "> 
+    <div class="py-16  px-4 lg:px-12 "> 
             
             <div class="space-y-6 container mx-auto ">
                 <form action="" class="space-y-6">
