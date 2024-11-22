@@ -34,7 +34,7 @@
 
         <div class="space-y-7">
     
-        <h4 class="text-3xl font-bold text-blue-500">Hello, Student! 👋</h4>
+        <h4 class="text-3xl font-bold text-blue-500">Hello, Student 👋</h4>
 
         <div class="p-9 bg-white rounded-md space-y-6">
 
