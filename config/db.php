@@ -2,7 +2,7 @@
 $hostName = "localhost";
 $dbAdmin = "root";
 $dbPassword = "";
-$dbName = "stamarta";
+$dbName = "smec_database";
 
 $connection = new mysqli($hostName, $dbAdmin, $dbPassword, $dbName);
 
