@@ -24,7 +24,7 @@ Benefits: Provides valuable insights for decision-making and strategic planning.
 Functionality: Implements access levels based on user roles such as administrators, teachers, and students.
 Benefits: Ensures data security and appropriate access to sensitive information based on user responsibilities.
 
-s
+
 Technologies Used
 This project leverages a variety of technologies to deliver its features effectively:
 Frontend Technologies:
