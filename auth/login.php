@@ -15,34 +15,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
- 
         $user = $result->fetch_assoc();
-        
-    
+
         if (password_verify($password, $user['password'])) {
-     
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role']; 
 
+            // Redirect based on user role
             if ($_SESSION['user_role'] == 'admin') {
-                header('Location: ../dist/admin/dashboard.php');
+                header('Location: ../dist/admin/');
             } elseif ($_SESSION['user_role'] == 'teacher') {
                 header('Location: ../dist/teacher/dashboard.php');
             } elseif ($_SESSION['user_role'] == 'student') {
                 header('Location: ../dist/student/dashboard.php');
             }
+
             exit();
         } else {
-          
-            echo "<p>Invalid password.</p>";
+            $_SESSION['error'] = "Invalid password.";
         }
     } else {
-       
-        echo "<p>User not found.</p>";
+        $_SESSION['error'] = "No user found with this username or invalid password.";
     }
+
+    // Redirect back to the login page to avoid resubmission
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit();
 }
+
+// Retrieve error message from session (if any)
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -124,6 +130,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <!-- <p class="text-gray-800 text-sm !mt-8 text-center">Don't have an account? <a href="register.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register here</a></p> -->
             </form>
+
+            
+            <?php if (isset($error)): ?>
+                    <div class="text-red-500 text-sm mt-8"><?php echo $error; ?></div>
+            <?php endif; ?>
+
+
         </div>
 
         <div class="text-xs text-gray-400  flex items-center justify-between">
@@ -143,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <img src="../assets/images/techny-school-supplies-for-school-subjects.gif" alt="" class=" h-1/2 w-full">
     </div>
 
-    <!-- <img src="../assets/images/sample.jpg" alt="School Asset" class="w-full h-full object-cover  hidden xl:block z-0"> -->
+
 
 
 
