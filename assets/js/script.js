@@ -6,7 +6,9 @@ tailwind.config = {
         }
       }
     }
+    
   }
+
 
 
 
@@ -30,3 +32,5 @@ function togglePassword(inputId, iconId) {
               
             }
 }
+
+// for sidebar
