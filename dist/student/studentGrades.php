@@ -26,7 +26,9 @@
 <body class="bg-gray-100 h-screen flex flex-col">
 
 
-    <?php include './layouts/navbar.php' ?>
+    
+    <?php include './components/navbar.php' ?>
+
 
     <div class="container mx-auto py-14 px-4 lg:px-12 h-full overflow-y-auto">
 

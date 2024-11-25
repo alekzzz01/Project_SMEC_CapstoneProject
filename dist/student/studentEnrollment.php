@@ -32,7 +32,7 @@
 <body>
 
 
-<?php include './layouts/navbar.php' ?>
+<?php include './components/navbar.php' ?>
 
   
     <div class="py-16 px-4 lg:px-12 border-b border-gray-100 "> 
