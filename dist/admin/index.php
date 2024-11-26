@@ -30,7 +30,7 @@
 
 
 </head>
-<body class="flex h-screen">
+<body class="flex lg:h-screen">
 
     <?php include('./components/sidebar.php'); ?>
 

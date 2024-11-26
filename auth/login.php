@@ -78,7 +78,7 @@ unset($_SESSION['error']);
     <div class="flex flex-col  justify-between p-4 space-y-12">
 
         
-        <a class="flex items-center gap-4" href="./dashboard.php">
+        <a class="flex items-center gap-4" href="../">
        
             <img src="../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
          
