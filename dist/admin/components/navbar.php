@@ -67,7 +67,7 @@
                 </a>
                 </li>
                 <li><a>Settings</a></li>
-                <li><a>Logout</a></li>
+                <li><a href="./../../auth/logout.php">Logout</a></li>
             </ul>
         </div>
 
