@@ -1,4 +1,4 @@
-<footer class="h-full pt-16 px-4 container mx-auto">
+<footer class="h-full pt-24 px-4 mx-auto max-w-7xl">
 
 
     <div class="pb-8 flex flex-col md:flex-row lg:flex-row items-start justify-between gap-16 ">
