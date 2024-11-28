@@ -58,7 +58,6 @@ unset($_SESSION['error']);
     <title>Document</title>
 
     <link rel="stylesheet" href="../assets/css/styles.css">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@heroicons/react@2.0.16/dist/outline/index.js" type="module"></script>
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
@@ -87,7 +86,7 @@ unset($_SESSION['error']);
         <div class="m-auto flex flex-col items-center">
             <div class="space-y-3">
             <h5 class="text-2xl font-bold text-center">Welcome back to Sta. Marta Educational Inc.</h5>
-            <p class="text-secondaryText text-center">Enter your email and password to continue</p>
+            <p class="text-slate-500 text-center">Enter your email and password to continue</p>
             </div>
     
             <form method="POST" class="mt-8 space-y-4 w-full lg:w-[580px] ">
