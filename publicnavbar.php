@@ -1,17 +1,17 @@
-<div class="bg-white shadow-sm px-4 py-2">
+<div class="bg-blue-800  shadow-sm px-4 py-2">
     <div class=" flex items-center justify-between">
 
-        <a class="flex items-center gap-4" href="./dashboard.php">
+        <a class="flex items-center gap-4 text-white" href="./dashboard.php">
             <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTejSwyvHeui4gyY6btIs-IlMMOqncLlOk3UQ&s" alt="" class="w-10 h-10 object-cover"> -->
-            <img src="./assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
+            <img src="./assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
             <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
         </a>
 
 
-        <div class="flex items-center">
+        <div class="flex items-center ">
             
             <!-- Initial Items Menu -->
-            <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex">
+            <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex text-white">
           
             <li><a href="">ABOUT US</a></li>
             <li><a href="">PROGRAMS</a></li>
@@ -36,7 +36,7 @@
             <!-- Small Screen Menu -->
             <div>
                 <div class="dropdown dropdown-end">
-                <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+                <div tabindex="0" role="button" class="btn btn-ghost lg:hidden text-white">
                     <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
