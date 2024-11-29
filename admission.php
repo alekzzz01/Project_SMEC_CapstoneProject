@@ -1,3 +1,51 @@
+<?php
+session_start();
+
+require_once('./config/db.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $first_name = mysqli_real_escape_string($connection, $_POST['first_name']);
+    $middle_initial = mysqli_real_escape_string($connection, $_POST['middle_initial']);
+    $last_name = mysqli_real_escape_string($connection, $_POST['last_name']);
+    $birth_date = mysqli_real_escape_string($connection, $_POST['birth_date']);
+    $gender = mysqli_real_escape_string($connection, $_POST['gender']);
+    $year_level = mysqli_real_escape_string($connection, $_POST['yearlevel']);
+    $parent_first_name = mysqli_real_escape_string($connection, $_POST['parent_first_name']);
+    $parent_last_name = mysqli_real_escape_string($connection, $_POST['parent_last_name']);
+    $region = mysqli_real_escape_string($connection, $_POST['region']);
+    $province = mysqli_real_escape_string($connection, $_POST['province']);
+    $city = mysqli_real_escape_string($connection, $_POST['city']);
+    $barangay = mysqli_real_escape_string($connection, $_POST['barangay']);
+    $zip_code = mysqli_real_escape_string($connection, $_POST['zip_code']);
+    $phone = mysqli_real_escape_string($connection, $_POST['phone']);
+    $email = mysqli_real_escape_string($connection, $_POST['email']);
+    $emergency_first_name = mysqli_real_escape_string($connection, $_POST['emergency_first_name']);
+    $emergency_last_name = mysqli_real_escape_string($connection, $_POST['emergency_last_name']);
+    $relationship = mysqli_real_escape_string($connection, $_POST['relationship']);
+
+    $query = "INSERT INTO admission_form
+              (first_name, middle_initial, last_name, birth_date, gender, year_level, 
+               parent_first_name, parent_last_name, region, province, city, barangay, zip_code, 
+               phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+              VALUES 
+              ('$first_name', '$middle_initial', '$last_name', '$birth_date', '$gender', '$year_level', 
+               '$parent_first_name', '$parent_last_name', '$region', '$province', '$city', '$barangay', 
+               '$zip_code', '$phone', '$email', '$emergency_first_name', '$emergency_last_name', '$relationship', NOW())";
+
+    if ($connection->query($query) === TRUE) {
+        $_SESSION['message'] = "Your admission form has been successfully submitted.";
+
+        header("Location: ./index.php");
+        exit();
+    } else {
+        echo "Error: " . $query . "<br>" . $connection->error;
+    }
+
+    $connection->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -50,7 +98,7 @@
     <div class="py-16  px-4 lg:px-12 "> 
             
             <div class="space-y-6 container mx-auto ">
-                <form action="" class="space-y-6">
+                <form action="" method="POST" class="space-y-6">
                  
                 
                 <!-- Name -->
@@ -287,7 +335,7 @@
 
                 <!-- Submit Form -->
                 <div class=" flex items-center justify-end">
-                    <button class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
+                    <button type="submit" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
                 </div>
 
                 </form>
