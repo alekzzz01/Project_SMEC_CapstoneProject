@@ -5,44 +5,54 @@ require_once('./config/db.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $first_name = mysqli_real_escape_string($connection, $_POST['first_name']);
-    $middle_initial = mysqli_real_escape_string($connection, $_POST['middle_initial']);
-    $last_name = mysqli_real_escape_string($connection, $_POST['last_name']);
-    $birth_date = mysqli_real_escape_string($connection, $_POST['birth_date']);
-    $gender = mysqli_real_escape_string($connection, $_POST['gender']);
-    $year_level = mysqli_real_escape_string($connection, $_POST['yearlevel']);
-    $parent_first_name = mysqli_real_escape_string($connection, $_POST['parent_first_name']);
-    $parent_last_name = mysqli_real_escape_string($connection, $_POST['parent_last_name']);
-    $region = mysqli_real_escape_string($connection, $_POST['region']);
-    $province = mysqli_real_escape_string($connection, $_POST['province']);
-    $city = mysqli_real_escape_string($connection, $_POST['city']);
-    $barangay = mysqli_real_escape_string($connection, $_POST['barangay']);
-    $zip_code = mysqli_real_escape_string($connection, $_POST['zip_code']);
-    $phone = mysqli_real_escape_string($connection, $_POST['phone']);
-    $email = mysqli_real_escape_string($connection, $_POST['email']);
-    $emergency_first_name = mysqli_real_escape_string($connection, $_POST['emergency_first_name']);
-    $emergency_last_name = mysqli_real_escape_string($connection, $_POST['emergency_last_name']);
-    $relationship = mysqli_real_escape_string($connection, $_POST['relationship']);
+    $first_name = $_POST['first_name'];
+    $middle_initial = $_POST['middle_initial'];
+    $last_name = $_POST['last_name'];
+    $birth_date = $_POST['birth_date'];
+    $gender = $_POST['gender'];
+    $year_level = $_POST['year_level'];
+    $parent_first_name = $_POST['parent_first_name'];
+    $parent_middle_initial = $_POST['parent_middle_initial'];
+    $parent_last_name = $_POST['parent_last_name'];
+    $region = $_POST['region_text'];
+    $province = $_POST['province_text'];
+    $city = $_POST['city_text'];
+    $barangay = $_POST['barangay_text'];
+    $zip_code = $_POST['zip_code'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $emergency_first_name = $_POST['emergency_first_name'];
+    $emergency_last_name = $_POST['emergency_last_name'];
+    $relationship = $_POST['relationship'];
 
-    $query = "INSERT INTO admission_form
-              (first_name, middle_initial, last_name, birth_date, gender, year_level, 
-               parent_first_name, parent_last_name, region, province, city, barangay, zip_code, 
-               phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
-              VALUES 
-              ('$first_name', '$middle_initial', '$last_name', '$birth_date', '$gender', '$year_level', 
-               '$parent_first_name', '$parent_last_name', '$region', '$province', '$city', '$barangay', 
-               '$zip_code', '$phone', '$email', '$emergency_first_name', '$emergency_last_name', '$relationship', NOW())";
+    $query = "INSERT INTO admission_form 
+(first_name, middle_initial, last_name, birth_date, gender, year_level, 
+ parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
+ phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+VALUES 
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
-    if ($connection->query($query) === TRUE) {
+if ($stmt = $connection->prepare($query)) {
+    $stmt->bind_param("sssssssssssssssssss", 
+    $first_name, $middle_initial, $last_name, $birth_date, $gender, 
+    $year_level, $parent_first_name, $parent_middle_initial, $parent_last_name, $region, 
+    $province, $city, $barangay, $zip_code, $phone, $email, $emergency_first_name, 
+    $emergency_last_name, $relationship);
+
+    if ($stmt->execute()) {
         $_SESSION['message'] = "Your admission form has been successfully submitted.";
-
         header("Location: ./index.php");
         exit();
     } else {
-        echo "Error: " . $query . "<br>" . $connection->error;
+        echo "Error executing query: " . $stmt->error;
     }
 
-    $connection->close();
+    $stmt->close();
+} else {
+    echo "Error preparing query: " . $connection->error;
+}
+
+$connection->close();
 }
 ?>
 
@@ -107,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -115,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -123,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -139,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
+                            <input name="birth_date" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
                         
                             </div>
                           
@@ -161,7 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-6 block">Year Level To Enroll On</label>
                             <div class="relative flex items-center">
-                                <select name="yearlevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                <select name="year_level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                     <option value="" disabled selected>Select year level</option>
                                     <option >Grade 1</option>
                                     <option >Grade 2</option>
@@ -188,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -196,7 +206,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -204,7 +214,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="parent_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -263,7 +273,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <div>
                           
                             <div class="relative flex items-center">
-                            <input name="ZipCode" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="zip_code" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <label class="text-sm font-light mt-1 ml-1">Zip Code</label>
@@ -305,7 +315,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="firstName" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -313,7 +323,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="lastName" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
