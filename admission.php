@@ -94,7 +94,7 @@ $connection->close();
   
     <div class="py-16  px-4 lg:px-12 border-b border-gray-100 "> 
             
-            <div class="space-y-6 container mx-auto ">
+            <div class="space-y-6  max-w-7xl mx-auto ">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-extrabold mb-1">School Admission Form</h2>
 
@@ -107,8 +107,7 @@ $connection->close();
 
     <div class="py-16  px-4 lg:px-12 "> 
             
-            <div class="space-y-6 container mx-auto ">
-                <form action="" method="POST" class="space-y-6">
+
                  
                 
                 <!-- Name -->

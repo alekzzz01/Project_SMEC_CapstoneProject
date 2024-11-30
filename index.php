@@ -60,20 +60,19 @@
         
     </section>
 
-
-    <section class="py-24 px-4 bg-gradient-to-l from-blue-50 to-white">
+    
+    <section class="py-24 px-4">
             
         <div class="mx-auto max-w-7xl">
 
-            <h2 class="text-3xl lg:text-5xl font-bold mb-12">Recognitions</h2>
-
-            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 mb-24">
 
                 <div class="space-y-3">
                     <img src="https://scontent.fmnl30-2.fna.fbcdn.net/v/t39.30808-6/465168729_1090904103041419_2656158095321802361_n.jpg?stp=cp6_dst-jpg&_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeG1us1kXwdfT5LdoQjQg1B6tEqQFIOIlHe0SpAUg4iUd_ATCaWIJ0dXIqvRge-nPoZSHPTlzSi9Ddvm92Cil5EJ&_nc_ohc=hhp5WdakdIUQ7kNvgGSm6kc&_nc_zt=23&_nc_ht=scontent.fmnl30-2.fna&_nc_gid=ATfVUcINNNhNSrjbv3sOdJF&oh=00_AYAHeGkcP4jyshhDrpwOFPToDvW0_z5ztFY5jVNZJjVF1g&oe=674E102A" alt="" class="h-[300px] w-full object-cover">
                     <div>
                     <p class="text-lg font-bold mb-1">Awards and Recognition 1</p>
-                    <p class="text-gray-400">6 November 2024</p>
+                    <p class="font-light text-gray-400 mb-6">6 November 2024</p>
+                    <a href="" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md">Read More</a>
                     </div>
                 </div>
 
@@ -81,7 +80,8 @@
                     <img src="https://scontent.fmnl30-2.fna.fbcdn.net/v/t39.30808-6/465168729_1090904103041419_2656158095321802361_n.jpg?stp=cp6_dst-jpg&_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeG1us1kXwdfT5LdoQjQg1B6tEqQFIOIlHe0SpAUg4iUd_ATCaWIJ0dXIqvRge-nPoZSHPTlzSi9Ddvm92Cil5EJ&_nc_ohc=hhp5WdakdIUQ7kNvgGSm6kc&_nc_zt=23&_nc_ht=scontent.fmnl30-2.fna&_nc_gid=ATfVUcINNNhNSrjbv3sOdJF&oh=00_AYAHeGkcP4jyshhDrpwOFPToDvW0_z5ztFY5jVNZJjVF1g&oe=674E102A" alt="" class="h-[300px] w-full object-cover">
                     <div>
                     <p class="text-lg font-bold mb-1">Awards and Recognition 1</p>
-                    <p class="text-gray-400">6 November 2024</p>
+                    <p class="font-light text-gray-400 mb-6">6 November 2024</p>
+                    <a href="" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md">Read More</a>
                     </div>
                 </div>
 
@@ -89,101 +89,98 @@
                     <img src="https://scontent.fmnl30-2.fna.fbcdn.net/v/t39.30808-6/465168729_1090904103041419_2656158095321802361_n.jpg?stp=cp6_dst-jpg&_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeG1us1kXwdfT5LdoQjQg1B6tEqQFIOIlHe0SpAUg4iUd_ATCaWIJ0dXIqvRge-nPoZSHPTlzSi9Ddvm92Cil5EJ&_nc_ohc=hhp5WdakdIUQ7kNvgGSm6kc&_nc_zt=23&_nc_ht=scontent.fmnl30-2.fna&_nc_gid=ATfVUcINNNhNSrjbv3sOdJF&oh=00_AYAHeGkcP4jyshhDrpwOFPToDvW0_z5ztFY5jVNZJjVF1g&oe=674E102A" alt="" class="h-[300px] w-full object-cover">
                     <div>
                     <p class="text-lg font-bold mb-1">Awards and Recognition 1</p>
-                    <p class="text-gray-400">6 November 2024</p>
+                    <p class="font-light text-gray-400 mb-6">6 November 2024</p>
+                    <a href="" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md">Read More</a>
                     </div>
                 </div>
 
             </div>
-            
 
+
+            <div class="flex flex-col lg:flex-row items-center justify-between mb-6">
+                    <div class="text-center lg:text-start">
+                        <h2 class="text-3xl lg:text-4xl font-semibold mb-4">What’s Happening?</h2>
+                        <p class="text-gray-400">Stay updated with our educational blogs</p>
+                    </div>
+
+                    <img src="./assets/images/happening.gif" alt="" class="h-[180px] w-[180px] object-cover">
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5  mb-24">
+
+                        <div class="flex flex-wrap gap-4  p-6 bg-blue-50 rounded-md">
+                            <img src="" alt="" class="w-[100px] h-[100px] bg-blue-50">
+                            <div>
+                                <p class="text-xl font-semibold mb-2 text-blue-800">The Importance of STEM Education</p>
+                                <p>Exploring the benefits of STEM education in today's world</p>
+
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4  p-6 bg-blue-50 rounded-md">
+                            <img src="" alt="" class="w-[100px] h-[100px] bg-blue-50">
+                            <div>
+                                <p class="text-xl font-semibold mb-2 text-blue-800">The Importance of STEM Education</p>
+                                <p>Exploring the benefits of STEM education in today's world</p>
+
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4  p-6 bg-blue-50 rounded-md">
+                            <img src="" alt="" class="w-[100px] h-[100px] bg-blue-50">
+                            <div>
+                                <p class="text-xl font-semibold mb-2 text-blue-800">The Importance of STEM Education</p>
+                                <p>Exploring the benefits of STEM education in today's world</p>
+
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap gap-4  p-6 bg-blue-50 rounded-md">
+                            <img src="" alt="" class="w-[100px] h-[100px] bg-blue-50">
+                            <div>
+                                <p class="text-xl font-semibold mb-2 text-blue-800">The Importance of STEM Education</p>
+                                <p>Exploring the benefits of STEM education in today's world</p>
+                            </div>
+                        </div>
+
+            </div>
+                
+
+            <div class="text-center">
+                    <a href="" class="text-blue-500 border-2 border-blue-500 transition-colors py-4 px-12 rounded-md hover:border-blue-700 hover:bg-blue-700 hover:text-white font-semibold">Show more</a>
+            </div>
+            
+            
         </div>
     
     </section>
 
 
 
-    <section class="py-24 px-4"> 
-        <div class="mx-auto max-w-7xl space-y-5">
-
-                <div class="flex flex-col lg:flex-row items-center justify-between ">
-                    <div class="text-center lg:text-start">
-                        <h2 class="text-3xl lg:text-4xl font-bold mb-4">What’s Happening?</h2>
-                        <p class="text-gray-400">Stay updated with our educational blogs</p>
-                    </div>
-
-                    <img src="./assets/images/happening.gif" alt="" class="h-[180px] w-[180px] object-cover ">
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
-                        <div class="flex flex-wrap gap-4 p-4  border border-gray-200 rounded-md">
-                            <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300">
-                            <div>
-                                <p class="text-xl font-semibold mb-2">The Importance of STEM Education</p>
-                                <p>Exploring the benefits of STEM education in today's world</p>
-
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap  gap-4 p-4  border border-gray-200 rounded-md">
-                            <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300">
-                            <div>
-                                <p class="text-xl font-semibold mb-2">The Importance of STEM Education</p>
-                                <p>Exploring the benefits of STEM education in today's world</p>
-
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap  gap-4 p-4  border border-gray-200 rounded-md">
-                            <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300">
-                            <div>
-                                <p class="text-xl font-semibold mb-2">The Importance of STEM Education</p>
-                                <p>Exploring the benefits of STEM education in today's world</p>
-
-                            </div>
-                        </div>
-
-                        <div class="flex flex-wrap  gap-4 p-4  border border-gray-200 rounded-md">
-                            <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300">
-                            <div>
-                                <p class="text-xl font-semibold mb-2">The Importance of STEM Education</p>
-                                <p>Exploring the benefits of STEM education in today's world</p>
-
-                            </div>
-                        </div>
-
-                </div>
-
-
-
-        </div>
-              
-
-    </section>
 
     <div class="py-14 px-4 bg-blue-800 w-full text-center">
-        <h2 class="text-3xl lg:text-4xl font-bold text-white">ABOUT US</h2>
+        <h2 class="text-3xl lg:text-5xl font-bold text-white">ABOUT US</h2>
     </div>
 
-    <section class="py-24 px-4 ">
-            <div class="grid items-center grid-cols-1 gap-12 lg:gap-0 lg:grid-cols-2 mx-auto max-w-7xl">
+    <section class="py-24 px-4">
+            <div class="grid items-center grid-cols-1 gap-12 lg:gap-0 lg:grid-cols-2 mx-auto max-w-7xl  mb-24">
                     <div>
                         <h2 class="text-3xl lg:text-4xl font-bold mb-4">Our Vision and Mission</h2>
                         <p class="text-gray-400">Creating a world-class learning environment</p>
                     </div>
 
                     <div class="space-y-10">
-                        <div class="flex flex-wrap  gap-4 p-4  border border-gray-200 rounded-md">
+                        <div class="flex flex-wrap  gap-4  p-6 bg-blue-50 rounded-md">
                             <div>
-                                <p class="text-xl font-semibold mb-2">Vision Statement</p>
+                                <p class="text-2xl font-semibold mb-2  text-blue-800">Vision Statement</p>
                                 <p>Sta. Marta Educational Center, Inc. is envisioned to uphold its vigor in inspiring a scholastic environment that yields productivity among independently - directed individuals.</p>
 
                             </div>
                         </div>
 
-                        <div class="flex flex-wrap  gap-4 p-4  border border-gray-200 rounded-md">
+                        <div class="flex flex-wrap  gap-4  p-6 bg-blue-50 rounded-md">
                             <div>
-                                <p class="text-xl font-semibold mb-2">Mission Statement</p>
+                                <p class="text-2xl font-semibold mb-2  text-blue-800">Mission Statement</p>
                                 <p>The Sta. Marta Educational Center, Inc. is committed to exert the fullness of its effort in establishing a community of learners geared with quality and responsive education and turning out graduates who are globally competitive and productive citizens of the nation.</p>
 
                             </div>
@@ -192,18 +189,15 @@
 
             </div>
 
-    </section>
+            <div class=" mx-auto max-w-7xl">
+                <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-center">Core Values</h2>
 
-    <section class="py-24 px-4 ">
-        <div class=" mx-auto max-w-7xl">
-            <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-center">Core Values</h2>
-
-            <div class="max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-10 py-16 mx-auto">
+                <div class="max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-10 py-16 mx-auto">
 
                     <div class="flex flex-col items-center">
                         <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
                         <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2">Responsive</p>
+                            <p class="text-xl font-semibold mb-2 text-blue-800">Responsive</p>
                             <p class="text-gray-400">Hand in hand with respect, SMECians positively respond clearly and directly to other people and to task set at hand.</p>
                         </div>
                     </div>
@@ -211,7 +205,7 @@
                     <div class="flex flex-col items-center">
                         <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
                         <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2">Respectful</p>
+                            <p class="text-xl font-semibold mb-2 text-blue-800">Respectful</p>
                             <p class="text-gray-400">SMECians acknowledge and respect differences in each other, and provide a safe, supportive environment in which all individuals and staff are valued, and encouraged to engage in open two-way communication.
                             </p>
                         </div>
@@ -220,7 +214,7 @@
                     <div class="flex flex-col items-center">
                         <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
                         <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2">Self-Directed</p>
+                            <p class="text-xl font-semibold mb-2 text-blue-800">Self-Directed</p>
                             <p class="text-gray-400">SMECians has the ability to regulate and adapt behaviour to the demands of a situation in order to achieve personally chosen goals and values.</p>
                         </div>
                     </div>
@@ -232,8 +226,9 @@
 
     </section>
 
+
     <div class="py-14 px-4 bg-blue-800 w-full text-center">
-        <h2 class="text-3xl lg:text-4xl font-bold text-white">CONTACT US</h2>
+        <h2 class="text-3xl lg:text-5xl font-bold text-white">CONTACT US</h2>
     </div>
 
     <section class="py-24 px-4 border-b border-gray-100">
