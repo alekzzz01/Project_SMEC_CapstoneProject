@@ -1,3 +1,61 @@
+<?php
+session_start();
+
+require_once('./config/db.php');
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $first_name = $_POST['first_name'];
+    $middle_initial = $_POST['middle_initial'];
+    $last_name = $_POST['last_name'];
+    $birth_date = $_POST['birth_date'];
+    $gender = $_POST['gender'];
+    $year_level = $_POST['year_level'];
+    $parent_first_name = $_POST['parent_first_name'];
+    $parent_middle_initial = $_POST['parent_middle_initial'];
+    $parent_last_name = $_POST['parent_last_name'];
+    $region = $_POST['region_text'];
+    $province = $_POST['province_text'];
+    $city = $_POST['city_text'];
+    $barangay = $_POST['barangay_text'];
+    $zip_code = $_POST['zip_code'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $emergency_first_name = $_POST['emergency_first_name'];
+    $emergency_last_name = $_POST['emergency_last_name'];
+    $relationship = $_POST['relationship'];
+
+    $query = "INSERT INTO admission_form 
+(first_name, middle_initial, last_name, birth_date, gender, year_level, 
+ parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
+ phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+VALUES 
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+if ($stmt = $connection->prepare($query)) {
+    $stmt->bind_param("sssssssssssssssssss", 
+    $first_name, $middle_initial, $last_name, $birth_date, $gender, 
+    $year_level, $parent_first_name, $parent_middle_initial, $parent_last_name, $region, 
+    $province, $city, $barangay, $zip_code, $phone, $email, $emergency_first_name, 
+    $emergency_last_name, $relationship);
+
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Your admission form has been successfully submitted.";
+        header("Location: ./index.php");
+        exit();
+    } else {
+        echo "Error executing query: " . $stmt->error;
+    }
+
+    $stmt->close();
+} else {
+    echo "Error preparing query: " . $connection->error;
+}
+
+$connection->close();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -49,8 +107,7 @@
 
     <div class="py-16  px-4 lg:px-12 "> 
             
-            <div class="space-y-6 max-w-7xl mx-auto ">
-                <form action="" class="space-y-6">
+
                  
                 
                 <!-- Name -->
@@ -59,7 +116,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -67,7 +124,7 @@
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -75,7 +132,7 @@
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -91,7 +148,7 @@
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
+                            <input name="birth_date" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
                         
                             </div>
                           
@@ -113,7 +170,7 @@
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-6 block">Year Level To Enroll On</label>
                             <div class="relative flex items-center">
-                                <select name="yearlevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                <select name="year_level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                     <option value="" disabled selected>Select year level</option>
                                     <option >Grade 1</option>
                                     <option >Grade 2</option>
@@ -140,7 +197,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -148,7 +205,7 @@
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -156,7 +213,7 @@
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="parent_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -215,7 +272,7 @@
                         <div>
                           
                             <div class="relative flex items-center">
-                            <input name="ZipCode" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="zip_code" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <label class="text-sm font-light mt-1 ml-1">Zip Code</label>
@@ -257,7 +314,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
                             <div class="relative flex items-center">
-                            <input name="firstName" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -265,7 +322,7 @@
 
                         <div>
                             <div class="relative flex items-center">
-                            <input name="lastName" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
                             <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -287,7 +344,7 @@
 
                 <!-- Submit Form -->
                 <div class=" flex items-center justify-end">
-                    <button class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
+                    <button type="submit" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
                 </div>
 
                 </form>
