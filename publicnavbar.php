@@ -1,7 +1,7 @@
 <div class="bg-blue-800  shadow-sm px-4 py-2">
     <div class=" flex items-center justify-between">
 
-        <a class="flex items-center gap-4 text-white" href="./dashboard.php">
+        <a class="flex items-center gap-4 text-white" href="index.php">
             <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTejSwyvHeui4gyY6btIs-IlMMOqncLlOk3UQ&s" alt="" class="w-10 h-10 object-cover"> -->
             <img src="./assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
             <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
@@ -13,8 +13,8 @@
             <!-- Initial Items Menu -->
             <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex text-white">
           
-            <li><a href="">ABOUT US</a></li>
-            <li><a href="">PROGRAMS</a></li>
+            <li><a href="aboutus.php">ABOUT US</a></li>
+            <li><a href="programs.php">PROGRAMS</a></li>
             <li><a href="">NEWS & EVENTS</a></li>
             <li><a href="admission.php">ADMISSION</a></li>
             <li><a href="./auth/login.php">LOGIN</a></li>
