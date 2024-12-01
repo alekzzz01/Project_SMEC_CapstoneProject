@@ -139,7 +139,7 @@ unset($_SESSION['error']);
         </div>
 
         <div class="text-xs text-gray-400  flex items-center justify-between">
-            <p class="hover:text-black transition-colors">© 2024 JMA Technologies. All Rights Reserved.</p>
+            <p class="hover:text-black transition-colors">© 2024 Lumix. All Rights Reserved.</p>
             <div class="flex items-center gap-6">
                 <a href="" class="hover:text-black transition-colors">Privacy</a>
                 <a href="" class="hover:text-black transition-colors">Cookies Policy</a>
