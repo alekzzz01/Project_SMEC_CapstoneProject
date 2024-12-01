@@ -1,3 +1,78 @@
+<?php
+session_start();
+
+include '../../config/db.php';
+
+// Check if form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get form data
+    $first_name = $_POST['first-name'];
+    $middle_initial = $_POST['middle-initial'];
+    $last_name = $_POST['last-name'];
+    $lrn = $_POST['lrn'];
+    $birth_date = $_POST['birth-date'];
+    $gender = $_POST['gender'];
+    $mobile_number = $_POST['mobile-number'];
+    $parent_first_name = $_POST['parent-first-name'];
+    $parent_middle_initial = $_POST['parent-middle-initial'];
+    $parent_last_name = $_POST['parent-last-name'];
+    $parent_contact_number = $_POST['parent-contact-number'];
+    $student_type = isset($_POST['new-student']) ? 'New Student' : (isset($_POST['transferee']) ? 'Transferee' : 'Returning Student');
+    $grade_level = $_POST['grade-level'];
+    $school_year = $_POST['school-year'];
+    $last_school_attended = $_POST['last-school-attended'];
+
+    // Handle file uploads (if necessary, but ignoring for now)
+    $birth_certificate = file_get_contents($_FILES['birth-certificate']['tmp_name']);
+    $report_card = file_get_contents($_FILES['report-card']['tmp_name']);
+    $good_moral_certificate = file_get_contents($_FILES['good-moral-certificate']['tmp_name']);
+
+    // Prepare SQL query using prepared statements
+    $query = "INSERT INTO enrollment (first_name, middle_initial, last_name, lrn, birth_date, gender, mobile_number, parent_first_name, parent_middle_initial, parent_last_name, parent_contact_number, student_type, grade_level, school_year, last_school_attended, birth_certificate, report_card, good_moral_certificate) 
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    // Prepare the statement
+    $stmt = $connection->prepare($query);
+
+    // Bind the parameters to the prepared statement
+    $stmt->bind_param("ssssssssssssssssss", 
+    $first_name, 
+    $middle_initial, 
+    $last_name, 
+    $lrn, 
+    $birth_date, 
+    $gender, 
+    $mobile_number, 
+    $parent_first_name, 
+    $parent_middle_initial, 
+    $parent_last_name, 
+    $parent_contact_number, 
+    $student_type, 
+    $grade_level, 
+    $school_year, 
+    $last_school_attended, 
+    $birth_certificate, 
+    $report_card, 
+    $good_moral_certificate
+);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        // Redirect to avoid resubmission (PRG pattern)
+        $_SESSION['formSubmitted'] = true;
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    // Close the statement
+    $stmt->close();
+}
+
+$connection->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,7 +127,7 @@
             
             <div class="container mx-auto space-y-7">
 
-                <form action="" class="space-y-6">
+                <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
                     
                         <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
                         <!-- Name -->
@@ -61,7 +136,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"readonly />
+                                    <input name="first-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -69,7 +144,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"readonly />
+                                    <input name="middle-initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -77,7 +152,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly />
+                                    <input name="last-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -85,7 +160,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly  />
+                                    <input name="lrn" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">LRN</p>
@@ -101,7 +176,7 @@
                                 <div>
                                     <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" readonly/>
+                                    <input name="birth-date" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
                                 
                                     </div>
                                 
@@ -110,7 +185,7 @@
                                 <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Gender</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly  />
+                                    <input name="gender" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                 
@@ -121,7 +196,7 @@
                                 <div>
                                     <label class="text-gray-800 text-sm font-medium mb-6 block">Mobile Number</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly />
+                                    <input name="mobile-number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                 
@@ -140,7 +215,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly/>
+                                    <input name="parent-first-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -148,7 +223,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"readonly/>
+                                    <input name="parent-middle-initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -156,7 +231,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" readonly  />
+                                    <input name="parent-last-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -164,7 +239,7 @@
 
                                 <div>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  readonly />
+                                    <input name="parent-contact-number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                 
                                     </div>
                                     <p class="text-sm font-light mt-1 ml-1">Contact Number</p>
@@ -173,11 +248,11 @@
                         </div>
 
 
-                </form>
+
 
                 <div class="border-b border-gray-100"></div>
 
-                <form action="" class="space-y-6">
+
                     
                     <h1 class="text-lg font-bold">Academic <span class="text-red-500">*</span></h1>
 
@@ -186,17 +261,17 @@
                     <div class="flex flex-col gap-4">
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="radio-1" class="radio radio-info" />
+                                    <input type="radio" name="new-student" class="radio radio-info" />
                                     <span>New Student</span>
                             </div>
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="radio-1" class="radio radio-info" />
+                                    <input type="radio" name="transferee" class="radio radio-info" />
                                     <span>Transferee</span>
                             </div>
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="radio-1" class="radio radio-info" />
+                                    <input type="radio" name="returning-student" class="radio radio-info" />
                                     <span>Returning Student</span>
                             </div>
 
@@ -210,7 +285,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Grade Level</label>
                                 <div class="relative flex items-center">
-                                    <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                    <select name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                         <option value="" disabled selected>Select grade level</option>
                                         <option value="grade-1">Grade 1</option>
                                         <option value="grade-2">Grade 2</option>
@@ -232,7 +307,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">School Year</label>
                                 <div class="relative flex items-center">
-                                    <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                    <select name="school-year" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                         <option value="" disabled selected>Select school year</option>
                                         <option value="2022-2023">2022-2023</option>
                                         <option value="2023-2024">2023-2024</option>
@@ -245,7 +320,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Last School Attended</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  readonly />
+                                    <input name="last-school-attended" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                 
                                     </div>
                                
@@ -266,7 +341,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Certificate</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                    <input name="birth-certificate" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
     
                                     </div>
                             </div>
@@ -274,7 +349,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Report Card</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                    <input name="report-card" type="file" required  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
     
                                     </div>
                             </div>
@@ -282,7 +357,7 @@
                             <div>
                                 <label class="text-gray-800 text-sm font-medium mb-6 block">Good Moral Certificate</label>
                                     <div class="relative flex items-center">
-                                    <input name="email" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                    <input name="good-moral-certificate" type="file" required  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
     
                                     </div>
                             </div>
@@ -304,62 +379,53 @@
                     </div>
 
                     
-
+                    <div class=" flex items-center justify-end">
+                    <button type="submit" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
+                </div>
 
                 </form>
 
                 <div class="border-gray-100 border-b"></div>
 
-                <!-- Submit Form -->
-                <div class=" flex items-center justify-end">
-                    <button class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
-                </div>
+                
+     
 
-                <!-- <button class="btn" onclick="my_modal_5.showModal()">open modal</button> -->
+               
+ 
 
-
-
-            </div>
-
-    </div>
-
-    <!-- Modal For Success of submission of the form -->
-   
+                <?php if (isset($_SESSION['formSubmitted']) && $_SESSION['formSubmitted'] === true): ?>
     <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-lg font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-            Enrollment Submitted Successfully!</h3>
-
+                Enrollment Submitted Successfully!</h3>
             <p class="py-4 text-gray-400 text-sm">Thank you for submitting your enrollment form. Please follow these next steps:</p>
-
-
             <!-- Instructions -->
-            <div className="py-4">
+            <div class="py-4">
                 <ol class="list-decimal list-inside space-y-2">
-                <li>Visit the school registrar&apos;s office within the next 5 business days.</li>
-                <li>Bring the following documents:
-                    <ul class="list-disc list-inside ml-4 mt-1">
-                    <li>Valid ID</li>
-                    <li>Original and photocopy of your diploma or transcript</li>
-                    <li>2 recent passport-sized photos</li>
-                    </ul>
-                </li>
-                <li>Be prepared to pay the enrollment fee at the cashier&apos;s office.</li>
-                <li>Collect your student ID and class schedule from the registrar.</li>
+                    <li>Visit the school registrar's office within the next 5 business days.</li>
+                    <li>Bring the following documents:
+                        <ul class="list-disc list-inside ml-4 mt-1">
+                            <li>Valid ID</li>
+                            <li>Original and photocopy of your diploma or transcript</li>
+                            <li>2 recent passport-sized photos</li>
+                        </ul>
+                    </li>
+                    <li>Be prepared to pay the enrollment fee at the cashier's office.</li>
+                    <li>Collect your student ID and class schedule from the registrar.</li>
                 </ol>
             </div>
-
-      
-
             <div class="modal-action">
-            <form method="dialog">
-                <!-- if there is a button in form, it will close the modal -->
-                <button class="btn">Close</button>
-            </form>
+                <form method="dialog" action="">
+                    <a href="dashboard.php" class="btn">Close</a>
+                </form>
             </div>
         </div>
     </dialog>
-
+    <script>
+        document.getElementById("my_modal_5").showModal();
+    </script>
+    <?php unset($_SESSION['formSubmitted']); ?>
+<?php endif; ?>
 
         
 
