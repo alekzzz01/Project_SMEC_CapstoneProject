@@ -26,34 +26,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $relationship = $_POST['relationship'];
 
     $query = "INSERT INTO admission_form 
-(first_name, middle_initial, last_name, birth_date, gender, year_level, 
- parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
- phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
-VALUES 
-(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+    (first_name, middle_initial, last_name, birth_date, gender, year_level, 
+    parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
+    phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+    VALUES 
+    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
-if ($stmt = $connection->prepare($query)) {
-    $stmt->bind_param("sssssssssssssssssss", 
-    $first_name, $middle_initial, $last_name, $birth_date, $gender, 
-    $year_level, $parent_first_name, $parent_middle_initial, $parent_last_name, $region, 
-    $province, $city, $barangay, $zip_code, $phone, $email, $emergency_first_name, 
-    $emergency_last_name, $relationship);
+    if ($stmt = $connection->prepare($query)) {
+        $stmt->bind_param("sssssssssssssssssss", 
+        $first_name, $middle_initial, $last_name, $birth_date, $gender, 
+        $year_level, $parent_first_name, $parent_middle_initial, $parent_last_name, $region, 
+        $province, $city, $barangay, $zip_code, $phone, $email, $emergency_first_name, 
+        $emergency_last_name, $relationship);
 
-    if ($stmt->execute()) {
-        $_SESSION['message'] = "Your admission form has been successfully submitted.";
-        header("Location: ./index.php");
-        exit();
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Your admission form has been successfully submitted.";
+            header("Location: ./index.php");
+            exit();
+        } else {
+            echo "Error executing query: " . $stmt->error;
+        }
+
+        $stmt->close();
     } else {
-        echo "Error executing query: " . $stmt->error;
+        echo "Error preparing query: " . $connection->error;
     }
 
-    $stmt->close();
-} else {
-    echo "Error preparing query: " . $connection->error;
-}
-
-$connection->close();
-}
+    $connection->close();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -108,8 +108,7 @@ $connection->close();
     <div class="py-16  px-4 lg:px-12 "> 
             
 
-                 
-                
+            <div class="space-y-6  max-w-7xl mx-auto ">
                 <!-- Name -->
                 <div>
                     <label class="text-gray-800 text-sm font-medium mb-6 block">Name</label>
