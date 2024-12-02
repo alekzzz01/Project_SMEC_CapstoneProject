@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once('./config/db.php');
+include './config/db.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -65,7 +65,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <link rel="stylesheet" href="./assets/css/styles.css">
      
-     <script src="../assets/js/script.js"></script>
  
      <script src="https://cdn.tailwindcss.com"></script>
  
@@ -108,7 +107,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="py-16  px-4 lg:px-12 "> 
             
 
-            <div class="space-y-6  max-w-7xl mx-auto ">
+            <div class="max-w-7xl mx-auto ">
+                <form action="" method="POST" class="space-y-6 ">
                 <!-- Name -->
                 <div>
                     <label class="text-gray-800 text-sm font-medium mb-6 block">Name</label>
