@@ -29,7 +29,7 @@
 
 <?php include 'publicnavbar.php' ?>
 
-    <section class="h-[20vh] lg:h-[30vh] bg-blue-800 flex items-center justify-center">
+    <section class="py-36 px-4 lg:px-12 bg-blue-800 flex items-center justify-center">
 
       
         <div>
@@ -41,7 +41,7 @@
     </section>
 
 
-    <section class="py-24 px-4">
+    <section class="py-24 px-4 border-b border-gray-100">
         <div class="mx-auto max-w-7xl">
          
 
@@ -70,45 +70,6 @@
     </section>
 
 
-    
-    <section class="py-24 px-4 ">
-       
-    <div class=" mx-auto max-w-7xl">
-                <h2 class="text-3xl lg:text-4xl font-bold mb-4 text-center">Core Values</h2>
-
-                <div class="max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-10 py-16 mx-auto">
-
-                    <div class="flex flex-col items-center">
-                        <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
-                        <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2 text-blue-800">Responsive</p>
-                            <p class="text-gray-400">Hand in hand with respect, SMECians positively respond clearly and directly to other people and to task set at hand.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center">
-                        <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
-                        <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2 text-blue-800">Respectful</p>
-                            <p class="text-gray-400">SMECians acknowledge and respect differences in each other, and provide a safe, supportive environment in which all individuals and staff are valued, and encouraged to engage in open two-way communication.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col items-center">
-                        <img src="" alt="" class="w-[100px] h-[100px] bg-gray-300 rounded-full object-cover">
-                        <div class=" mt-5 text-center ">
-                            <p class="text-xl font-semibold mb-2 text-blue-800">Self-Directed</p>
-                            <p class="text-gray-400">SMECians has the ability to regulate and adapt behaviour to the demands of a situation in order to achieve personally chosen goals and values.</p>
-                        </div>
-                    </div>
-
-
-            </div>
-
-        </div>
-
-    </section>
 
     <?php include 'footer.php' ?>
 
