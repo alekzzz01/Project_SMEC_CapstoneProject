@@ -27,12 +27,14 @@
 
     <?php include 'publicnavbar.php' ?>
 
-    <section class="h-[20vh] lg:h-[30vh] bg-blue-800 flex items-center justify-center">
+    <section class="py-36 px-4 lg:px-12 bg-blue-800 flex items-center justify-center">
         <div>
             <h1 class="text-4xl lg:text-6xl font-semibold text-white mb-4 shadow-sm">Programs Offered</h1>
         </div>
 
     </section>
+
+
 
 
     <section class="py-24 px-4">
