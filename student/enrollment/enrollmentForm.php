@@ -106,17 +106,78 @@ $connection->close();
 </head>
 <body>
 
+    <div id="navbar" class="px-4 py-2 fixed w-full top-0 left-0 z-10 transition duration-300 text-white">
+        <div class=" flex items-center justify-between">
 
-<?php include './components/navbar.php' ?>
+            <a class="flex items-center gap-4 " href="./">
+                <img src="../../assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
+                <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
+            </a>
+
+
+            <div class="flex items-center ">
+                
+                <!-- Initial Items Menu -->
+                <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex ">
+            
+                
+                <li><a href="../../auth/login.php">LOGOUT</a></li>
+
+                </ul>
+
+                <!-- Small Screen Menu -->
+                <div>
+                    <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button" class="btn btn-ghost lg:hidden text-white">
+                        <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="inline-block h-5 w-5 stroke-current">
+                        <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    </div>
+                        <ul
+                        tabindex="0"
+                        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                      
+                        <li><a href="../../auth/login.php">LOGOUT</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+
 
   
-    <div class="py-16 px-4 lg:px-12 border-b border-gray-100 "> 
+    <div class="py-36 px-4 lg:px-12 bg-blue-800 border-b border-gray-100 "> 
             
-            <div class="space-y-6 container mx-auto ">
+            <div class="space-y-6  max-w-7xl mx-auto text-white">
                 <div>
                     <h2 class="text-2xl lg:text-3xl font-extrabold mb-1">Enrollment Form</h2>
 
-                    <p class="text-gray-400 font-light">Enrollment for A.Y. 2022 - 2023 is open!</p>
+                    <p class="font-light">Enrollment for A.Y. 2022 - 2023 is open!</p>
                 </div>
                
             </div>
@@ -125,7 +186,7 @@ $connection->close();
 
     <div class="py-16 px-4 lg:px-12"> 
             
-            <div class="container mx-auto space-y-7">
+            <div class=" max-w-7xl mx-auto space-y-7">
 
                 <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
                     
@@ -388,44 +449,41 @@ $connection->close();
                 <div class="border-gray-100 border-b"></div>
 
                 
-     
-
-               
- 
+    
 
                 <?php if (isset($_SESSION['formSubmitted']) && $_SESSION['formSubmitted'] === true): ?>
-    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-lg font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                Enrollment Submitted Successfully!</h3>
-            <p class="py-4 text-gray-400 text-sm">Thank you for submitting your enrollment form. Please follow these next steps:</p>
-            <!-- Instructions -->
-            <div class="py-4">
-                <ol class="list-decimal list-inside space-y-2">
-                    <li>Visit the school registrar's office within the next 5 business days.</li>
-                    <li>Bring the following documents:
-                        <ul class="list-disc list-inside ml-4 mt-1">
-                            <li>Valid ID</li>
-                            <li>Original and photocopy of your diploma or transcript</li>
-                            <li>2 recent passport-sized photos</li>
-                        </ul>
-                    </li>
-                    <li>Be prepared to pay the enrollment fee at the cashier's office.</li>
-                    <li>Collect your student ID and class schedule from the registrar.</li>
-                </ol>
-            </div>
-            <div class="modal-action">
-                <form method="dialog" action="">
-                    <a href="dashboard.php" class="btn">Close</a>
-                </form>
-            </div>
-        </div>
-    </dialog>
-    <script>
-        document.getElementById("my_modal_5").showModal();
-    </script>
-    <?php unset($_SESSION['formSubmitted']); ?>
-<?php endif; ?>
+                        <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+                            <div class="modal-box">
+                                <h3 class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-lg font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+                                    Enrollment Submitted Successfully!</h3>
+                                <p class="py-4 text-gray-400 text-sm">Thank you for submitting your enrollment form. Please follow these next steps:</p>
+                                <!-- Instructions -->
+                                <div class="py-4">
+                                    <ol class="list-decimal list-inside space-y-2">
+                                        <li>Visit the school registrar's office within the next 5 business days.</li>
+                                        <li>Bring the following documents:
+                                            <ul class="list-disc list-inside ml-4 mt-1">
+                                                <li>Valid ID</li>
+                                                <li>Original and photocopy of your diploma or transcript</li>
+                                                <li>2 recent passport-sized photos</li>
+                                            </ul>
+                                        </li>
+                                        <li>Be prepared to pay the enrollment fee at the cashier's office.</li>
+                                        <li>Collect your student ID and class schedule from the registrar.</li>
+                                    </ol>
+                                </div>
+                                <div class="modal-action">
+                                    <form method="dialog" action="">
+                                        <a href="dashboard.php" class="btn">Close</a>
+                                    </form>
+                                </div>
+                            </div>
+                        </dialog>
+                        <script>
+                            document.getElementById("my_modal_5").showModal();
+                        </script>
+                        <?php unset($_SESSION['formSubmitted']); ?>
+                    <?php endif; ?>
 
         
 
@@ -434,6 +492,23 @@ $connection->close();
     
 </body>
 </html>
+
+
+
+
+
+<script>
+    document.addEventListener("scroll", function () {
+    const navbar = document.getElementById("navbar");
+    if (window.scrollY > 50) {
+        navbar.classList.add("bg-blue-800");
+    } else {
+        navbar.classList.remove("bg-blue-800");
+    }
+    });
+
+</script>
+
 
 
 
