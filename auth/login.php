@@ -3,11 +3,28 @@ session_start();
 
 include '../config/db.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+require '../vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable('../config');
+$dotenv->load();
 
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
+    $recaptcha_response = $_POST['g-recaptcha-response']; // Get reCAPTCHA response
 
+    // Verify reCAPTCHA
+    $secretKey = $_ENV['RECAPTCHA_SECRET']; 
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $response = file_get_contents($url . '?secret=' . $secretKey . '&response=' . $recaptcha_response . '&remoteip=' . $_SERVER['REMOTE_ADDR']);
+    $responseKeys = json_decode($response, true);
+
+    if (!$responseKeys["success"]) {
+        $_SESSION['error'] = "reCAPTCHA verification failed. Please try again.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+  
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param('s', $email);
@@ -44,10 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
-// Retrieve error message from session (if any)
-$error = $_SESSION['error'] ?? null;
-unset($_SESSION['error']);
+    // Retrieve error message from session (if any)
+    $error = $_SESSION['error'] ?? null;
+    unset($_SESSION['error']);
 ?>
+
 
 
 <!DOCTYPE html>
@@ -55,11 +73,11 @@ unset($_SESSION['error']);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login - SMEC</title>
 
     <link rel="stylesheet" href="../assets/css/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@heroicons/react@2.0.16/dist/outline/index.js" type="module"></script>
+    <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
     <script src="../assets/js/script.js"></script>
 
@@ -122,12 +140,19 @@ unset($_SESSION['error']);
                             </div>
                         </div>
 
+                   
+
                         <div class="!mt-8">
                             <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
                             Sign in
                             </button>
                         </div>
                         <!-- <p class="text-gray-800 text-sm !mt-8 text-center">Don't have an account? <a href="register.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register here</a></p> -->
+                        
+                        <!-- Google Recaptcha -->
+                        <div class="flex items-center justify-center">
+                            <div class="g-recaptcha" data-sitekey="6LfIZ5EqAAAAAGeXLXbd-FE6FjKxV-VKz4wfSLM2"></div>
+                        </div>
             </form>
 
             
@@ -168,3 +193,5 @@ unset($_SESSION['error']);
     
 </body>
 </html>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
