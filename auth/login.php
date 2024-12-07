@@ -1,8 +1,6 @@
 <?php
 session_start();
-
 include '../config/db.php';
-
 require '../vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable('../config');
 $dotenv->load();
@@ -24,7 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-  
+    // Check if email and password are provided
+    if (empty($email) || empty($password) || empty($recaptcha_response)) {
+        $_SESSION['error'] = "Please fill in all fields.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param('s', $email);
@@ -35,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $user = $result->fetch_assoc();
 
         if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['role']; 
 
@@ -47,13 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($_SESSION['user_role'] == 'student') {
                 header('Location: ../dist/student/dashboard.php');
             }
-
             exit();
         } else {
             $_SESSION['error'] = "Invalid password.";
         }
     } else {
-        $_SESSION['error'] = "No user found with this username or invalid password.";
+        $_SESSION['error'] = "No user found with this email.";
     }
 
     // Redirect back to the login page to avoid resubmission
@@ -61,11 +64,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 
-    // Retrieve error message from session (if any)
-    $error = $_SESSION['error'] ?? null;
-    unset($_SESSION['error']);
+// Retrieve error message from session (if any)
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
 ?>
-
 
 
 <!DOCTYPE html>
