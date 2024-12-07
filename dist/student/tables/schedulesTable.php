@@ -1,9 +1,9 @@
 
-<p class="text-xl font-medium">Name: <span class="font-bold">John Doe</span> </p>
+<p class="font-semibold">Name: <span class="font-normal">John Doe</span> </p>
 
-<p class="text-xl font-medium">Grade Level: <span class="font-bold">12</span> </p>
+<p class="font-semibold">Grade Level: <span class="font-normal">12</span> </p>
 
-<p class="text-xl font-medium">Section: <span class="font-bold">St. Jude</span> </p>
+<p class="font-semibold">Section: <span class="font-normal">St. Jude</span> </p>
 
 <div class="border-b border-neutral-100"></div>
 

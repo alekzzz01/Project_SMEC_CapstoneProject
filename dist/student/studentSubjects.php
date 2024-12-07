@@ -1,3 +1,47 @@
+<?php
+session_start();
+include '../../config/db.php';
+
+$user_id = $_SESSION['user_id'];  // Assuming the user_id is stored in the session
+
+// Step 1: Get the student_id associated with the user_id
+$student_sql = "SELECT student_id FROM students WHERE user_id = ?";
+$stmt = $connection->prepare($student_sql);
+$stmt->bind_param('i', $user_id);  // 'i' indicates that $user_id is an integer
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Fetch student_id
+$student = $result->fetch_assoc();
+
+if ($student) {
+    $student_id = $student['student_id'];  // Now you have the student_id
+
+    // Step 2: Get the current subjects the student is enrolled in
+    $sql = "
+    SELECT s.subject_name, s.subject_code
+    FROM subjects s
+    JOIN enrollment e ON JSON_CONTAINS(e.subjectEnrolled, JSON_QUOTE(CAST(s.subject_id AS CHAR)))
+    WHERE e.student_id = ?
+    AND e.enrollment_status = 'active'
+    ORDER BY s.subject_name
+    ";
+
+    // Prepare and execute the query
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param('i', $student_id);  // 'i' indicates that $student_id is an integer
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+} else {
+    echo "Student not found.";
+    exit();
+}
+
+$connection->close();  // Close the connection
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -62,8 +106,47 @@
     </div>
 
     <div class="p-7 bg-white rounded-md space-y-4 mt-7">
-            <?php include './tables/gradesTable.php' ?>
-      
+           
+
+        <p class="text-xl font-semibold">Current Enrolled Subjects</p>
+
+        <div class="border-b border-neutral-100"></div>
+
+        <div class="flex flex-col ">
+        <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+            <div class="overflow-hidden">
+                <table
+                class="min-w-full text-left text-sm font-light text-surface ">
+                <thead
+                    class="border-b border-neutral-200 font-medium">
+                    <tr>
+                    <th scope="col" class="px-6 py-4">Subject name</th>
+                    <th scope="col" class="px-6 py-4">Subject Code</th>
+                    <!-- <th scope="col" class="px-6 py-4">Course Title</th>
+                    <th scope="col" class="px-6 py-4">Units</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                            if ($result->num_rows > 0) {
+                                    while ($subject = $result->fetch_assoc()) {
+                                    echo '<tr class="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100">';
+                                    echo '<td class="whitespace-nowrap px-6 py-4 font-medium">' . $subject['subject_name'] . '</td>';
+                                    echo '<td class="whitespace-nowrap px-6 py-4 font-medium">' . $subject['subject_code'] . '</td>';
+                                    echo '</tr>';
+                                }
+                            } else {
+                        echo "<tr><td colspan='2' class='px-6 py-4 text-center'>No current subjects found for this student.</td></tr>";
+                        }
+                    ?>
+                </tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+        </div>
+            
 
     </div>
 
