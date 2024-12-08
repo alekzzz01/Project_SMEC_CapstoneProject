@@ -1,53 +1,54 @@
 <?php
 session_start();
+include '../../config/db.php'; // Include the database connection
 
-include '../../config/db.php';
+// Initialize error message
+$error = '';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Process the form when submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get the student number from the form input
+    $student_number = $_POST['student_number'];
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+    // Check if the student number is empty
+    if (empty($student_number)) {
+        $error = "Student number is required.";
+    } else {
+        // Prepare the SQL query to check if the student number exists and if it has been approved
+        $sql = "SELECT * FROM admission_form WHERE student_number = ? AND is_confirmed = 1"; // Adjusted column name
 
-    $sql = "SELECT * FROM users WHERE email = ?";
-    $stmt = $connection->prepare($sql);
-    $stmt->bind_param('s', $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $user['role']; 
-
-            // Redirect based on user role
-            if ($_SESSION['user_role'] == 'admin') {
-                header('Location: ../dist/admin/');
-            } elseif ($_SESSION['user_role'] == 'teacher') {
-                header('Location: ../dist/teacher/dashboard.php');
-            } elseif ($_SESSION['user_role'] == 'student') {
-                header('Location: ../dist/student/dashboard.php');
+        // Prepare the query using MySQLi
+        if ($stmt = $connection->prepare($sql)) {
+            // Bind the student number to the parameter
+            $stmt->bind_param("s", $student_number); // "s" means it's a string
+            
+            // Execute the statement
+            $stmt->execute();
+            
+            // Store the result
+            $stmt->store_result();
+            
+            // Check if the student number is found and approved
+            if ($stmt->num_rows > 0) {
+                // Student number is valid and approved
+                $_SESSION['student_number'] = $student_number;
+                header("Location: enrollmentForm.php"); // Redirect to the enrollment form
+                exit();
+            } else {
+                // Student number is not found or not approved
+                $error = "The student number you entered is either not found or not approved.";
             }
 
-            exit();
+            // Close the statement
+            $stmt->close();
         } else {
-            $_SESSION['error'] = "Invalid password.";
+            $error = "Failed to prepare the SQL query.";
         }
-    } else {
-        $_SESSION['error'] = "No user found with this username or invalid password.";
     }
-
-    // Redirect back to the login page to avoid resubmission
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
 }
 
-// Retrieve error message from session (if any)
-$error = $_SESSION['error'] ?? null;
-unset($_SESSION['error']);
 ?>
+
 
 
 <!DOCTYPE html>
@@ -94,7 +95,7 @@ unset($_SESSION['error']);
                         <div>
                             <label class="text-gray-800 text-sm mb-2 block">Select School year</label>
                                 <div class="relative flex items-center">
-                                    <select name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                    <select name="school-year" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                         <option value="" disabled selected>Select grade level</option>
                                         <option value="2024-2025">2024-2025</option>
                                        
@@ -129,7 +130,7 @@ unset($_SESSION['error']);
                         <div>
                             <label class="text-gray-800 text-sm mb-2 block">Student Number</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your student Number" />
+                            <input name="student_number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your student Number" />
                         
                             </div>
                         </div>

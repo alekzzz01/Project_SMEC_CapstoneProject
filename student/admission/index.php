@@ -3,8 +3,28 @@ session_start();
 
 include '../../config/db.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Function to generate a unique student number
+function generateStudentNumber($connection) {
+    $prefix = "SN"; // Prefix for student numbers
+    $unique = false;
 
+    while (!$unique) {
+        $studentNumber = $prefix . rand(100000, 999999); // Generate a 6-digit unique number
+        $query = "SELECT id FROM admission_form WHERE student_number = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("s", $studentNumber);
+        $stmt->execute();
+        $stmt->store_result();
+        if ($stmt->num_rows === 0) { // Ensure the student number is unique
+            $unique = true;
+        }
+        $stmt->close();
+    }
+    return $studentNumber;
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect form data
     $first_name = $_POST['first_name'];
     $middle_initial = $_POST['middle_initial'];
     $last_name = $_POST['last_name'];
@@ -25,35 +45,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $emergency_last_name = $_POST['emergency_last_name'];
     $relationship = $_POST['relationship'];
 
-    $query = "INSERT INTO admission_form 
-    (first_name, middle_initial, last_name, birth_date, gender, year_level, 
-    parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
-    phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
-    VALUES 
-    (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+    // Generate a unique student number
+    $student_number = generateStudentNumber($connection);
 
-    if ($stmt = $connection->prepare($query)) {
-        $stmt->bind_param("sssssssssssssssssss", 
-        $first_name, $middle_initial, $last_name, $birth_date, $gender, 
+    $query = "INSERT INTO admission_form 
+(student_number, is_confirmed, first_name, middle_initial, last_name, birth_date, gender, year_level, 
+parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
+phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+VALUES 
+(?, 0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+
+if ($stmt = $connection->prepare($query)) {
+    // Bind the parameters (22 total)
+    $stmt->bind_param("ssssssssssssssssssss", 
+        $student_number, $first_name, $middle_initial, $last_name, $birth_date, $gender, 
         $year_level, $parent_first_name, $parent_middle_initial, $parent_last_name, $region, 
         $province, $city, $barangay, $zip_code, $phone, $email, $emergency_first_name, 
         $emergency_last_name, $relationship);
 
-        if ($stmt->execute()) {
-            $_SESSION['message'] = "Your admission form has been successfully submitted.";
-            header("Location: ./index.php");
-            exit();
-        } else {
-            echo "Error executing query: " . $stmt->error;
-        }
-
-        $stmt->close();
+    // Execute the query
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Your admission form has been successfully submitted.";
+        $_SESSION['student_number'] = $student_number;
+        header("Location: ./admission_pending.php");
+        exit();
     } else {
-        echo "Error preparing query: " . $connection->error;
+        echo "Error executing query: " . $stmt->error;
     }
+
+    $stmt->close();
+} else {
+    echo "Error preparing query: " . $connection->error;
+}
 
     $connection->close();
-    }
+}
 ?>
 
 <!DOCTYPE html>

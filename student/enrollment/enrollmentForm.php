@@ -1,11 +1,36 @@
 <?php
 session_start();
 
+// Ensure the session variable is set and debug
+if (!isset($_SESSION['student_number'])) {
+    echo "Student number not set in session.";
+    exit();
+} 
+
+// Database connection
 include '../../config/db.php';
 
-// Check if form is submitted
+// Retrieve the student number from the session
+$student_number = $_SESSION['student_number'];
+
+// Check if the student number exists and is confirmed in the admission_form table
+$checkStudentSql = "SELECT student_number FROM admission_form WHERE student_number = ? AND is_confirmed = 1";
+if ($checkStmt = $connection->prepare($checkStudentSql)) {
+    $checkStmt->bind_param("s", $student_number);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+    
+    if ($checkStmt->num_rows === 0) {
+        echo "Invalid or unconfirmed student number. Please contact the administrator.";
+        $checkStmt->close();
+        exit();
+    }
+    $checkStmt->close();
+}
+
+// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get form data
+    // Get other form data
     $first_name = $_POST['first-name'];
     $middle_initial = $_POST['middle-initial'];
     $last_name = $_POST['last-name'];
@@ -17,61 +42,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $parent_middle_initial = $_POST['parent-middle-initial'];
     $parent_last_name = $_POST['parent-last-name'];
     $parent_contact_number = $_POST['parent-contact-number'];
-    $student_type = isset($_POST['new-student']) ? 'New Student' : (isset($_POST['transferee']) ? 'Transferee' : 'Returning Student');
     $grade_level = $_POST['grade-level'];
     $school_year = $_POST['school-year'];
     $last_school_attended = $_POST['last-school-attended'];
 
-    // Handle file uploads (if necessary, but ignoring for now)
-    $birth_certificate = file_get_contents($_FILES['birth-certificate']['tmp_name']);
-    $report_card = file_get_contents($_FILES['report-card']['tmp_name']);
-    $good_moral_certificate = file_get_contents($_FILES['good-moral-certificate']['tmp_name']);
+    // Retrieve the selected student type from the radio buttons
+    $student_type = isset($_POST['student-type']) ? $_POST['student-type'] : null;
 
-    // Prepare SQL query using prepared statements
-    $query = "INSERT INTO enrollment (first_name, middle_initial, last_name, lrn, birth_date, gender, mobile_number, parent_first_name, parent_middle_initial, parent_last_name, parent_contact_number, student_type, grade_level, school_year, last_school_attended, birth_certificate, report_card, good_moral_certificate) 
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    // Prepare the statement
-    $stmt = $connection->prepare($query);
-
-    // Bind the parameters to the prepared statement
-    $stmt->bind_param("ssssssssssssssssss", 
-    $first_name, 
-    $middle_initial, 
-    $last_name, 
-    $lrn, 
-    $birth_date, 
-    $gender, 
-    $mobile_number, 
-    $parent_first_name, 
-    $parent_middle_initial, 
-    $parent_last_name, 
-    $parent_contact_number, 
-    $student_type, 
-    $grade_level, 
-    $school_year, 
-    $last_school_attended, 
-    $birth_certificate, 
-    $report_card, 
-    $good_moral_certificate
-);
-
-    // Execute the statement
-    if ($stmt->execute()) {
-        // Redirect to avoid resubmission (PRG pattern)
-        $_SESSION['formSubmitted'] = true;
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Error: " . $stmt->error;
+    // Validate student type selection
+    if ($student_type === null) {
+        echo "Please select a student type.";
+        exit();
     }
 
-    // Close the statement
-    $stmt->close();
-}
+     // Handle file uploads (if necessary, but ignoring for now)
+     $birth_certificate = file_get_contents($_FILES['birth-certificate']['tmp_name']);
+     $report_card = file_get_contents($_FILES['report-card']['tmp_name']);
+     $good_moral_certificate = file_get_contents($_FILES['good-moral-certificate']['tmp_name']);
+    
+    // Insert the data into the enrollment table
+    $sql = "INSERT INTO enrollment (
+        student_number, first_name, middle_initial, last_name, lrn, birth_date,
+        gender, mobile_number, parent_first_name, parent_middle_initial, 
+        parent_last_name, parent_contact_number, student_type, grade_level, 
+        school_year, last_school_attended, birth_certificate, report_card, good_moral_certificate
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-$connection->close();
+    if ($stmt = $connection->prepare($sql)) {
+        $stmt->bind_param(
+            "sssssssssssssssssss",
+            $student_number, $first_name, $middle_initial, $last_name, $lrn,
+            $birth_date, $gender, $mobile_number, $parent_first_name, 
+            $parent_middle_initial, $parent_last_name, $parent_contact_number, 
+            $student_type, $grade_level, $school_year, $last_school_attended,
+            $birth_certificate, $report_card, $good_moral_certificate
+        );
+        $stmt->execute();
+        $stmt->close();
+        echo "Enrollment successfully submitted.";
+    } else {
+        echo "Failed to insert the data: " . $connection->error;
+    }
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -322,17 +336,17 @@ $connection->close();
                     <div class="flex flex-col gap-4">
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="new-student" class="radio radio-info" />
+                                    <input type="radio" name="student-type" class="radio radio-info" value="New Student" />
                                     <span>New Student</span>
                             </div>
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="transferee" class="radio radio-info" />
+                                    <input type="radio" name="student-type" class="radio radio-info" value="Transferee" />
                                     <span>Transferee</span>
                             </div>
 
                             <div class="flex items-center gap-3">
-                                    <input type="radio" name="returning-student" class="radio radio-info" />
+                                    <input type="radio" name="student-type" class="radio radio-info" value="Returning Student" />
                                     <span>Returning Student</span>
                             </div>
 
@@ -395,7 +409,7 @@ $connection->close();
 
                     
                     </div>
-
+                
                     <!-- File Inputs -->
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
 
@@ -428,7 +442,7 @@ $connection->close();
 
 
                     </div>
-
+                
                     <div class="border-gray-100 border-b"></div>
 
                     <div class="space-y-2">
