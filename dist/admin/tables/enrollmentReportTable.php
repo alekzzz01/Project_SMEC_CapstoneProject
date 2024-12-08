@@ -11,6 +11,7 @@ $sql = "
         e.subjectEnrolled,
         e.school_year_id AS enrolled_school_year,
         e.type,
+        e.grade_level,
         e.strand,
         e.section,
         e.date_enrolled,
@@ -21,8 +22,8 @@ $sql = "
         s.student_number AS student_number_label,
         CONCAT(s.first_name, ' ', s.last_name) AS student_name,
 
-        sec.section_name AS section_name_label,
-        sec.grade_level AS grade_level_label
+        sec.section_name AS section_name_labels
+     
      
     FROM 
         student_enrollment e
@@ -139,8 +140,8 @@ $result = $connection->query($sql);
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['school_year_label']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['type']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['strand']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['grade_level_label']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['section_name_label']}</td>
+                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['grade_level']}</td>
+                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['section_name_labels']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['date_enrolled']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['enrollment_status']}</td>
                                     
