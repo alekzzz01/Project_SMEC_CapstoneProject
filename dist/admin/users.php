@@ -1,3 +1,101 @@
+<?php
+session_start();
+
+include '../../config/db.php';
+
+// Add user
+if (isset($_POST['createUser'])) {
+    // Collect form data
+    $role = $_POST['role'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $student_number = $_POST['student_number'];  // Only for students
+    $dob = $_POST['dob'];                        // Only for students
+    $gender = $_POST['gender'];                  // Only for students
+    $contact_number = $_POST['contact_number'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Step 1: Check if the email already exists in the database
+    $stmt = $connection->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    
+    // Clear the result to allow for the next query to run
+    $stmt->free_result();
+    $stmt->close();
+
+    if ($count > 0) {
+        $_SESSION['error'] = "Email is already in use. Please choose another one.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        // Step 2: Hash the password
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        // Step 3: Insert into the users table
+        $stmt = $connection->prepare("INSERT INTO users (email, password, role, created_at) VALUES (?, ?, ?, NOW())");
+        $stmt->bind_param("sss", $email, $hashedPassword, $role);
+
+        // Execute the statement for inserting the user
+        if ($stmt->execute()) {
+            // Get the inserted user ID
+            $userId = $stmt->insert_id;
+            
+            // Clear the result and close the statement after the insert
+            $stmt->free_result();
+            $stmt->close();
+
+            // Step 4: Handle role-specific data insertion
+            if ($role == 'student') {
+                // Insert student data into students table
+                $stmt = $connection->prepare("INSERT INTO students (user_id, student_number, first_name, last_name, date_of_birth, gender, contact_number) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("issssss", $userId, $student_number, $first_name, $last_name, $dob, $gender, $contact_number);
+
+                // Execute the student insertion
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "Student user added successfully!";
+                    header('Location: ' . $_SERVER['PHP_SELF']);
+                    exit();
+                } else {
+                    $_SESSION['error'] = "Error inserting student data.";
+                }
+            } elseif ($role == 'teacher') {
+                // Handle teacher-specific data if needed
+                $_SESSION['message'] = "Teacher user added successfully!";
+
+                 // Insert student data into students table
+                 $stmt = $connection->prepare("INSERT INTO teachers (user_id, First_name, Last_name, Date_of_Birth, gender, Contact_Number) VALUES (?, ?, ?, ?, ?, ?)");
+                 $stmt->bind_param("isssss", $userId, $first_name, $last_name, $dob, $gender, $contact_number);
+ 
+                 // Execute the student insertion
+                 if ($stmt->execute()) {
+                     $_SESSION['message'] = "Teacher user added successfully!";
+                     header('Location: ' . $_SERVER['PHP_SELF']);
+                     exit();
+                 } else {
+                     $_SESSION['error'] = "Error inserting teacher data.";
+                 }
+
+            } elseif ($role == 'admin') {
+                // Handle admin-specific data if needed
+                $_SESSION['message'] = "Admin user added successfully!";
+            } else {
+                $_SESSION['error'] = "Invalid role.";
+            }
+        } else {
+            $_SESSION['error'] = "Error inserting user data.";
+        }
+    }
+}
+?>
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,8 +139,33 @@
 
 
         <div class="p-7 bg-gray-50 h-full">
-            <h1 class="text-lg font-bold mb-1">User management</h1>
-            <p>Manage users and change account roles here.</p>
+            
+            <?php if (isset($_SESSION['message'])): ?>
+                    <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>
+                    <?php unset($_SESSION['message']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                    <div class="rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7" ><?= $_SESSION['error']; ?></div>
+                    <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-lg font-bold mb-1">User management</h1>
+                    <p class="text-gray-400 text-sm">Manage users and change account roles here.</p>
+                </div>
+                
+                <button onclick="add_user.showModal()" class=" inline-flex items-center  gap-1 font-medium  text-white border border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 btn btn-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                            </svg>
+                            Add User
+                </button>
+
+            </div>
+
+           
 
             <div class=" p-6 bg-white rounded-md mt-7">
                 <div>
@@ -53,22 +176,45 @@
 
         </div>
 
-
-
     </div>
 
     <!-- Modals -->
 
-     <!-- Add user -->
-    <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+    <!-- Add user -->
+    <dialog id="add_user" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg font-bold">Add new user</h3>
-            <form action="" class="py-4 grid grid-cols-2 gap-3">
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+
+            <form action="" class="py-4 grid grid-cols-2 gap-6" method="POST">
+
+                    <div class="col-span-2">
+                        <label class="text-gray-800 text-sm mb-2 block">Role</label>
+                        <div class="relative flex items-center">
+                            <select name="role" id="role" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" onchange="toggleStudentNumberField()">
+                                <option value="" disabled selected>Select role</option>
+                                <option value="admin">Admin</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="student">Student</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    
+                    <div id="student_number_field" class="hidden col-span-2">
+                        <label class="text-gray-800 text-sm mb-2 block">Student Number</label>
+                        <div class="relative flex items-center">
+                            <input name="student_number" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Student Number" />
+                        </div>
+                    </div>
               
                     <div>
                             <label class="text-gray-800 text-sm mb-2 block">First Name</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
+                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
                         
                             </div>
                     </div>
@@ -76,30 +222,47 @@
                     <div>
                             <label class="text-gray-800 text-sm mb-2 block">Last Name</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Last Name" />
+                            <input name="last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Last Name" />
                         
                             </div>
                     </div>
+
+    
+                    
+                    <div>
+                            <label class="text-gray-800 text-sm mb-2 block">Date of Birth</label>
+                            <div class="relative flex items-center">
+                            <input name="dob" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
+                        
+                            </div>
+                    </div>
+
+                    <div>
+                            <label class="text-gray-800 text-sm mb-2 block">Gender</label>
+                            <div class="relative flex items-center">
+                           <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                               <option value="" disabled selected>Select your gender</option>
+                               <option value="male">Male</option>
+                               <option value="female">Female</option>
+                               <option value="other">Other</option>
+                           </select>
+                            </div>
+                    </div>
+
+
+                    <div class="col-span-2">
+                            <label class="text-gray-800 text-sm mb-2 block">Contact Number</label>
+                            <div class="relative flex items-center">
+                            <input name="contact_number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Contact Number" />
+                        
+                            </div>
+                    </div>
+
 
                     <div>
                             <label class="text-gray-800 text-sm mb-2 block">Email</label>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
-                        
-                            </div>
-                    </div>
-
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Role</label>
-                            <div class="relative flex items-center">
-                            <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                                    <option value="" disabled selected>Select role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Teacher">Teacher</option>
-                                    <option value="Student">Student</option>
-                                  
-                                </select>
+                            <input name="email" type="email" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
                         
                             </div>
                     </div>
@@ -108,35 +271,32 @@
                     
                     <div>
                             <label class="text-gray-800 text-sm mb-2 block">Password</label>
-                            <div class="relative flex items-center">
-                                <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
-                                <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
-                                    <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
-                                </button>
+                            <div class="relative flex items-center mb-2">
+                            <input id="edit_password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
+                            <button type="button" onclick="togglePassword('edit_password', 'edit_togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
+                                <i id="edit_togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
+                            </button>
                             </div>
+    
+                            <button type="button" onclick="generateRandomPassword()" class="flex items-center gap-1 font-medium text-sm text-white border-2 border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-1">
+                            Generate password
+                            </button>
                     </div>
 
-                  
-            </form>
+                 
 
-            <div>
-                      
-                 <button class="flex items-center gap-1 font-medium text-sm  text-white border-2 border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-1">
-                         
-                          Generate password
-                </button>
+                    <div class="modal-action col-span-2">
                     
-            </div>
+                    <button type="submit" name="createUser" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Add User</button>
+                
+                    </div>
+     
 
-           
-            <div class="modal-action">
-            <form method="dialog">
-              
-                <button class="btn">Close</button>
-                <button class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Add User</button>
             </form>
-            </div>
+
         </div>
+           
+          
     </dialog>
 
     <!-- Edit user -->
@@ -257,3 +417,37 @@
 </body>
 </html>
 
+
+<script>
+    function generateRandomPassword() {
+    const length = 16; // Adjust the length of the password
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+    }
+    document.querySelector('[name="password"]').value = password;
+}
+
+</script>
+
+<script>
+    // JavaScript function to hide/show Student Number field based on selected role
+    function toggleStudentNumberField() {
+        var role = document.getElementById('role').value;
+        var studentNumberField = document.getElementById('student_number_field');
+        
+        // Show the student number input field only when the selected role is 'student'
+        if (role === 'student') {
+            studentNumberField.classList.remove('hidden');
+        } else {
+            studentNumberField.classList.add('hidden');
+        }
+    }
+
+    // Initialize the form with correct visibility state on page load
+    window.onload = function() {
+        toggleStudentNumberField();
+    };
+</script>
