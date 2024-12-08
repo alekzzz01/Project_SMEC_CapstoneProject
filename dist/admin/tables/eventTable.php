@@ -83,15 +83,14 @@ $connection->close();
     </form>
 
 
-
-
-
     <!-- Table -->
     <div class="flex flex-col mt-7">
       <div class="-m-1.5 overflow-x-auto">
         <div class="p-1.5 min-w-full inline-block align-middle">
           <div class="border rounded-lg divide-y divide-gray-200">
             <div class="overflow-hidden">
+
+            <?php if ($search_query || $event_type_filter): ?>
               <table class="min-w-full divide-y divide-gray-200">
                 <thead>
                   <tr>
@@ -137,7 +136,7 @@ $connection->close();
                         }
                         echo '</td>';
                         echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="editEvent.php?event_id=' . $row['event_id'] . '" 
+                        <a href="campusEditEvent.php?event_id=' . $row['event_id'] . '" 
                            type="button" 
                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
                            Edit
@@ -161,6 +160,11 @@ $connection->close();
               </tbody>
 
               </table>
+
+              <?php else: ?>
+                    <p class="my-7 text-gray-600 text-center">No data to display. Please apply filters or search.</p>
+              <?php endif; ?>
+
             </div>
           </div>
         </div>

@@ -1,3 +1,55 @@
+<?php
+
+include '../../config/db.php';
+
+$userResult = $connection->query("SELECT COUNT(*) AS total_users FROM users");
+$userRow = $userResult->fetch_assoc();
+$userCount = $userRow['total_users'];
+
+$role_type_filter = isset($_GET['role_type']) ? $_GET['role_type'] : '';
+$search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
+
+$sql = "SELECT * FROM users";
+
+// Conditions for filtering and search
+$conditions = [];
+$params = [];
+$param_types = "";
+
+// Add role type condition if selected
+if ($role_type_filter) {
+    $conditions[] = "role = ?";
+    $params[] = $role_type_filter;
+    $param_types .= "s";
+}
+
+// Add search query condition if provided
+if ($search_query) {
+    $conditions[] = "email LIKE ?";
+    $params[] = "%" . $search_query . "%";
+    $param_types .= "s";
+}
+
+// Combine conditions into the SQL query
+if (!empty($conditions)) {
+    $sql .= " WHERE " . implode(" AND ", $conditions);
+}
+
+$stmt = $connection->prepare($sql);
+
+// Bind parameters if there are any
+if (!empty($params)) {
+  $stmt->bind_param($param_types, ...$params);
+}
+
+$stmt->execute();
+
+$users = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+$connection->close();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,40 +87,28 @@
 <body>
 
   <div class="flex items-center justify-between w-full">
-                    <p class="font-bold">All Users <span class="text-gray-400 font-medium ml-1">44</span></p>
+                    <p class="font-bold">All Users <span class="text-gray-400 font-medium ml-1"><?php echo $userCount ?></span></p>
 
-                    <div class="flex items-center justify-between gap-4 text-sm ">
+                    <form method="GET" class="flex items-center justify-end">
+                        <div class="flex items-center gap-4 text-sm">
 
-                      <label class="input input-sm input-bordered flex items-center gap-2">
-                        <input type="text" class="grow" placeholder="Search" />
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
-                          class="h-4 w-4 opacity-70">
-                          <path
-                            fill-rule="evenodd"
-                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                            clip-rule="evenodd" />
-                        </svg>
-                      </label>
+                          <label class="input input-sm input-bordered flex items-center gap-2">
+                              <input type="text" name="search_query" class="grow" placeholder="Search user email" value="<?php echo htmlspecialchars($search_query); ?>" />
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-4 w-4 opacity-70">
+                                  <path fill-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" />
+                              </svg>
+                          </label>
 
-                        <select name="grade_level" class="select select-bordered select-sm w-full">
-                            <option disabled selected>Select Grade level</option>
-                            <option>Grade 12</option>
-                           
-                        </select>
+                          <!-- Event Type Filter -->
+                          <select name="role_type" class="select select-bordered select-sm w-full" onchange="this.form.submit()">
+                              <option value="" <?php if ($role_type_filter == '') echo 'selected'; ?>>Select Role</option> <!-- Option to clear the filter -->
+                              <option value="Admin" <?php if ($role_type_filter == 'Admin') echo 'selected'; ?>>Admin</option>
+                              <option value="Teacher" <?php if ($role_type_filter == 'Teacher') echo 'selected'; ?>>Teacher</option>
+                              <option value="Student" <?php if ($role_type_filter == 'Student') echo 'selected'; ?>>Student</option>
+                          </select>
 
-                        <button onclick="my_modal_5.showModal()" class=" inline-flex items-center  gap-1 font-medium  text-white border border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 btn btn-sm">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Add user
-                        </button>
-                      
-                                
-
-                    </div>
+                        </div>
+                      </form>
 
 
     </div>
@@ -80,6 +120,7 @@
           <div class="border rounded-lg divide-y divide-gray-200">
           
             <div class="overflow-hidden">
+            <?php if ($search_query || $role_type_filter): ?>
               <table class="min-w-full divide-y divide-gray-200">
                 <thead >
                   <tr>
@@ -89,39 +130,64 @@
                         <label for="hs-table-pagination-checkbox-all" class="sr-only">Checkbox</label>
                       </div>
                     </th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Age</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Address</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">User ID</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Email</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Role</th>
+                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Created At</th>
                   </tr>
                 </thead>
+             
                 <tbody class="divide-y divide-gray-200">
-                  <tr>
-                    <td class="py-3 ps-4">
-                      <div class="flex items-center h-5">
-                        <input id="hs-table-pagination-checkbox-1" type="checkbox" class="border-gray-200 rounded text-blue-600 focus:ring-blue-500">
-                        <label for="hs-table-pagination-checkbox-1" class="sr-only">Checkbox</label>
-                      </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">New York No. 1 Lake Park</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button  onclick="my_modal_6.showModal()"  type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Edit</button>
-                      <button  onclick="my_modal_7.showModal()" type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
-                    </td>
-                  </tr>
+                  <?php
+                  // Check if there are any events
+                  if (!empty($users)) {
+                      // Loop through each event
+                      foreach ($users as $row) {
+                          echo '<tr>';
+                          echo '<td class="py-3 ps-4">
+                                  <div class="flex items-center h-5">
+                                      <input type="checkbox" class="border-gray-200 rounded text-blue-600 focus:ring-blue-500">
+                                  </div>
+                                </td>';
+                          echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">' . htmlspecialchars($row['user_id']) . '</td>';
+                          echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['email']) . '</td>';
+                          echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['role']) . '</td>';
+                          echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['created_at']) . '</td>';
+                         
+                        //   echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        //   <a href="campusEditEvent.php?event_id=' . $row['event_id'] . '" 
+                        //     type="button" 
+                        //     class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                        //     Edit
+                        //   </a>
+                        //   <button onclick="deleteEvent(' . $row['event_id'] . ')" 
+                        //           type="button" 
+                        //           class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">
+                        //           Delete
+                        //   </button>
+                        // </td>';
+                  
 
+                          echo '</tr>';
 
-
-
+                      
+                      }
+                  } else {
+                      echo '<tr><td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">No user found.</td></tr>';
+                  }
+                  ?>
                 </tbody>
+
+                              
+              <?php else: ?>
+                    <p class="my-7 text-gray-600 text-center">No data to display. Please apply filters or search.</p>
+              <?php endif; ?>
+
               </table>
+
             </div>
 
-
-
-            <div class="py-1 px-4">
+            <!-- <div class="py-1 px-4">
               <nav class="flex items-center space-x-1" aria-label="Pagination">
                 <button type="button" class="p-2.5 min-w-[40px] inline-flex justify-center items-center gap-x-2 text-sm rounded-full text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none" aria-label="Previous">
                   <span aria-hidden="true">«</span>
@@ -135,7 +201,7 @@
                   <span aria-hidden="true">»</span>
                 </button>
               </nav>
-            </div>
+            </div> -->
 
 
           </div>
@@ -144,37 +210,7 @@
     </div>
 
 
-  <!-- <div class="overflow-x-auto ">
-    <table id="myTable" class="display min-w-full">
-      <thead>
-        <tr >
-          <th class="px-4 py-2 text-left">ID No.</th>
-          <th class="px-4 py-2 text-left">User name</th>
-          <th class="px-4 py-2 text-left">Email</th>
-          <th class="px-4 py-2 text-left">Access/Role</th>
-          <th class="px-4 py-2 text-left">Last active</th>
-          <th class="px-4 py-2 text-left">Date Added</th>
-          <th class="px-4 py-2 text-left">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="px-4 py-2">1</td>
-          <td class="px-4 py-2">Alex</td>
-          <td class="px-4 py-2">sample@gmail.com</td>
-          <td class="px-4 py-2">Admin</td>
-          <td class="px-4 py-2">Mar 4, 2024</td>
-          <td class="px-4 py-2">Jan 4, 2024</td>
-          <td class="px-4 py-2 flex items-center gap-3">
-            <button onclick="my_modal_6.showModal()" class="text-blue-500 hover:text-blue-700">Edit</button>
-            <button onclick="my_modal_7.showModal()" class="text-red-500 hover:text-red-700">Delete</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div> -->
 
-  <!-- Edit Modal -->
 
 </body>
 </html>
