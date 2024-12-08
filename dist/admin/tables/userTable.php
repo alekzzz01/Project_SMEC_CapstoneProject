@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tailwind + jQuery DataTables</title>
 
-  
  
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
  
@@ -39,28 +37,29 @@
   <div class="flex items-center justify-between w-full">
                     <p class="font-bold">All Users <span class="text-gray-400 font-medium ml-1">44</span></p>
 
-                    <div class="flex flex-wrap items-center gap-4 text-sm">
+                    <div class="flex items-center justify-between gap-4 text-sm ">
 
-                        <div class="relative mx-auto text-gray-600 ">
-                            <input class="border border-gray-100 bg-white py-2 px-3 pr-16 rounded-lg text-sm focus:outline-none"
-                            type="search" name="search" placeholder="Search">
-                            <button type="submit" class="absolute right-3 top-3">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>
+                      <label class="input input-sm input-bordered flex items-center gap-2">
+                        <input type="text" class="grow" placeholder="Search" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          class="h-4 w-4 opacity-70">
+                          <path
+                            fill-rule="evenodd"
+                            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                            clip-rule="evenodd" />
+                        </svg>
+                      </label>
 
-                            </button>
-                        </div>
+                        <select name="grade_level" class="select select-bordered select-sm w-full">
+                            <option disabled selected>Select Grade level</option>
+                            <option>Grade 12</option>
+                           
+                        </select>
 
-                        <details class="dropdown dropdown-end">
-                          <summary class="border border-gray-100 bg-white py-2 px-3 pr-16 rounded-lg text-sm focus:outline-none">Filters</summary>
-                          <ul class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow mt-2">
-                            <li><a>Item 1</a></li>
-                            <li><a>Item 2</a></li>
-                          </ul>
-                        </details>
-
-                        <button onclick="my_modal_5.showModal()" class="flex items-center gap-1 font-medium  text-white border border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 rounded-lg px-3 py-2">
+                        <button onclick="my_modal_5.showModal()" class=" inline-flex items-center  gap-1 font-medium  text-white border border-blue-600 hover:border-blue-700 bg-blue-600 hover:bg-blue-700 btn btn-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
@@ -176,115 +175,6 @@
   </div> -->
 
   <!-- Edit Modal -->
-
-    <dialog id="my_modal_6" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Edit user</h3>
-            <form action="" class="py-4 grid grid-cols-2 gap-3">
-              
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">First Name</label>
-                            <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
-                        
-                            </div>
-                    </div>
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Last Name</label>
-                            <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Last Name" />
-                        
-                            </div>
-                    </div>
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Email</label>
-                            <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
-                        
-                            </div>
-                    </div>
-
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Role</label>
-                            <div class="relative flex items-center">
-                            <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                                    <option value="" disabled selected>Select role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Teacher">Teacher</option>
-                                    <option value="Student">Student</option>
-                                  
-                                </select>
-                        
-                            </div>
-                    </div>
-
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Current Password</label>
-                            <div class="relative flex items-center">
-                                <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
-                                <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
-                                    <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
-                                </button>
-                            </div>
-                    </div>
-
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">New Password</label>
-                            <div class="relative flex items-center">
-                                <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
-                                <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
-                                    <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
-                                </button>
-                            </div>
-                    </div>
-
-                    <div>
-                            <label class="text-gray-800 text-sm mb-2 block">Confirm New Password</label>
-                            <div class="relative flex items-center">
-                                <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
-                                <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
-                                    <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
-                                </button>
-                            </div>
-                    </div>
-
-
-                  
-            </form>
-
-            
-
-           
-            <div class="modal-action">
-            <form method="dialog">
-              
-                <button class="btn">Close</button>
-                <button class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Edit User</button>
-            </form>
-            </div>
-        </div>
-    </dialog>
-
-    
-    <dialog id="my_modal_7" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Delete user?</h3>
-            <p class="py-4">Are you sure you want to delete this user?</p>
-        
-            <div class="modal-action">
-            <form method="dialog">
-              
-                <button class="btn">Close</button>
-                <button class="btn bg-red-500 hover:bg-red-700 text-white border border-red-500 hover:border-red-700">Confirm</button>
-            </form>
-            </div>
-        </div>
-    </dialog>
 
 </body>
 </html>
