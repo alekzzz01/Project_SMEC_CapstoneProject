@@ -112,10 +112,12 @@
                     </summary>
                     <ul>
                         <li><a>Term</a></li>
-                        <li><a>Grade Level</a></li>
-                        <li><a>Class</a></li>
+                        <li><a>Section</a></li>
                         <li><a>Subject</a></li>  
+                        <li><a>Schedule</a></li>  
                    
+                   
+                     
                     </ul>
                     </details>
                 </li>

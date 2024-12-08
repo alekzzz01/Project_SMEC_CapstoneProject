@@ -21,9 +21,9 @@ if ($student) {
     $sql = "
     SELECT s.subject_name, s.subject_code
     FROM subjects s
-    JOIN enrollment e ON JSON_CONTAINS(e.subjectEnrolled, JSON_QUOTE(CAST(s.subject_id AS CHAR)))
+    JOIN student_enrollment e ON JSON_CONTAINS(e.subjectEnrolled, JSON_QUOTE(CAST(s.subject_id AS CHAR)))
     WHERE e.student_id = ?
-    AND e.enrollment_status = 'active'
+    AND e.status = 'enrolled'
     ORDER BY s.subject_name
     ";
 
