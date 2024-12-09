@@ -29,12 +29,12 @@
 
 
 </head>
-<body class="flex lg:h-screen">
+<body class="flex min-h-screen">
 
     <?php include('./components/sidebar.php'); ?>
     
 
-    <div class="flex flex-col w-full shadow-xl h-full">
+    <div class="flex flex-col w-full">
 
         
         <?php include('./components/navbar.php'); ?>

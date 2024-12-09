@@ -2,15 +2,14 @@
 session_start();
 include '../../config/db.php';
 
-// Initialize variables for event data
-$event_name = $event_schedule = $event_venue = $event_type = $event_description = $banner_image = '';
+
 
 // Check if event_id is provided in the GET request
 if (isset($_GET['event_id'])) {
     $event_id = $_GET['event_id'];
 
     // SQL query to fetch event details
-    $sql = "SELECT event_id, event_name, event_date, venue, event_type, description, banner FROM events WHERE event_id = ?";
+    $sql = "SELECT * FROM events WHERE event_id = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param("i", $event_id);
     $stmt->execute();
@@ -20,12 +19,7 @@ if (isset($_GET['event_id'])) {
     if ($result->num_rows > 0) {
         // Fetch the event data
         $event = $result->fetch_assoc();
-        $event_name = $event['event_name'];
-        $event_schedule = $event['event_date']; // Assuming event_date is in 'Y-m-d H:i:s' format
-        $event_venue = $event['venue'];
-        $event_type = $event['event_type'];
-        $event_description = $event['description'];
-        $banner_image = $event['banner']; // Assuming banner is stored as a binary
+    
     } else {
         echo json_encode(["error" => "Event not found"]);
     }
@@ -39,10 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
     // Get form data
     $event_id = $_POST['event_id'];
     $event_name = $_POST['eventName'];
-    $event_schedule = $_POST['eventSchedule'];
+    $date_time_from = $_POST['date_time_to'];
+    $date_time_to = $_POST['date_time_to'];
     $event_venue = $_POST['eventVenue'];
     $event_type = $_POST['eventType'];
     $event_description = $_POST['eventDescription'];
+    $organizer_name = $_POST['organizer_name'];
+    $organizer_type = $_POST['organizer_type'];
 
     // Handle banner image upload (optional)
     if (isset($_FILES['banner-Image']) && $_FILES['banner-Image']['error'] == UPLOAD_ERR_OK) {
@@ -62,25 +59,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
         // SQL query to update the event, including the banner
         $sql = "UPDATE events SET 
                     event_name = ?, 
-                    event_date = ?, 
+                    date_time_from = ?,
+                    date_time_to = ?,
                     venue = ?, 
                     event_type = ?, 
-                    description = ?, 
+                    description = ?,
+                    organizer_name = ?,
+                    organizer_type = ?, 
                     banner = ? 
                 WHERE event_id = ?";
         $stmt = $connection->prepare($sql);
-        $stmt->bind_param("ssssssi", $event_name, $event_schedule, $event_venue, $event_type, $event_description, $banner_image, $event_id);
+        $stmt->bind_param("ssssssssbi", $event_name, $date_time_from, $date_time_to, $event_venue, $event_type, $event_description, $organizer_name, $organizer_type, $banner_image, $event_id);
     } else {
         // No new file uploaded, retain existing banner
         $sql = "UPDATE events SET 
                     event_name = ?, 
-                    event_date = ?, 
+                    date_time_from = ?,
+                    date_time_to = ?,
                     venue = ?, 
                     event_type = ?, 
-                    description = ? 
+                    description = ?,
+                    organizer_name = ?,
+                    organizer_type = ?
                 WHERE event_id = ?";
         $stmt = $connection->prepare($sql);
-        $stmt->bind_param("sssssi", $event_name, $event_schedule, $event_venue, $event_type, $event_description, $event_id);
+        $stmt->bind_param("ssssssssi", $event_name, $date_time_from, $date_time_to, $event_venue, $event_type, $event_description, $organizer_name, $organizer_type, $event_id);
     }
 
     // Execute the query
@@ -130,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
 
     <?php include('./components/navbar.php'); ?>
 
-            <div class="p-7 bg-gray-50 h-full">
+            <div class="p-7 bg-[#f7f7f7] h-full">
 
                 <?php if (isset($_SESSION['message'])): ?>
                 <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10  mb-7"><?= $_SESSION['message']; ?></div>
@@ -146,50 +149,85 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
                 <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="campusActivities.php">Campus Activities</a></li>
-                    <li>Event</li>
+                    <li>Edit Event</li>
                 </ul>
                 </div>
 
                 <div class=" p-6 bg-white rounded-md mt-7">
-                    <h3 class="text-lg font-bold">Edit Event</h3>
-
-                    <form action="" method="POST" class="py-4 flex flex-col gap-3" enctype="multipart/form-data">
+                 
+                    <form action="" method="POST" class="py-4 flex flex-col gap-6" enctype="multipart/form-data">
                         <input type="hidden" name="event_id" value="<?php echo $event_id; ?>">
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-6 block">Banner Image</label>
                              <!-- Show current banner image -->
-                             <?php
-                            // Check if there is a banner image
-                            if ($banner_image) {
-                                // If a banner image exists, display it
-                                echo '<img src="data:image/jpeg;base64,'.base64_encode($banner_image).'" alt="Event Banner" class="w-full h-60 object-cover rounded-md mb-6 ">';
-                            } else {
-                                // If there is no banner, display a message
+                            
+                            <?php
+                                // Check if there is a banner image
+                                if ($event['banner']) {
+                                    // If a banner image exists, display it
+                                    echo '<img src="data:image/jpeg;base64,'.base64_encode($event['banner']).'" alt="Event Banner" class="w-full h-56 object-cover rounded-md mb-6">';
+                                } else {
+                                    // If there is no banner, display a message
                                 echo '<p class="mb-6">No banner available for this event.</p>';
-                            }
+                                    }
                             ?>
+
                             <input name="banner-Image" type="file" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         </div>
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Event Name</label>
-                            <input name="eventName" type="text" value="<?php echo $event_name; ?>" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Event Name" />
+                            <input name="eventName" type="text" value="<?php echo $event['event_name'] ?>" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Event Name" />
                         </div>
 
-                        <div>
-                            <label class="text-gray-800 text-sm font-medium mb-2 block">Schedule</label>
-                            <input name="eventSchedule" type="datetime-local" value="<?php echo date('Y-m-d\TH:i', strtotime($event_schedule)); ?>" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 font-medium block">From</label>
+                                    <div class="relative flex items-center">
+                                    <input name="date_time_from" type="datetime-local" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo $event['date_time_from'] ?>" />
+                                
+                                    </div>
+                            </div>
+                    
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 font-medium block">To</label>
+                                    <div class="relative flex items-center">
+                                    <input name="date_time_to" type="datetime-local" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo $event['date_time_to'] ?>"/>
+                                
+                                    </div>
+                            </div>
+
                         </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 font-medium block">Organizer Name</label>
+                                    <div class="relative flex items-center">
+                                    <input name="organizer_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer name" value="<?php echo $event['organizer_name'] ?>" />
+                                
+                                    </div>
+                            </div>
+
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 font-medium block">Organizer Type</label>
+                                    <div class="relative flex items-center">
+                                    <input name="organizer_type" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer type" value="<?php echo $event['organizer_type'] ?>" />
+                                
+                                    </div>
+                            </div>
+
+                        </div>
+
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Venue</label>
-                            <input name="eventVenue" type="text" value="<?php echo $event_venue; ?>" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Venue" />
+                            <input name="eventVenue" type="text"  required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Venue" value="<?php echo $event['venue'] ?>" />
                         </div>
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Type</label>
-                            <select name="eventType" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <select name="eventType" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo $event['event_type'] ?>">
                                 <option value="Public" <?php echo $event_type == 'Public' ? 'selected' : ''; ?>>Public</option>
                                 <option value="Private" <?php echo $event_type == 'Private' ? 'selected' : ''; ?>>Private</option>
                             </select>
@@ -198,7 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Description</label>
                             <div id="editorEdit"></div>
-                            <input type="hidden" name="eventDescription" value="<?php echo htmlspecialchars($event_description); ?>" />
+                            <input type="hidden" name="eventDescription" value="<?php echo htmlspecialchars( $event['description']); ?>" />
                         </div>
 
                         <div class="modal-action">
