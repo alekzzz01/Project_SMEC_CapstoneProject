@@ -1,91 +1,65 @@
-<?php
+<?php 
+
+
 session_start();
+include '../../config/db.php'; // Include the database connection
 
-// Ensure the session variable is set and debug
-if (!isset($_SESSION['student_number'])) {
-    echo "Student number not set in session.";
+
+if (isset($_SESSION['student_id'])) {
+    $student_id = $_SESSION['student_id'];
+    $student_number = $_SESSION['student_number'];
+    $first_name = $_SESSION['first_name'];
+    $last_name = $_SESSION['last_name'];
+    $date_of_birth = $_SESSION['date_of_birth'];
+    $gender = $_SESSION['gender'];
+    $contact_number = $_SESSION['contact_number'];
+} else {
+    // Redirect back if session variables are not set
+    header("Location: index.php");
     exit();
-} 
-
-// Database connection
-include '../../config/db.php';
-
-// Retrieve the student number from the session
-$student_number = $_SESSION['student_number'];
-
-// Check if the student number exists and is confirmed in the admission_form table
-$checkStudentSql = "SELECT student_number FROM admission_form WHERE student_number = ? AND is_confirmed = 1";
-if ($checkStmt = $connection->prepare($checkStudentSql)) {
-    $checkStmt->bind_param("s", $student_number);
-    $checkStmt->execute();
-    $checkStmt->store_result();
-    
-    if ($checkStmt->num_rows === 0) {
-        echo "Invalid or unconfirmed student number. Please contact the administrator.";
-        $checkStmt->close();
-        exit();
-    }
-    $checkStmt->close();
 }
 
-// Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get other form data
-    $first_name = $_POST['first-name'];
-    $middle_initial = $_POST['middle-initial'];
-    $last_name = $_POST['last-name'];
-    $lrn = $_POST['lrn'];
-    $birth_date = $_POST['birth-date'];
-    $gender = $_POST['gender'];
-    $mobile_number = $_POST['mobile-number'];
-    $parent_first_name = $_POST['parent-first-name'];
-    $parent_middle_initial = $_POST['parent-middle-initial'];
-    $parent_last_name = $_POST['parent-last-name'];
-    $parent_contact_number = $_POST['parent-contact-number'];
+if (isset($_POST['submitForm'])) {
+    $student_type = $_POST['student-type'];
+    $type = $_POST['type'];
+    $school_year_id = $_POST['school-year'];
     $grade_level = $_POST['grade-level'];
-    $school_year = $_POST['school-year'];
-    $last_school_attended = $_POST['last-school-attended'];
+    $track = isset($_POST['track']) ? $_POST['track'] : null;
 
-    // Retrieve the selected student type from the radio buttons
-    $student_type = isset($_POST['student-type']) ? $_POST['student-type'] : null;
 
-    // Validate student type selection
-    if ($student_type === null) {
-        echo "Please select a student type.";
-        exit();
-    }
 
-     // Handle file uploads (if necessary, but ignoring for now)
-     $birth_certificate = file_get_contents($_FILES['birth-certificate']['tmp_name']);
-     $report_card = file_get_contents($_FILES['report-card']['tmp_name']);
-     $good_moral_certificate = file_get_contents($_FILES['good-moral-certificate']['tmp_name']);
-    
-    // Insert the data into the enrollment table
-    $sql = "INSERT INTO enrollment (
-        student_number, first_name, middle_initial, last_name, lrn, birth_date,
-        gender, mobile_number, parent_first_name, parent_middle_initial, 
-        parent_last_name, parent_contact_number, student_type, grade_level, 
-        school_year, last_school_attended, birth_certificate, report_card, good_moral_certificate
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+   
+               
+    $sql = "INSERT INTO student_enrollment (student_id, student_type, school_year_id, type, grade_level, track, date_enrolled, status) 
+                        VALUES (?, ?, ?, ?, ?, ?, NOW(), 'pending')";
 
     if ($stmt = $connection->prepare($sql)) {
-        $stmt->bind_param(
-            "sssssssssssssssssss",
-            $student_number, $first_name, $middle_initial, $last_name, $lrn,
-            $birth_date, $gender, $mobile_number, $parent_first_name, 
-            $parent_middle_initial, $parent_last_name, $parent_contact_number, 
-            $student_type, $grade_level, $school_year, $last_school_attended,
-            $birth_certificate, $report_card, $good_moral_certificate
-        );
-        $stmt->execute();
-        $stmt->close();
-        echo "Enrollment successfully submitted.";
-    } else {
-        echo "Failed to insert the data: " . $connection->error;
-    }
-}
-?>
+               
+        if (empty($track)) {
+            $track = NULL; // If track is empty, set it as NULL
+        }
 
+    // Bind parameters
+    $stmt->bind_param("isisss", $student_id, $student_type, $school_year_id, $type, $grade_level, $track);
+
+            // Execute the query
+        if ($stmt->execute()) {
+            $_SESSION['message'] = "Enrollment form submitted successfully!";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        } else {
+            $_SESSION['error'] = "Error: Unable to submit enrollment form.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
+
+        $stmt->close();
+    } 
+}
+
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -123,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div id="navbar" class="px-4 py-2 fixed w-full top-0 left-0 z-10 transition duration-300 text-white">
         <div class=" flex items-center justify-between">
 
-            <a class="flex items-center gap-4 " href="./">
+            <a class="flex items-center gap-4 " href="">
                 <img src="../../assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
                 <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
             </a>
@@ -135,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex ">
             
                 
-                <li><a href="../../auth/login.php">LOGOUT</a></li>
+                <li><a href="logout.php">LOGOUT</a></li>
 
                 </ul>
 
@@ -202,261 +176,296 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             <div class=" max-w-7xl mx-auto space-y-7">
 
+           
+               
+                <?php if (isset($_SESSION['message'])): ?>
+                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>
+                        <?php unset($_SESSION['message']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                        <div class="rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7" ><?= $_SESSION['error']; ?></div>
+                        <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+
+
                 <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
                     
-                        <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
-                        <!-- Name -->
-                        <div>
-                            <label class="text-gray-800 text-sm font-medium mb-6 block">Name</label>
-                            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="first-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-                                
+                            <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
+                            <!-- Name -->
+                            <div>
+                                <label class="text-gray-800 text-sm font-medium mb-6 block">Name</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="first-name" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($first_name); ?>" />
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">First Name</p>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">First Name</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="middle-initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-                                
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="middle-initial" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="last-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-                                
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="last-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($last_name); ?>" />
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">Last Name</p>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">Last Name</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="lrn" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
-                                
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="lrn" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">LRN</p>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">LRN</p>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Birthdate, Gender and Year Level -->
-                        <div>
-                        
-                            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
-                                
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
-                                    <div class="relative flex items-center">
-                                    <input name="birth-date" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
-                                
+                            <!-- Birthdate, Gender and Year Level -->
+                            <div>
+                            
+                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
+                                    
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
+                                        <div class="relative flex items-center">
+                                        <input name="birth-date" type="date"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" value="<?php echo htmlspecialchars($date_of_birth); ?>" />
+                                    
+                                        </div>
+                                    
                                     </div>
-                                
-                                </div>
 
-                                <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Gender</label>
-                                    <div class="relative flex items-center">
-                                    <input name="gender" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-                                
+                                            
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Gender</label>
+                                        <div class="relative flex items-center">
+                                            <select name="grade-level"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($gender); ?>">
+                                                <option value="grade-1">Male</option>
+                                                <option value="grade-2">Female</option>
+                                            </select>
+                                        </div>
+                                    
                                     </div>
-                                
-                                </div>
 
-                              
 
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Mobile Number</label>
-                                    <div class="relative flex items-center">
-                                    <input name="mobile-number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Mobile Number</label>
+                                        <div class="relative flex items-center">
+                                        <input name="mobile-number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($contact_number); ?>"/>
+                                    
+                                        </div>
+                                    
                                     </div>
-                                
-                                </div>
 
+
+                                
 
                             
+                                </div>
+                            </div>
+
+                            <!-- Parent/Guardian Name -->
+                            <div>
+                                <label class="text-gray-800 text-sm font-medium mb-6 block">Parent/Guardian Name</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="parent-first-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                                    </div>
+
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="parent-middle-initial" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
+                                    </div>
+
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="parent-last-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">Last Name</p>
+                                    </div>
+
+                                    <div>
+                                        <div class="relative flex items-center">
+                                        <input name="parent-contact-number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                    
+                                        </div>
+                                        <p class="text-sm font-light mt-1 ml-1">Contact Number</p>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <div class="border-b border-gray-100"></div>
+
 
                         
-                            </div>
-                        </div>
+                            <h1 class="text-lg font-bold">Academic <span class="text-red-500">*</span></h1>
 
-                        <!-- Parent/Guardian Name -->
-                        <div>
-                            <label class="text-gray-800 text-sm font-medium mb-6 block">Parent/Guardian Name</label>
-                            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="parent-first-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                
+                            <!-- Student Type -->
+
+                            <div class="flex flex-col gap-4">
+
+                                    <div class="flex items-center gap-3">
+                                            <input type="radio" name="student-type" class="radio radio-info" value="New Student" required />
+                                            <span>New Student</span>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">First Name</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="parent-middle-initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                
+                                    <div class="flex items-center gap-3">
+                                            <input type="radio" name="student-type" class="radio radio-info" value="Transferee" required  />
+                                            <span>Transferee</span>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="parent-last-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-                                
+                                    <div class="flex items-center gap-3">
+                                            <input type="radio" name="student-type" class="radio radio-info" value="Returning Student" required  />
+                                            <span>Returning Student</span>
                                     </div>
-                                    <p class="text-sm font-light mt-1 ml-1">Last Name</p>
-                                </div>
 
-                                <div>
-                                    <div class="relative flex items-center">
-                                    <input name="parent-contact-number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                
-                                    </div>
-                                    <p class="text-sm font-light mt-1 ml-1">Contact Number</p>
-                                </div>
                             </div>
-                        </div>
-
-
-
-
-                <div class="border-b border-gray-100"></div>
-
-
-                    
-                    <h1 class="text-lg font-bold">Academic <span class="text-red-500">*</span></h1>
-
-                    <!-- Student Type -->
-
-                    <div class="flex flex-col gap-4">
-
-                            <div class="flex items-center gap-3">
-                                    <input type="radio" name="student-type" class="radio radio-info" value="New Student" />
-                                    <span>New Student</span>
-                            </div>
-
-                            <div class="flex items-center gap-3">
-                                    <input type="radio" name="student-type" class="radio radio-info" value="Transferee" />
-                                    <span>Transferee</span>
-                            </div>
-
-                            <div class="flex items-center gap-3">
-                                    <input type="radio" name="student-type" class="radio radio-info" value="Returning Student" />
-                                    <span>Returning Student</span>
-                            </div>
-
-                    </div>
-                    
-            
-                    <!-- Grade level, School year, Last School Attended -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
-
                         
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Grade Level</label>
-                                <div class="relative flex items-center">
-                                    <select name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                                        <option value="" disabled selected>Select grade level</option>
-                                        <option value="grade-1">Grade 1</option>
-                                        <option value="grade-2">Grade 2</option>
-                                        <option value="grade-3">Grade 3</option>
-                                        <option value="grade-4">Grade 4</option>
-                                        <option value="grade-5">Grade 5</option>
-                                        <option value="grade-6">Grade 6</option>
-                                        <option value="grade-7">Grade 7</option>
-                                        <option value="grade-8">Grade 8</option>
-                                        <option value="grade-9">Grade 9</option>
-                                        <option value="grade-10">Grade 10</option>
-                                        <option value="grade-11">Grade 11</option>
-                                        <option value="grade-12">Grade 12</option>
-                                    </select>
-                                </div>
-                            
-                            </div>
 
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">School Year</label>
-                                <div class="relative flex items-center">
+                
+                        <!-- Grade level, School year, Last School Attended -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">School Year</label>
+                                    <div class="relative flex items-center">
                                     <select name="school-year" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                                        <option value="" disabled selected>Select school year</option>
-                                        <option value="2022-2023">2022-2023</option>
-                                        <option value="2023-2024">2023-2024</option>
-                                        <option value="2024-2025">2024-2025</option>
+                                        <option value="">Select school year</option>
+                                        <?php
+                                            // Fetch distinct school years with status 'open' and include the ID for each
+                                            $schoolYearQuery = "SELECT school_year_id, school_year FROM school_year WHERE status = 'open' ORDER BY school_year ASC";
+                                            $schoolYearResult = $connection->query($schoolYearQuery);
+                                            if ($schoolYearResult->num_rows > 0) {
+                                                while ($row = $schoolYearResult->fetch_assoc()) {
+                                                    echo "<option value='{$row['school_year_id']}'>{$row['school_year']}</option>";
+                                                }
+                                            }
+                                        ?>
                                     </select>
-                                </div>
-                            
-                            </div>
 
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Last School Attended</label>
-                                    <div class="relative flex items-center">
-                                    <input name="last-school-attended" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                
                                     </div>
-                               
+                                
+                                </div>
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Type</label>
+                                    <div class="relative flex items-center">
+                                        <select id="typeSelect" name="type" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                            <option value="" disabled selected>Select type</option>
+                                            <option value="Preschool">Preschool</option>
+                                            <option value="Elementary">Elementary</option>
+                                            <option value="JHS">Junior High School</option>
+                                            <option value="SHS">Senior High School</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Grade Level</label>
+                                    <div class="relative flex items-center">
+                                        <select id="gradeLevelSelect" name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                            <option value="" disabled selected>Select grade level</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="trackContainer" style="display: none;">
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Senior High School Program</label>
+                                    <div class="relative flex items-center">
+                                        <select id="trackSelect" name="track" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                            <option value="" disabled selected>Select Track</option>
+                                            <option value="abm-track">ABM Track</option>
+                                            <option value="gas-track">GAS Track</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                        </div>
+
+                        <div class="border-gray-100 border-b"></div>
+
+                        <h1 class="text-lg font-bold">For New Student <span class="text-red-500">*</span></h1>
+                    
+                        <!-- File Inputs -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+
+                
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Certificate</label>
+                                        <div class="relative flex items-center">
+                                        <input name="birth-certificate" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+        
+                                        </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Report Card</label>
+                                        <div class="relative flex items-center">
+                                        <input name="report-card" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+        
+                                        </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Good Moral Certificate</label>
+                                        <div class="relative flex items-center">
+                                        <input name="good-moral-certificate" type="file"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+        
+                                        </div>
+                                </div>
+
+                                <div>
+                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Last School Attended</label>
+                                        <div class="relative flex items-center">
+                                        <input name="last-school-attended" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                    
+                                        </div>
+                                
+                                </div>
+
+                                <p class="text-gray-400 text-sm">*Note: New student should submit their birth certificate, report card and good moral certificate.</p>
+
+
+
+                        </div>
+                    
+                        <div class="border-gray-100 border-b"></div>
+
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox"  required class="checkbox" />
+                                <p class="font-medium text-sm">I confirm that the information provided is accurate.</p>
                             </div>
-                            
-
-
-                       
+                            <p class="text-gray-400 text-sm">By checking this box, you agree to our <a class="text-black hover:underline">Terms and Conditions</a> and <a class="text-black hover:underline">Privacy Policy.</a></p>
+                        </div>
 
                         
-
-                    
+                        <div class=" flex items-center justify-end">
+                        <button type="submit" name="submitForm" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
                     </div>
-                
-                    <!-- File Inputs -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
-
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Certificate</label>
-                                    <div class="relative flex items-center">
-                                    <input name="birth-certificate" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-    
-                                    </div>
-                            </div>
-
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Report Card</label>
-                                    <div class="relative flex items-center">
-                                    <input name="report-card" type="file" required  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-    
-                                    </div>
-                            </div>
-
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Good Moral Certificate</label>
-                                    <div class="relative flex items-center">
-                                    <input name="good-moral-certificate" type="file" required  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-    
-                                    </div>
-                            </div>
-
-                            <p class="text-gray-400 text-sm">*Note: New student should submit their birth certificate, report card and good moral certificate.</p>
-
-
-
-                    </div>
-                
-                    <div class="border-gray-100 border-b"></div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-3">
-                            <input type="checkbox" checked="checked" class="checkbox" />
-                            <p class="font-medium text-sm">I confirm that the information provided is accurate.</p>
-                        </div>
-                        <p class="text-gray-400 text-sm">By checking this box, you agree to our <a class="text-black hover:underline">Terms and Conditions</a> and <a class="text-black hover:underline">Privacy Policy.</a></p>
-                    </div>
-
-                    
-                    <div class=" flex items-center justify-end">
-                    <button type="submit" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
-                </div>
 
                 </form>
 
@@ -524,5 +533,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get the dropdown elements
+        const typeSelect = document.getElementById("typeSelect");
+        const gradeLevelSelect = document.getElementById("gradeLevelSelect");
+        const trackContainer = document.getElementById("trackContainer");
+        const trackSelect = document.getElementById("trackSelect");
 
+        // Define grade level options based on type
+        const gradeOptions = {
+            Preschool: [
+                { value: "nursery", text: "Nursery" },
+                { value: "kinder", text: "Kinder" },
+                { value: "prepatory", text: "Preparatory" },
+            ],
+            Elementary: [
+                { value: "grade-1", text: "Grade 1" },
+                { value: "grade-2", text: "Grade 2" },
+                { value: "grade-3", text: "Grade 3" },
+                { value: "grade-4", text: "Grade 4" },
+                { value: "grade-5", text: "Grade 5" },
+                { value: "grade-6", text: "Grade 6" },
+            ],
+            JHS: [
+                { value: "grade-7", text: "Grade 7" },
+                { value: "grade-8", text: "Grade 8" },
+                { value: "grade-9", text: "Grade 9" },
+                { value: "grade-10", text: "Grade 10" },
+            ],
+            SHS: [
+                { value: "grade-11", text: "Grade 11" },
+                { value: "grade-12", text: "Grade 12" },
+            ],
+        };
 
+        // Event listener for type selection
+        typeSelect.addEventListener("change", function () {
+            const selectedType = this.value;
+
+            // Reset grade level options
+            gradeLevelSelect.innerHTML = '<option value="" disabled selected>Select grade level</option>';
+
+            if (selectedType in gradeOptions) {
+                // Populate grade level options based on selected type
+                gradeOptions[selectedType].forEach(option => {
+                    const opt = document.createElement("option");
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    gradeLevelSelect.appendChild(opt);
+                });
+
+                // Show or hide track dropdown
+                if (selectedType === "SHS") {
+                    trackContainer.style.display = "block";
+                } else {
+                    trackContainer.style.display = "none";
+                    trackSelect.value = ""; // Reset track selection if hidden
+                }
+            }
+        });
+    });
+</script>

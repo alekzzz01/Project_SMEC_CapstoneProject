@@ -1,53 +1,109 @@
 <?php
 session_start();
 include '../../config/db.php'; // Include the database connection
+require '../../vendor/autoload.php';
 
-// Initialize error message
-$error = '';
+$dotenv = Dotenv\Dotenv::createImmutable('../../config');
+$dotenv->load();
 
-// Process the form when submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the student number from the form input
+if (isset($_POST['proceed'])) {
+    // Retrieve POST variables
+    $school_year = $_POST['school-year'];
     $student_number = $_POST['student_number'];
+    $recaptcha_response = $_POST['g-recaptcha-response']; // Get reCAPTCHA response
 
-    // Check if the student number is empty
-    if (empty($student_number)) {
-        $error = "Student number is required.";
-    } else {
-        // Prepare the SQL query to check if the student number exists and if it has been approved
-        $sql = "SELECT * FROM admission_form WHERE student_number = ? AND is_confirmed = 1"; // Adjusted column name
+    // Verify reCAPTCHA
+    $secretKey = $_ENV['RECAPTCHA_SECRET'];
+    $url = 'https://www.google.com/recaptcha/api/siteverify';
+    $response = file_get_contents($url . '?secret=' . $secretKey . '&response=' . $recaptcha_response . '&remoteip=' . $_SERVER['REMOTE_ADDR']);
+    $responseKeys = json_decode($response, true);
 
-        // Prepare the query using MySQLi
-        if ($stmt = $connection->prepare($sql)) {
-            // Bind the student number to the parameter
-            $stmt->bind_param("s", $student_number); // "s" means it's a string
-            
-            // Execute the statement
-            $stmt->execute();
-            
-            // Store the result
-            $stmt->store_result();
-            
-            // Check if the student number is found and approved
-            if ($stmt->num_rows > 0) {
-                // Student number is valid and approved
-                $_SESSION['student_number'] = $student_number;
-                header("Location: enrollmentForm.php"); // Redirect to the enrollment form
-                exit();
-            } else {
-                // Student number is not found or not approved
-                $error = "The student number you entered is either not found or not approved.";
-            }
+    if (!$responseKeys["success"]) {
+        $_SESSION['error'] = "reCAPTCHA verification failed. Please try again.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
 
-            // Close the statement
-            $stmt->close();
-        } else {
-            $error = "Failed to prepare the SQL query.";
+    // Step 1: Get the active school year
+    $getSchoolYearSQL = "SELECT school_year_id FROM school_year WHERE status = 'Open' LIMIT 1";
+    if ($stmt = $connection->prepare($getSchoolYearSQL)) {
+        $stmt->execute();
+        $stmt->bind_result($school_year_id);
+        $stmt->fetch();
+        $stmt->close();
+
+        if (!$school_year_id) {
+            $_SESSION['warning'] = "No active school year found.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
         }
+    } else {
+        $_SESSION['error'] = "Error retrieving school year data.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+     // Step 2: Check if the student is already enrolled in the active school year
+     $checkEnrollmentSQL = "SELECT COUNT(*) FROM student_enrollment WHERE student_id = (SELECT student_id FROM students WHERE student_number = ?) AND school_year_id = ?";
+     if ($stmt = $connection->prepare($checkEnrollmentSQL)) {
+         $stmt->bind_param("si", $student_number, $school_year_id);
+         $stmt->execute();
+         $stmt->bind_result($enrollmentCount);
+         $stmt->fetch();
+         $stmt->close();
+ 
+         if ($enrollmentCount > 0) {
+             $_SESSION['error'] = "The student is already enrolled for this school year.";
+             header('Location: ' . $_SERVER['PHP_SELF']);
+             exit();
+         }
+     } else {
+         $_SESSION['error'] = "Error checking enrollment status.";
+         header('Location: ' . $_SERVER['PHP_SELF']);
+         exit();
+     }
+
+    // Step 3: Check if the student number exists in the database
+    $studentQuery = "SELECT * FROM students WHERE student_number = ?";
+    if ($stmt = $connection->prepare($studentQuery)) {
+        $stmt->bind_param("s", $student_number);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $student = $result->fetch_assoc();
+        $stmt->close();
+
+        if ($student) {
+            // Store student data in session
+            $_SESSION['student_id'] = $student['student_id'];
+            $_SESSION['student_number'] = $student['student_number'];
+            $_SESSION['first_name'] = $student['first_name'];
+            $_SESSION['last_name'] = $student['last_name'];
+            $_SESSION['date_of_birth'] = $student['date_of_birth'];
+            $_SESSION['gender'] = $student['gender'];
+            $_SESSION['contact_number'] = $student['contact_number'];
+
+            // Redirect to the enrollment form
+            header("Location: enrollmentForm.php");
+            exit();
+        } else {
+            $_SESSION['warning'] = "Student number not found. Please enter a valid student number.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
+        }
+    } else {
+        $_SESSION['error'] = "Error retrieving student data.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
     }
 }
 
+$error = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
+
+$warning = $_SESSION['warning'] ?? null;
+unset($_SESSION['warning']);
 ?>
+
 
 
 
@@ -96,16 +152,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label class="text-gray-800 text-sm mb-2 block">Select School year</label>
                                 <div class="relative flex items-center">
                                     <select name="school-year" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                                        <option value="" disabled selected>Select grade level</option>
-                                        <option value="2024-2025">2024-2025</option>
-                                       
+                                        <option value="">Select school year</option>
+                                            <?php
+                                                // Fetch distinct school years with status 'open' for the filter dropdown
+                                            $schoolYearQuery = "SELECT DISTINCT school_year FROM school_year WHERE status = 'open' ORDER BY school_year ASC";
+                                            $schoolYearResult = $connection->query($schoolYearQuery);
+                                            if ($schoolYearResult->num_rows > 0) {
+                                                while ($row = $schoolYearResult->fetch_assoc()) {
+                                                    echo "<option value='{$row['school_year']}'>{$row['school_year']}</option>";
+                                                }
+                                            }
+                                        ?>
+    
                                     </select>
                                 </div>
                             
                         </div>
 
                         
-                        <div>
+                        <!-- <div>
                             <label class="text-gray-800 text-sm mb-2 block">Select Grade Level</label>
                                 <div class="relative flex items-center">
                                     <select name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
@@ -125,7 +190,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     </select>
                                 </div>
                             
-                        </div>
+                        </div> -->
                         
                         <div>
                             <label class="text-gray-800 text-sm mb-2 block">Student Number</label>
@@ -148,16 +213,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="!mt-8">
-                            <button type="submit" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
+                            <button type="submit" name="proceed" class="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none">
                             Proceed to Enrollment
                             </button>
                         </div>
                         <!-- <p class="text-gray-800 text-sm !mt-8 text-center">Don't have an account? <a href="register.php" class="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold">Register here</a></p> -->
+
+                        <div class="flex items-center justify-center">
+                            <div class="g-recaptcha" data-sitekey="6LfIZ5EqAAAAAGeXLXbd-FE6FjKxV-VKz4wfSLM2"></div>
+                        </div>
             </form>
 
             
             <?php if (isset($error)): ?>
                     <div class="text-red-500 text-sm mt-8"><?php echo $error; ?></div>
+            <?php endif; ?>
+
+            <?php if (isset($warning)): ?>
+                    <div class="text-red-500 text-sm mt-8"><?php echo $warning; ?></div>
             <?php endif; ?>
 
 
@@ -193,3 +266,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
 </body>
 </html>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
