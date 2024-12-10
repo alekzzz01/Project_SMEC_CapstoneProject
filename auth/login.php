@@ -13,6 +13,7 @@ if (isset($_SESSION['user_id'])) {
     if ($_SESSION['role'] == 'admin') {
         header('Location: ../dist/admin/index.php'); // Admin redirect
     } else {
+       
         header('Location: ../dist/student/dashboard.php'); // Student redirect
     }
     exit(); // Ensure no further code is executed

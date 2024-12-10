@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // OTP is valid, mark as verified
             $_SESSION['otp_verified'] = true; // Mark OTP as verified
+            $_SESSION['user_id'] = $user['user_id'];
 
             // Clear OTP session variable after successful validation
             unset($_SESSION['otp_email']);

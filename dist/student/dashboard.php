@@ -1,4 +1,33 @@
+<?php
+session_start();
 
+if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
+    // Redirect to OTP page if OTP hasn't been verified yet
+    header('Location: otpAuth.php');
+    exit();
+}
+
+include '../../config/db.php';
+
+$resultEvent = $connection->query("SELECT COUNT(*) AS total_events FROM events");
+$row = $resultEvent->fetch_assoc();
+$total_events = $row['total_events'];
+
+
+$sql = "SELECT * FROM events";
+
+$stmt = $connection->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$events = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+$connection->close();
+
+
+
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">

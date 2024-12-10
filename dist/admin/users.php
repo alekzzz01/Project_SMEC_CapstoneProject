@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include '../../config/db.php';
 
 // Add user
@@ -51,8 +50,8 @@ if (isset($_POST['createUser'])) {
             // Step 4: Handle role-specific data insertion
             if ($role == 'student') {
                 // Insert student data into students table
-                $stmt = $connection->prepare("INSERT INTO students (user_id, student_number, first_name, last_name, date_of_birth, gender, contact_number) VALUES (?, ?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("issssss", $userId, $student_number, $first_name, $last_name, $dob, $gender, $contact_number);
+                $stmt = $connection->prepare("UPDATE students SET user_id = ? WHERE student_number = ?");
+                $stmt->bind_param("is", $userId, $student_number); // Fixed to use $userId
 
                 // Execute the student insertion
                 if ($stmt->execute()) {
@@ -63,22 +62,17 @@ if (isset($_POST['createUser'])) {
                     $_SESSION['error'] = "Error inserting student data.";
                 }
             } elseif ($role == 'teacher') {
-                // Handle teacher-specific data if needed
-                $_SESSION['message'] = "Teacher user added successfully!";
+                // Insert teacher data into teachers table
+                $stmt = $connection->prepare("INSERT INTO teachers (user_id, first_name, last_name, date_of_birth, gender, contact_number) VALUES (?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param("isssss", $userId, $first_name, $last_name, $dob, $gender, $contact_number);
 
-                 // Insert student data into students table
-                 $stmt = $connection->prepare("INSERT INTO teachers (user_id, First_name, Last_name, Date_of_Birth, gender, Contact_Number) VALUES (?, ?, ?, ?, ?, ?)");
-                 $stmt->bind_param("isssss", $userId, $first_name, $last_name, $dob, $gender, $contact_number);
- 
-                 // Execute the student insertion
-                 if ($stmt->execute()) {
-                     $_SESSION['message'] = "Teacher user added successfully!";
-                     header('Location: ' . $_SERVER['PHP_SELF']);
-                     exit();
-                 } else {
-                     $_SESSION['error'] = "Error inserting teacher data.";
-                 }
-
+                if ($stmt->execute()) {
+                    $_SESSION['message'] = "Teacher user added successfully!";
+                    header('Location: ' . $_SERVER['PHP_SELF']);
+                    exit();
+                } else {
+                    $_SESSION['error'] = "Error inserting teacher data.";
+                }
             } elseif ($role == 'admin') {
                 // Handle admin-specific data if needed
                 $_SESSION['message'] = "Admin user added successfully!";
@@ -90,6 +84,28 @@ if (isset($_POST['createUser'])) {
         }
     }
 }
+
+// Query for available student numbers that don't have a user_id
+$sql = "SELECT student_number FROM students WHERE user_id IS NULL";
+$result = $connection->query($sql);
+
+// Check if query was successful
+if (!$result) {
+    die("Query failed: " . $connection->error);
+}
+
+// Generate options for student numbers
+$options = "";
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $options .= '<option value="' . htmlspecialchars($row['student_number']) . '">' . htmlspecialchars($row['student_number']) . '</option>';
+    }
+} else {
+    $options = '<option value="" disabled>No available student numbers</option>';
+}
+
+// Close the database connection
+$connection->close();
 ?>
 
 
@@ -207,11 +223,15 @@ if (isset($_POST['createUser'])) {
                     <div id="student_number_field" class="hidden col-span-2">
                         <label class="text-gray-800 text-sm mb-2 block">Student Number</label>
                         <div class="relative flex items-center">
-                            <input name="student_number" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Student Number" />
+                            <select name="student_number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                <option value="" disabled selected>Select Student Number</option>
+                                <?php echo $options; ?>
+                            </select>
                         </div>
                     </div>
+
               
-                    <div>
+                    <div id="first_name_field" >
                             <label class="text-gray-800 text-sm mb-2 block">First Name</label>
                             <div class="relative flex items-center">
                             <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
@@ -219,7 +239,7 @@ if (isset($_POST['createUser'])) {
                             </div>
                     </div>
 
-                    <div>
+                    <div id="last_name_field" >
                             <label class="text-gray-800 text-sm mb-2 block">Last Name</label>
                             <div class="relative flex items-center">
                             <input name="last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Last Name" />
@@ -229,7 +249,7 @@ if (isset($_POST['createUser'])) {
 
     
                     
-                    <div>
+                    <div id="dob_field" >
                             <label class="text-gray-800 text-sm mb-2 block">Date of Birth</label>
                             <div class="relative flex items-center">
                             <input name="dob" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
@@ -237,7 +257,7 @@ if (isset($_POST['createUser'])) {
                             </div>
                     </div>
 
-                    <div>
+                    <div id="gender_field" >
                             <label class="text-gray-800 text-sm mb-2 block">Gender</label>
                             <div class="relative flex items-center">
                            <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
@@ -250,7 +270,7 @@ if (isset($_POST['createUser'])) {
                     </div>
 
 
-                    <div class="col-span-2">
+                    <div class="col-span-2" id="contact_field">
                             <label class="text-gray-800 text-sm mb-2 block">Contact Number</label>
                             <div class="relative flex items-center">
                             <input name="contact_number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Contact Number" />
@@ -431,18 +451,54 @@ if (isset($_POST['createUser'])) {
 }
 
 </script>
-
 <script>
-    // JavaScript function to hide/show Student Number field based on selected role
+    // JavaScript function to hide/show fields and manage 'required' validation based on the selected role
     function toggleStudentNumberField() {
         var role = document.getElementById('role').value;
         var studentNumberField = document.getElementById('student_number_field');
+        var first_name_field = document.getElementById('first_name_field');
+        var last_name_field = document.getElementById('last_name_field');
+        var dob_field = document.getElementById('dob_field');
+        var gender_field = document.getElementById('gender_field');
+        var contact_field = document.getElementById('contact_field');
         
-        // Show the student number input field only when the selected role is 'student'
+        var firstNameInput = document.getElementsByName('first_name')[0];
+        var lastNameInput = document.getElementsByName('last_name')[0];
+        var dobInput = document.getElementsByName('dob')[0];
+        var genderInput = document.getElementsByName('gender')[0];
+        var contactInput = document.getElementsByName('contact_number')[0];
+        
+        // Show/hide the input fields based on the selected role
         if (role === 'student') {
+            // For student, show student number and hide other fields
             studentNumberField.classList.remove('hidden');
+            first_name_field.classList.add('hidden');
+            last_name_field.classList.add('hidden');
+            dob_field.classList.add('hidden');
+            gender_field.classList.add('hidden');
+            contact_field.classList.add('hidden');
+
+            // Remove required validation from non-student fields
+            firstNameInput.removeAttribute('required');
+            lastNameInput.removeAttribute('required');
+            dobInput.removeAttribute('required');
+            genderInput.removeAttribute('required');
+            contactInput.removeAttribute('required');
         } else {
+            // For teacher or admin, show other fields and hide student number
             studentNumberField.classList.add('hidden');
+            first_name_field.classList.remove('hidden');
+            last_name_field.classList.remove('hidden');
+            dob_field.classList.remove('hidden');
+            gender_field.classList.remove('hidden');
+            contact_field.classList.remove('hidden');
+
+            // Add required validation for non-student fields
+            firstNameInput.setAttribute('required', 'required');
+            lastNameInput.setAttribute('required', 'required');
+            dobInput.setAttribute('required', 'required');
+            genderInput.setAttribute('required', 'required');
+            contactInput.setAttribute('required', 'required');
         }
     }
 
