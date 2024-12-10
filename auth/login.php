@@ -2,15 +2,28 @@
 session_start();
 include '../config/db.php';
 require '../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 $dotenv = Dotenv\Dotenv::createImmutable('../config');
 $dotenv->load();
+
+// Check if the user is already logged in (to avoid unnecessary redirects)
+if (isset($_SESSION['user_id'])) {
+    // If already logged in, redirect to the appropriate page based on role
+    if ($_SESSION['role'] == 'admin') {
+        header('Location: ../dist/admin/index.php'); // Admin redirect
+    } else {
+        header('Location: ../dist/student/dashboard.php'); // Student redirect
+    }
+    exit(); // Ensure no further code is executed
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
     $recaptcha_response = $_POST['g-recaptcha-response']; // Get reCAPTCHA response
 
-    // Verify reCAPTCHA
+    // Step 1: Verify reCAPTCHA
     $secretKey = $_ENV['RECAPTCHA_SECRET']; 
     $url = 'https://www.google.com/recaptcha/api/siteverify';
     $response = file_get_contents($url . '?secret=' . $secretKey . '&response=' . $recaptcha_response . '&remoteip=' . $_SERVER['REMOTE_ADDR']);
@@ -22,13 +35,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    // Check if email and password are provided
-    if (empty($email) || empty($password) || empty($recaptcha_response)) {
+    // Step 2: Validate email and password
+    if (empty($email) || empty($password)) {
         $_SESSION['error'] = "Please fill in all fields.";
         header('Location: ' . $_SERVER['PHP_SELF']);
         exit();
     }
 
+    // Step 3: Check if email exists in the database
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $connection->prepare($sql);
     $stmt->bind_param('s', $email);
@@ -38,35 +52,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
+        // Verify password
         if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['user_email'] = $user['email'];
-            $_SESSION['user_role'] = $user['role']; 
+            // Generate OTP
+            $otp = rand(1000, 9999); // 4-digit OTP
+            $otp_expiry = date('Y-m-d H:i:s', strtotime('+5 minutes')); // OTP expiry time (5 minutes from now)
 
-            // Redirect based on user role
-            if ($_SESSION['user_role'] == 'admin') {
-                header('Location: ../dist/admin/');
-            } elseif ($_SESSION['user_role'] == 'teacher') {
-                header('Location: ../dist/teacher/dashboard.php');
-            } elseif ($_SESSION['user_role'] == 'student') {
-                header('Location: ../dist/student/dashboard.php');
+            // Store OTP and expiry in the database
+            $sql = "UPDATE users SET otp = ?, otp_expiry = ? WHERE email = ?";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param('sss', $otp, $otp_expiry, $email);
+            $stmt->execute();
+
+            // Store the email in session to validate the OTP later
+            $_SESSION['otp_email'] = $email;
+
+            // Send OTP to user via email using PHPMailer
+            try {
+                $mail = new PHPMailer(true);
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
+                $mail->SMTPAuth = true;
+                $mail->Username = 'jeromedala2002@gmail.com';  // Your email (sender's email)
+                $mail->Password = 'jbef jrqn newa bhqc';  // Your Gmail app password (not the student's email)
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS encryption
+                $mail->Port = 587;  // SMTP Port
+
+                // Sender and recipient details
+                $mail->setFrom('jeromedala2002@gmail.com', 'Sta. Marta Educational Center');  // Sender's email
+                $mail->addAddress($email, $first_name);  // Recipient's email (the student's email from DB)
+
+                // Content
+                $mail->isHTML(true);
+                $mail->Subject = 'Your OTP for Login';
+                $mail->Body    = 'Your OTP is: ' . $otp;
+
+                $mail->send();
+                $_SESSION['message'] = "OTP has been sent to your email.";
+
+                // Redirect to OTP verification page
+                header('Location: otpAuth.php');
+                exit();
+
+            } catch (Exception $e) {
+                $_SESSION['error'] = "OTP could not be sent. Please try again later.";
+                header('Location: ' . $_SERVER['PHP_SELF']);
+                exit();
             }
-            exit();
+
         } else {
-            $_SESSION['error'] = "Invalid password.";
+            $_SESSION['error'] = "Invalid email or password.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
         }
     } else {
         $_SESSION['error'] = "No user found with this email.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
     }
-
-    // Redirect back to the login page to avoid resubmission
-    header('Location: ' . $_SERVER['PHP_SELF']);
-    exit();
 }
-
-// Retrieve error message from session (if any)
-$error = $_SESSION['error'] ?? null;
-unset($_SESSION['error']);
 ?>
 
 
