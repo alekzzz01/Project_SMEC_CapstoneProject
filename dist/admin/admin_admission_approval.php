@@ -3,11 +3,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require '../../vendor/autoload.php';  // Ensure PHPMailer is correctly included
-
 include '../../config/db.php';  // Include your database connection file
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $student_number = $_POST['student_number'];  // Get the student number from the form
+    // Get the student number from the form
+    $student_number = $_POST['student_number'];  
 
     // Update the student's status to "confirmed"
     $query = "UPDATE admission_form SET is_confirmed = 1 WHERE student_number = ?";
@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("s", $student_number);
 
     if ($stmt->execute()) {
-        // Fetch the student's email and first name
+        // Fetch the student's email and first name after updating the status
         $query = "SELECT email, first_name FROM admission_form WHERE student_number = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param("s", $student_number);
@@ -38,37 +38,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $mail->Port = 587;  // SMTP Port
 
                 // Sender and recipient details
-                $mail->setFrom('jeromedala2002@gmail.com', 'Your School Name');  // Sender's email
+                $mail->setFrom('jeromedala2002@gmail.com', 'Sta. Marta Educational Center');  // Sender's email
                 $mail->addAddress($email, $first_name);  // Recipient's email (the student's email from DB)
 
-                // Email content
+                // Email subject and body
                 $mail->isHTML(true);
-                $mail->Subject = 'Admission Approved - Sta. Marta Educational Center';
-                $mail->Body = "
+                $mail->Subject = 'Admission Confirmed';
+                $mail->Body    = "
                     <p>Dear $first_name,</p>
-                    <p>Congratulations! Your admission has been approved. Here is your student number:</p>
-                    <h3>$student_number</h3>
-                    <p>You can now log in to your account to proceed with enrollment.</p>
+                    <p>Your admission request has been successfully approved. Welcome to our institution!</p>
+                    <p>We are excited to have you join us. Please feel free to reach out if you have any questions.</p>
                     <p>Best regards,</p>
                     <p>Sta. Marta Educational Center</p>
                 ";
 
                 // Send the email
                 $mail->send();
-                $message = "Admission approved, and email sent successfully.";
+                $_SESSION['success'] = "Admission request approved and confirmation email sent!";
             } catch (Exception $e) {
-                $message = "Admission approved, but email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                $_SESSION['error'] = "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
             }
         } else {
-            $message = "Email address not found for this student.";
+            $_SESSION['error'] = "Student's email not found.";
         }
-    } else {
-        $message = "Error approving admission: " . $stmt->error;
-    }
 
-    $stmt->close();
-    $connection->close();
+        // Redirect back to the page to refresh the table
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        $_SESSION['error'] = "Failed to approve the request.";
+    }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -76,19 +77,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Admission Approval</title>
+    <title>Approve Admission Requests</title>
+    
 </head>
 <body>
-    <h1>Admin Admission Approval</h1>
+    <h1>Unapproved Admission Requests</h1>
 
-    <?php if (isset($message)): ?>
-        <p><?php echo $message; ?></p>
-    <?php endif; ?>
+    <?php
+    if (isset($_SESSION['success'])) {
+        echo "<p style='color: green;'>".$_SESSION['success']."</p>";
+        unset($_SESSION['success']);
+    }
 
-    <form method="POST" action="admin_admission_approval.php">
-        <label for="student_number">Student Number:</label>
-        <input type="text" id="student_number" name="student_number" required>
-        <button type="submit">Approve Admission</button>
-    </form>
+    if (isset($_SESSION['error'])) {
+        echo "<p style='color: red;'>".$_SESSION['error']."</p>";
+        unset($_SESSION['error']);
+    }
+
+    // Fetch all unapproved admission requests
+    $query = "SELECT student_number, first_name, email FROM admission_form WHERE is_confirmed = 0";
+    $result = $connection->query($query);
+    ?>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Student Number</th>
+                <th>First Name</th>
+                <th>Email</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?php echo $row['student_number']; ?></td>
+                    <td><?php echo $row['first_name']; ?></td>
+                    <td><?php echo $row['email']; ?></td>
+                    <td>
+                        <!-- Approve Button -->
+                        <form action="admin_admission_approval.php" method="POST">
+                            <input type="hidden" name="student_number" value="<?php echo $row['student_number']; ?>">
+                            <button type="submit" name="approve">Approve</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
 </body>
 </html>

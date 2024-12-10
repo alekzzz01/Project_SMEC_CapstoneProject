@@ -1,6 +1,10 @@
 <?php 
 session_start();
-
+if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
+    // Redirect to OTP page if OTP hasn't been verified yet
+    header('Location: otpAuth.php');
+    exit();
+}
 include '../../config/db.php';
 
 // Get Total Events
