@@ -127,11 +127,11 @@ if (isset($_POST['createUser'])) {
      
 
 </head>
-<body class="flex h-screen">
+<body class="flex min-h-screen">
 
     <?php include('./components/sidebar.php'); ?>
 
-    <div class="flex flex-col w-full shadow-xl">
+    <div class="flex flex-col w-full">
 
     <!-- Navbar -->
 
