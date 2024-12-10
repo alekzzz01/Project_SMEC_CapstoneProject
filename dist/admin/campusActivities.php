@@ -38,6 +38,8 @@ include '../../config/db.php';
             exit();
         } else {
             $_SESSION['error'] = "Failed to create event. Please try again.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
         }
         
     }

@@ -5,6 +5,8 @@ include '../../config/db.php';
 
 $user = $_SESSION['user_id'];
 
+
+
 $selected_grade_level = isset($_GET['grade_level']) ? $_GET['grade_level'] : 'Grade 12'; // Default to Grade 12 if not set
     
 // SQL query to fetch student details and grades information (including grade level, section, and school year)
@@ -42,6 +44,8 @@ if ($result->num_rows > 0) {
     $grades = [];
 
     while ($row = $result->fetch_assoc()) {
+
+   
         $studentDetails['student_id'] = $row["student_id"];
         $studentDetails['first_name'] = $row["first_name"];
         $studentDetails['last_name'] = $row["last_name"];
@@ -69,6 +73,8 @@ if ($result->num_rows > 0) {
     // $age = '';
     
 }
+
+
 
 
 // Close the statement and connection
