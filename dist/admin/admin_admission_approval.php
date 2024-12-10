@@ -5,72 +5,114 @@ use PHPMailer\PHPMailer\Exception;
 require '../../vendor/autoload.php';  // Ensure PHPMailer is correctly included
 include '../../config/db.php';  // Include your database connection file
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the student number from the form
-    $student_number = $_POST['student_number'];  
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['approve'])) {
+    // Get student ID (admission_form ID) from the form submission
+    $studentId = $_POST['student_id'];
 
-    // Update the student's status to "confirmed"
-    $query = "UPDATE admission_form SET is_confirmed = 1 WHERE student_number = ?";
+    // Fetch student details from the admission_form table
+    $query = "SELECT * FROM admission_form WHERE id = ?";
     $stmt = $connection->prepare($query);
-    $stmt->bind_param("s", $student_number);
+    $stmt->bind_param("i", $studentId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $admissionData = $result->fetch_assoc();
 
-    if ($stmt->execute()) {
-        // Fetch the student's email and first name after updating the status
-        $query = "SELECT email, first_name FROM admission_form WHERE student_number = ?";
-        $stmt = $connection->prepare($query);
-        $stmt->bind_param("s", $student_number);
-        $stmt->execute();
-        $stmt->bind_result($email, $first_name);
-        $stmt->fetch();
+    if (!$admissionData) {
+        echo "No admission record found.";
+        exit;
+    }
 
-        // Send the email notification if an email is found
-        if (!empty($email)) {
-            $mail = new PHPMailer(true);
+    // Generate the sequential student number
+    // Generate the sequential student number
+$currentYear = date("Y");
 
-            try {
-                // Server settings for SMTP (Gmail)
-                $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
-                $mail->SMTPAuth = true;
-                $mail->Username = 'jeromedala2002@gmail.com';  // Your email (sender's email)
-                $mail->Password = 'jbef jrqn newa bhqc';  // Your Gmail app password (not the student's email)
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS encryption
-                $mail->Port = 587;  // SMTP Port
+// Extract numeric grade level and ensure it's two-digit
+$numericGradeLevel = preg_replace('/[^0-9]/', '', $admissionData['year_level']); // Extract numeric part
+$formattedGradeLevel = str_pad($numericGradeLevel, 2, "0", STR_PAD_LEFT); // Convert to two digits
 
-                // Sender and recipient details
-                $mail->setFrom('jeromedala2002@gmail.com', 'Sta. Marta Educational Center');  // Sender's email
-                $mail->addAddress($email, $first_name);  // Recipient's email (the student's email from DB)
+// Generate the student number prefix
+$studentNumberPrefix = $currentYear . '-' . $formattedGradeLevel . '-';
 
-                // Email subject and body
-                $mail->isHTML(true);
-                $mail->Subject = 'Admission Confirmed';
-                $mail->Body    = "
-                    <p>Dear $first_name,</p>
-                    <p>Your admission request has been successfully approved. Welcome to our institution!</p>
-                    <p>We are excited to have you join us. Please feel free to reach out if you have any questions.</p>
-                    <p>Best regards,</p>
-                    <p>Sta. Marta Educational Center</p>
-                ";
+// Query to find the last sequence
+$query = "SELECT MAX(CAST(SUBSTRING(student_number, 10) AS UNSIGNED)) AS last_seq FROM students WHERE SUBSTRING(student_number, 1, 9) = ?";
+$stmt = $connection->prepare($query);
+$stmt->bind_param("s", $studentNumberPrefix);
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+$lastSeq = $row['last_seq'] ?? 0;
+$newSeq = str_pad($lastSeq + 1, 4, "0", STR_PAD_LEFT);
 
-                // Send the email
-                $mail->send();
-                $_SESSION['success'] = "Admission request approved and confirmation email sent!";
-            } catch (Exception $e) {
-                $_SESSION['error'] = "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
-            }
+// Construct the new student number
+$studentNumber = $studentNumberPrefix . $newSeq;
+
+    // Insert the data into the students table
+    $insertQuery = "
+        INSERT INTO students (user_id, student_number, first_name, last_name, date_of_birth, gender, contact_number)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ";
+    $insertStmt = $connection->prepare($insertQuery);
+    $insertStmt->bind_param(
+        "issssss",
+        $studentId,
+        $studentNumber,
+        $admissionData['first_name'],
+        $admissionData['last_name'],
+        $admissionData['birth_date'],
+        $admissionData['gender'],
+        $admissionData['phone']
+    );
+
+    if ($insertStmt->execute()) {
+        echo "Student data inserted successfully.";
+
+        // Update the is_confirmed field in the admission_form table
+        $updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
+        $updateStmt = $connection->prepare($updateQuery);
+        $updateStmt->bind_param("i", $studentId);
+
+        if ($updateStmt->execute()) {
+            echo "Admission form updated successfully.";
         } else {
-            $_SESSION['error'] = "Student's email not found.";
+            echo "Error updating admission form.";
         }
 
-        // Redirect back to the page to refresh the table
-        header('Location: ' . $_SERVER['PHP_SELF']);
-        exit();
-    } else {
-        $_SESSION['error'] = "Failed to approve the request.";
-    }
-}
+        // Send the email with PHPMailer
+        $mail = new PHPMailer(true);
+        try {
+            // SMTP configuration
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
+            $mail->SMTPAuth = true;
+            $mail->Username = 'sweetmiyagi@gmail.com';  // Your email (sender's email)
+            $mail->Password = 'niui ynqm ojtp bwva';  // Your Gmail app password
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS encryption
+            $mail->Port = 587;  // SMTP Port
 
+            // Sender and recipient details
+            $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');  // Sender's email
+            $mail->addAddress($admissionData['email'], $admissionData['first_name']);  // Recipient's email
+            $mail->isHTML(true);
+            $mail->Subject = 'Your Admission Has Been Approved';
+            $mail->Body = "Dear {$admissionData['first_name']},<br><br>
+                           Congratulations! Your admission has been approved. Your student number is: <b>{$studentNumber}</b>.<br><br>
+                           Regards,<br>School Administration";
+
+            $mail->send();
+            echo "Student number generated and email sent successfully!";
+        } catch (Exception $e) {
+            echo "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+    } else {
+        echo "Error inserting data into the students table.";
+    }
+
+    // Do not close the connection here as it's reused later
+    $stmt->close();
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -81,29 +123,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
 </head>
 <body>
-    <h1>Unapproved Admission Requests</h1>
+<!-- Fetch Unapproved Admission Requests -->
+<h1>Unapproved Admission Requests</h1>
+<?php
+$query = "SELECT id, first_name, last_name, birth_date, gender, phone, email FROM admission_form WHERE is_confirmed = 0";
+$result = $connection->query($query);
 
-    <?php
-    if (isset($_SESSION['success'])) {
-        echo "<p style='color: green;'>".$_SESSION['success']."</p>";
-        unset($_SESSION['success']);
-    }
-
-    if (isset($_SESSION['error'])) {
-        echo "<p style='color: red;'>".$_SESSION['error']."</p>";
-        unset($_SESSION['error']);
-    }
-
-    // Fetch all unapproved admission requests
-    $query = "SELECT student_number, first_name, email FROM admission_form WHERE is_confirmed = 0";
-    $result = $connection->query($query);
-    ?>
-
+if ($result->num_rows > 0): ?>
     <table border="1">
         <thead>
             <tr>
-                <th>Student Number</th>
+                <th>ID</th>
                 <th>First Name</th>
+                <th>Last Name</th>
+                <th>Birth Date</th>
+                <th>Gender</th>
+                <th>Phone</th>
                 <th>Email</th>
                 <th>Action</th>
             </tr>
@@ -111,13 +146,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <tbody>
             <?php while ($row = $result->fetch_assoc()): ?>
                 <tr>
-                    <td><?php echo $row['student_number']; ?></td>
+                    <td><?php echo $row['id']; ?></td>
                     <td><?php echo $row['first_name']; ?></td>
+                    <td><?php echo $row['last_name']; ?></td>
+                    <td><?php echo $row['birth_date']; ?></td>
+                    <td><?php echo $row['gender']; ?></td>
+                    <td><?php echo $row['phone']; ?></td>
                     <td><?php echo $row['email']; ?></td>
                     <td>
-                        <!-- Approve Button -->
-                        <form action="admin_admission_approval.php" method="POST">
-                            <input type="hidden" name="student_number" value="<?php echo $row['student_number']; ?>">
+                        <form method="POST">
+                            <input type="hidden" name="student_id" value="<?php echo $row['id']; ?>">
                             <button type="submit" name="approve">Approve</button>
                         </form>
                     </td>
@@ -125,5 +163,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <?php endwhile; ?>
         </tbody>
     </table>
+<?php else: ?>
+    <p>No unapproved admission requests found.</p>
+<?php endif; ?>
 </body>
 </html>
