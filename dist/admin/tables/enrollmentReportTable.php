@@ -12,7 +12,8 @@ $sql = "
         e.school_year_id AS enrolled_school_year,
         e.type,
         e.grade_level,
-        e.strand,
+        e.student_type,
+        e.track,
         e.section,
         e.date_enrolled,
         e.status AS enrollment_status,
@@ -114,7 +115,8 @@ $result = $connection->query($sql);
 
                     <thead class="border border-gray-300  text-sm">
                         <tr>
-                            <th class="py-3 px-4 text-left">Enrollment ID</th>
+                            <th class="py-3 px-4 text-left">ID</th>
+                            <th class="py-3 px-4 text-left">Student Type</th>
                             <th class="py-3 px-4 text-left">Student Number</th>
                             <th class="py-3 px-4 text-left">Student Name</th>
                             <th class="py-3 px-4 text-left">School year</th>
@@ -135,11 +137,12 @@ $result = $connection->query($sql);
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<tr>
                                             <td  class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_id']}</td>
+                                             <td  class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_type']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['student_number_label']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['student_name']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['school_year_label']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['type']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['strand']}</td>
+                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['track']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['grade_level']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['section_name_labels']}</td>
                                             <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['date_enrolled']}</td>

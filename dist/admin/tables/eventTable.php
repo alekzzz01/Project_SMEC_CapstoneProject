@@ -6,7 +6,7 @@ $event_type_filter = isset($_GET['event_type']) ? $_GET['event_type'] : '';
 $search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
 
 // Base SQL query
-$sql = "SELECT event_id, event_name, event_date, venue, event_type, banner, description, created_at FROM events";
+$sql = "SELECT * FROM events";
 
 // Conditions for filtering and search
 $conditions = [];
@@ -101,7 +101,6 @@ $connection->close();
                       </div>
                     </th>
                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Event Name</th>
-                    <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Event Date</th>
                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Event Venue</th>
                     <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Type</th>
                     <!-- <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th> -->
@@ -123,7 +122,7 @@ $connection->close();
                                 </div>
                               </td>';
                         echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">' . htmlspecialchars($row['event_name']) . '</td>';
-                        echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['event_date']) . '</td>';
+                       
                         echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['venue']) . '</td>';
                         echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['event_type']) . '</td>';
                         // echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['description']) . '</td>';

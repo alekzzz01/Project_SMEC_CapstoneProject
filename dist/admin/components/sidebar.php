@@ -93,7 +93,7 @@
                         School Management
                     </summary>
                     <ul>
-                        <li><a>Admissions</a></li>
+                        <li><a href="admin_admission_approval.php">Admissions</a></li>
                         <li><a>Enrollment</a></li>
                         <li><a>Fees</a></li>
                        

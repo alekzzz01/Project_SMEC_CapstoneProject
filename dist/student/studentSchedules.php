@@ -23,14 +23,13 @@
     <html data-theme="light"></html>
    
 </head>
-<body class="bg-gray-100 h-screen">
-
+<body class="bg-[#f7f7f7] min-h-screen">
 
     
     <?php include './components/navbar.php' ?>
 
 
-    <div class="container mx-auto py-14 px-4 lg:px-12">
+    <div class="max-w-7xl mx-auto py-14 px-4">
 
 
     <div class="flex items-center justify-between w-full ">

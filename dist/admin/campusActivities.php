@@ -8,10 +8,13 @@ include '../../config/db.php';
     // Add Event
     if (isset($_POST['createEvent'])) {
         $eventName = $_POST['eventName'];
-        $eventSchedule = $_POST['eventSchedule'];
+        $from = $_POST['date_time_from'];
+        $to = $_POST['date_time_to'];
         $eventVenue = $_POST['eventVenue'];
         $eventType = $_POST['eventType'];
         $eventDescription = $_POST['eventDescription'];
+        $organizerName = $_POST['organizer_name'];
+        $organizerType = $_POST['organizer_type'];
 
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
         if (in_array($_FILES['banner-Image']['type'], $allowedTypes) && $_FILES['banner-Image']['size'] <= 5 * 1024 * 1024) { // 5MB size limit
@@ -24,8 +27,8 @@ include '../../config/db.php';
         
 
         // Prepare and execute the SQL statement
-        $stmt = $connection->prepare("INSERT INTO events (event_name, event_date, venue, event_type, description, banner) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssb", $eventName, $eventSchedule, $eventVenue, $eventType, $eventDescription, $null);
+        $stmt = $connection->prepare("INSERT INTO events (event_name, date_time_from, date_time_to, venue, event_type,  description, organizer_name , organizer_type, banner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssb", $eventName, $from, $to,  $eventVenue, $eventType, $eventDescription, $organizerName, $organizerType, $bannerImage);
         $stmt->send_long_data(5, $bannerImage);
 
 
@@ -35,6 +38,8 @@ include '../../config/db.php';
             exit();
         } else {
             $_SESSION['error'] = "Failed to create event. Please try again.";
+            header('Location: ' . $_SERVER['PHP_SELF']);
+            exit();
         }
         
     }
@@ -134,12 +139,12 @@ include '../../config/db.php';
 
 
 </head>
-<body class="flex h-screen">
+<body class="flex min-h-screen">
 
 <?php include('./components/sidebar.php'); ?>
 
 
-<div class="flex flex-col w-full shadow-xl">
+<div class="flex flex-col w-full">
 
 <!-- Navbar -->
 
@@ -254,14 +259,46 @@ include '../../config/db.php';
                             
                                 </div>
                         </div>
-                
-                        <div>
-                                <label class="text-gray-800 text-sm mb-2 block">Schedule</label>
-                                <div class="relative flex items-center">
-                                <input name="eventSchedule" type="datetime-local" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
-                            
-                                </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 block">From</label>
+                                    <div class="relative flex items-center">
+                                    <input name="date_time_from" type="datetime-local" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                
+                                    </div>
+                            </div>
+                    
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 block">To</label>
+                                    <div class="relative flex items-center">
+                                    <input name="date_time_to" type="datetime-local" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                
+                                    </div>
+                            </div>
+
                         </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 block">Organizer Name</label>
+                                    <div class="relative flex items-center">
+                                    <input name="organizer_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer name" />
+                                
+                                    </div>
+                            </div>
+
+                            <div>
+                                    <label class="text-gray-800 text-sm mb-2 block">Organizer Type</label>
+                                    <div class="relative flex items-center">
+                                    <input name="organizer_type" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer type" />
+                                
+                                    </div>
+                            </div>
+
+                        </div>
+
+
 
                         <div>
                                 <label class="text-gray-800 text-sm mb-2 block">Venue</label>
@@ -286,7 +323,7 @@ include '../../config/db.php';
                         </div>
 
                         <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Banner Image</label>
+                                <label class="text-gray-800 text-sm  mb-6 block">Banner Image</label>
                                 <div class="relative flex items-center">
                                 <input name="banner-Image" type="file" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                 </div>

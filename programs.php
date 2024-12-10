@@ -55,14 +55,10 @@
                                     <div>
                                         <div
                                             class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
+                                            <div class="font-bold">Nursery</div>
 
                                             <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
+                                            Nursery education focuses on fostering the early development of young children through play-based learning, helping them develop basic social, emotional, and motor skills. Activities include storytelling, music, and hands-on exploration to nurture creativity and curiosity.
                                             </div>
                                         </div>
                                     </div>
@@ -70,7 +66,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
+                                    src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/468720692_1114624990669330_8113704273698150300_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHrq3Mqq-OIOILzMBPbOtO7GBx9IZsGqh4YHH0hmwaqHv6tO88UX9lZeZ0ZQTZ8_yqZLWbN8k4Ji3jsZjj_ga78&_nc_ohc=OqBvhy0YpckQ7kNvgEiz-39&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=Ap-H1ccrSFwTU8k4-xvz6V7&oh=00_AYAkaHAjbxqNCHG0lUl-iE0tpQWtpSLcfhz_GKWnGwwf4Q&oe=675CC31F"
                                 />
                             </div>
 
@@ -84,14 +80,10 @@
                                     <div>
                                         <div
                                             class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
+                                            <div class="font-bold">Kinder</div>
 
                                             <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
+                                                Kindergarten prepares children for formal schooling by introducing foundational concepts in literacy, numeracy, and basic problem-solving. It emphasizes structured play and activities that develop fine motor skills and social interactions.
                                             </div>
                                         </div>
                                     </div>
@@ -99,7 +91,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
+                                    src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/468666050_1114142917384204_8106935391583286270_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGxUzAMmKKfsoIMdTcKlBQSix69u034W8SLHr27TfhbxDysMJXEQiEky8NV3kbajPXgOq-589Fwvr6nT2j_DJwP&_nc_ohc=HTaXcR0nqScQ7kNvgEgb-xV&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=AeQSfdCWdnbdP85BMRq24Cm&oh=00_AYAWATLVoudipNV1-2um4WDgBGhhxRsHQkhdE2yjilIYTw&oe=675CC1C5"
                                 />
                             </div>
 
@@ -114,14 +106,10 @@
                                     <div>
                                         <div
                                             class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
+                                            <div class="font-bold">Prepatory</div>
 
                                             <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
+                                            Preparatory education builds on kindergarten skills, focusing on readiness for primary education with more advanced literacy and numeracy exercises. It instills discipline, responsibility, and a love for learning through engaging and interactive lessons.
                                             </div>
                                         </div>
                                     </div>
@@ -129,7 +117,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
+                                          src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/468666050_1114142917384204_8106935391583286270_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGxUzAMmKKfsoIMdTcKlBQSix69u034W8SLHr27TfhbxDysMJXEQiEky8NV3kbajPXgOq-589Fwvr6nT2j_DJwP&_nc_ohc=HTaXcR0nqScQ7kNvgEgb-xV&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=AeQSfdCWdnbdP85BMRq24Cm&oh=00_AYAWATLVoudipNV1-2um4WDgBGhhxRsHQkhdE2yjilIYTw&oe=675CC1C5"
                                 />
                             </div>
 
@@ -142,7 +130,7 @@
 
             <!-- Elementary -->
 
-            <div class="elementary">
+            <div class="elementary mb-12">
 
                 <h2 class="text-3xl lg:text-4xl font-semibold mb-16">Elementary</h2>
 
@@ -155,14 +143,10 @@
                                     <div>
                                         <div
                                             class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
+                                            <div class="font-bold">Grade 1 - 6</div>
 
                                             <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
+                                            Elementary education covers a broad curriculum, including core subjects like Math, Science, English, and Social Studies, designed to develop academic competence and critical thinking. It promotes holistic development through extracurricular activities, character building, and life skills training.
                                             </div>
                                         </div>
                                     </div>
@@ -170,162 +154,121 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
+                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
                                 />
                             </div>
 
-                            <p class=" text-xl font-medium m-3">Nursery</p>
+                            <p class=" text-xl font-medium m-3">Grade 1 - 6</p>
                         </div>
 
-                        <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
-                                <div
-                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
-                                    <div>
-                                        <div
-                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
-
-                                            <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img
-                                    alt=""
-                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
-                                />
-                            </div>
-
-                            <p class=" text-xl font-medium m-3">Kinder</p>
-                        </div>
-
-
-                        <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
-                                <div
-                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
-                                    <div>
-                                        <div
-                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
-
-                                            <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img
-                                    alt=""
-                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
-                                />
-                            </div>
-
-                            <p class=" text-xl font-medium m-3">Prepatory</p>
-                        </div>
-
-                        <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
-                                <div
-                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
-                                    <div>
-                                        <div
-                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
-
-                                            <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img
-                                    alt=""
-                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
-                                />
-                            </div>
-
-                            <p class=" text-xl font-medium m-3">Prepatory</p>
-                        </div>
-
-                        <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
-                                <div
-                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
-                                    <div>
-                                        <div
-                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
-
-                                            <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img
-                                    alt=""
-                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
-                                />
-                            </div>
-
-                            <p class=" text-xl font-medium m-3">Prepatory</p>
-                        </div>
-
-                        <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
-                                <div
-                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
-                                    <div>
-                                        <div
-                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
-                                            <div class="font-bold">Jessie Watsica</div>
-
-                                            <div class="opacity-60 text-sm ">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit. Distinctio dolores error iure, perferendis
-                                                sequi totam. Ad aliquam aperiam atque deleniti dolor
-                                                dolorem enim esse et in, inventore itaque, pariatur
-                                                reprehenderit.
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <img
-                                    alt=""
-                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://images.unsplash.com/photo-1650790362847-3c1dd609d0c5?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=686&q=80"
-                                />
-                            </div>
-
-                            <p class=" text-xl font-medium m-3">Prepatory</p>
-                        </div>
 
                     </div>
 
             </div>
+
+
+            <!-- Junior High School -->
+            <div class="juniorhighschool mb-12">
+
+                <h2 class="text-3xl lg:text-4xl font-semibold mb-16">Junior High School</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        <div>
+                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                                <div
+                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
+                                    <div>
+                                        <div
+                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
+                                            <div class="font-bold">Grade 7 - 10</div>
+
+                                            <div class="opacity-60 text-sm ">
+                                            Elementary education covers a broad curriculum, including core subjects like Math, Science, English, and Social Studies, designed to develop academic competence and critical thinking. It promotes holistic development through extracurricular activities, character building, and life skills training.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img
+                                    alt=""
+                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
+                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                />
+                            </div>
+
+                            <p class=" text-xl font-medium m-3">Grade 7 - 10</p>
+                        </div>
+
+
+                    </div>
+
+            </div>
+
+
+                 
+            <div class="seniorhighschool mb-12">
+
+                <h2 class="text-3xl lg:text-4xl font-semibold mb-16">Senior High School Programs</h2>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                        <div>
+                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                                <div
+                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
+                                    <div>
+                                        <div
+                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
+                                            <div class="font-bold">ABM</div>
+
+                                            <div class="opacity-60 text-sm ">
+                                            Elementary education covers a broad curriculum, including core subjects like Math, Science, English, and Social Studies, designed to develop academic competence and critical thinking. It promotes holistic development through extracurricular activities, character building, and life skills training.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img
+                                    alt=""
+                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
+                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                />
+                            </div>
+
+                            <p class=" text-xl font-medium m-3">ABM</p>
+                        </div>
+
+                        <div>
+                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                                <div
+                                    class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
+                                    <div>
+                                        <div
+                                            class="transform-gpu  p-4 space-y-3 text-xl group-hover:opacity-100 group-hover:translate-y-0 translate-y-4 pb-10 transition duration-300 ease-in-out">
+                                            <div class="font-bold">GAS</div>
+
+                                            <div class="opacity-60 text-sm ">
+                                            Elementary education covers a broad curriculum, including core subjects like Math, Science, English, and Social Studies, designed to develop academic competence and critical thinking. It promotes holistic development through extracurricular activities, character building, and life skills training.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img
+                                    alt=""
+                                    class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
+                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                />
+                            </div>
+
+                            <p class=" text-xl font-medium m-3">GAS</p>
+                        </div>
+
+                     
+
+                    </div>
+
+            </div>
+
+
 
         </div>
     </section>

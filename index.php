@@ -256,8 +256,8 @@
         <h2 class="text-3xl lg:text-5xl font-bold text-white">CONTACT</h2>
     </div>
 
-    <section class="py-24 px-4 border-b border-gray-100">
-        <div class="flex flex-col justify-center items-center gap-12 mx-auto max-w-7xl mb-24">
+    <section class="py-24 px-4">
+        <div class="flex flex-col justify-center items-center gap-12 mx-auto max-w-7xl">
                     <div class="text-center">
                         <h2 class="text-3xl lg:text-4xl font-bold mb-4">Have a question? Reach out to us!</h2>
                         <p class="text-gray-400">Telefax: 8642-2591 • Email: smec_dolmarpasig@yahoo.com • smecdolmarpasig@gmail.com</p>
@@ -300,9 +300,9 @@
 
             </div>
 
-            <div class=" mx-auto max-w-7xl">
+            <!-- <div class=" mx-auto max-w-7xl">
             <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.854383684177!2d121.0790562760387!3d14.55031847830387!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c62a30c9328d%3A0xe7f55d6cec7bcb54!2sSta.%20Marta%20Educational%20Center%2C%20Inc.!5e0!3m2!1sen!2sph!4v1732789028666!5m2!1sen!2sph" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-            </div>
+            </div> -->
 
     </section>
 
