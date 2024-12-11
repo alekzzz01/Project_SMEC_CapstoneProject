@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mail->Body    = 'Your OTP is: ' . $otp;
 
                 $mail->send();
-                $_SESSION['message'] = "OTP has been sent to your email.";
+              
 
                 // Redirect to OTP verification page
                 header('Location: otpAuth.php');
