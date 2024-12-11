@@ -46,36 +46,35 @@ $newSeq = str_pad($lastSeq + 1, 4, "0", STR_PAD_LEFT);
 // Construct the new student number
 $studentNumber = $studentNumberPrefix . $newSeq;
 
-    // Insert the data into the students table
-    $insertQuery = "
-        INSERT INTO students (user_id, student_number, first_name, last_name, date_of_birth, gender, contact_number)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ";
-    $insertStmt = $connection->prepare($insertQuery);
-    $insertStmt->bind_param(
-        "issssss",
-        $studentId,
-        $studentNumber,
-        $admissionData['first_name'],
-        $admissionData['last_name'],
-        $admissionData['birth_date'],
-        $admissionData['gender'],
-        $admissionData['phone']
-    );
+    // Insert the data into the students table directly from admission_form
+$insertQuery = "
+INSERT INTO students (student_number, first_name, last_name, date_of_birth, gender, contact_number)
+VALUES (?, ?, ?, ?, ?, ?)
+";
+$insertStmt = $connection->prepare($insertQuery);
+$insertStmt->bind_param(
+"ssssss",
+$studentNumber,
+$admissionData['first_name'],
+$admissionData['last_name'],
+$admissionData['birth_date'],
+$admissionData['gender'],
+$admissionData['phone']
+);
 
-    if ($insertStmt->execute()) {
-        echo "Student data inserted successfully.";
+if ($insertStmt->execute()) {
+echo "Student data inserted successfully.";
 
-        // Update the is_confirmed field in the admission_form table
-        $updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
-        $updateStmt = $connection->prepare($updateQuery);
-        $updateStmt->bind_param("i", $studentId);
+// Update the is_confirmed field in the admission_form table
+$updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
+$updateStmt = $connection->prepare($updateQuery);
+$updateStmt->bind_param("i", $studentId);
 
-        if ($updateStmt->execute()) {
-            echo "Admission form updated successfully.";
-        } else {
-            echo "Error updating admission form.";
-        }
+if ($updateStmt->execute()) {
+    echo "Admission form updated successfully.";
+} else {
+    echo "Error updating admission form.";
+}
 
         // Send the email with PHPMailer
         $mail = new PHPMailer(true);
