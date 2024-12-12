@@ -31,7 +31,7 @@ if (isset($_POST['submitForm'])) {
    
                
     $sql = "INSERT INTO student_enrollment (student_id, student_type, school_year_id, type, grade_level, track, date_enrolled, status) 
-                        VALUES (?, ?, ?, ?, ?, ?, NOW(), 'pending')";
+                        VALUES (?, ?, ?, ?, ?, ?, NOW(), 'Pending')";
 
     if ($stmt = $connection->prepare($sql)) {
                

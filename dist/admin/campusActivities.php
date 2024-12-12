@@ -6,7 +6,6 @@ include '../../config/db.php';
 
     // Add Event
    
-
     if (isset($_POST['createEvent'])) {
         $eventName = $_POST['eventName'];
         $from = $_POST['date_time_from'];
@@ -57,27 +56,36 @@ include '../../config/db.php';
     }
     
 
-    // Delete Event from the delete buttonin the event table
+ 
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
+    // Retrieve the event ID from the POST data
+ 
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_event_id'])) {
-        $event_id = intval($_POST['delete_event_id']);
-        $stmt = $connection->prepare("DELETE FROM events WHERE event_id = ?");
-        $stmt->bind_param("i", $event_id);
-    
-        if ($stmt->execute()) {
-            $_SESSION['message'] = "Event deleted successfully!";
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
-        } else {
-            $_SESSION['error'] = "Failed to delete event.";
-        }
-    
-        $stmt->close();
-        $connection->close();
-        exit();
+    // Debug: Check if the event ID is being passed correctly
+    echo "Event ID is: " . $event_id;
+
+    // Prepare the SQL query to archive the event
+    $sql = "UPDATE events SET is_archived = 1 WHERE event_id = ?";
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("i", $event_id);  // Bind the event ID as an integer parameter
+
+    if ($stmt->execute()) {
+        // Set a success message in the session
+        $_SESSION['message'] = "Event archived successfully!" . $event_id;
+    } else {
+        // Set an error message in the session
+        $_SESSION['error'] = "Error archiving event: " . $stmt->error;
     }
 
-    
+    // Close the statement and connection
+    $stmt->close();
+    $connection->close();
+
+    // Redirect back to the events page
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit();
+    }
+
 
     // if (isset($_POST['createAnnouncement'])) {
 
@@ -381,19 +389,21 @@ include '../../config/db.php';
     });
 </script>
 
+
+
 <script>
-function deleteEvent(eventId) {
-    if (confirm("Are you sure you want to delete this event?")) {
+   function archiveEvent(eventId) {
+    if (confirm("Are you sure you want to archive this event?")) {
         // Create a form dynamically
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = ''; // Submits to the same file
 
-        // Add the event ID as a hidden input
+        // Add the event ID as a hidden input field
         const input = document.createElement('input');
         input.type = 'hidden';
-        input.name = 'delete_event_id';
-        input.value = eventId;
+        input.name = 'archiveEvent';  // This name must match with the PHP code
+        input.value = eventId;  // Set the event ID here
         form.appendChild(input);
 
         // Append form to the body and submit it
@@ -401,6 +411,8 @@ function deleteEvent(eventId) {
         form.submit();
     }
 }
+
+     
 </script>
 
 

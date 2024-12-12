@@ -33,4 +33,20 @@ function togglePassword(inputId, iconId) {
             }
 }
 
-// for sidebar
+// for sidebar  
+
+$(document).ready(function () {
+  console.log("Document is ready."); // Debug: Check if the document is fully loaded.
+
+  $('#toggleSidebar').on('click', function () {
+    console.log("Toggle Sidebar button clicked."); // Debug: Log button click.
+    $('#sidebar').toggleClass('-translate-x-full');
+    console.log("Sidebar classes:", $('#sidebar').attr('class')); // Debug: Log sidebar classes.
+  });
+
+  $('#closeSidebar').on('click', function () {
+    console.log("Close Sidebar button clicked."); // Debug: Log button click.
+    $('#sidebar').addClass('-translate-x-full');
+    console.log("Sidebar classes:", $('#sidebar').attr('class')); // Debug: Log sidebar classes.
+  });
+});

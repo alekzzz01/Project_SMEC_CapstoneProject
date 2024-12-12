@@ -100,7 +100,7 @@ $femaleCountsJSON = json_encode(array_values($femaleCounts));
         xaxis: {
           categories: gradeLevels,
           title: {
-                    text: 'Grade Levels'
+                    text: 'Grade Levels - Current Year'
                 }
         },
         yaxis: {
