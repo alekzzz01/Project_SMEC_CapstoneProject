@@ -1,7 +1,25 @@
 <?php
 
-
 include '../../config/db.php';
+
+$user_id = $_SESSION['user_id'];
+
+// Prepare and execute the query to fetch the user's name
+$sql = "SELECT name FROM users WHERE user_id = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("i", $user_id);  // Binding user_id as an integer
+$stmt->execute();
+$stmt->bind_result($user_name);  // Bind the result to the $user_name variable
+$stmt->fetch();  // Fetch the result
+$stmt->close();  // Close the prepared statement
+
+// // Check if the name was fetched successfully
+// if ($user_name) {
+//     echo "Welcome, " . $user_name;  // Display the user's name
+// } else {
+//     echo "User not found.";  // If user is not found in the database
+// }
+
 
 
 $sql = "
@@ -63,7 +81,7 @@ $result = $connection->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TailwindCSS Datatable with Export Buttons</title>
+  
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <!-- DataTables -->
@@ -80,6 +98,9 @@ $result = $connection->query($sql);
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/jquery.dataTables.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+
+
+
 </head>
 <body class="bg-gray-100 py-10">
 
@@ -124,40 +145,40 @@ $result = $connection->query($sql);
                             <th class="py-3 px-4 text-left">Strand</th>
                             <th class="py-3 px-4 text-left">Grade Level</th>
                             <th class="py-3 px-4 text-left">Section</th>
-                            <th class="py-3 px-4 text-left">Date Enrolled</th>
                             <th class="py-3 px-4 text-left">Enrollment Status</th>
+                            <th class="py-3 px-4 text-left">Date Enrolled</th>
+                       
                     
                         
                         </tr>
                     </thead>
                         <tbody class="divide-y divide-gray-200 border border-gray-300 ">
-                            <?php
-                            
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    echo "<tr>
-                                            <td  class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_id']}</td>
-                                             <td  class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_type']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['student_number_label']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['student_name']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['school_year_label']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['type']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['track']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['grade_level']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['section_name_labels']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['date_enrolled']}</td>
-                                            <td class='px-6 py-4 whitespace-nowrap text-sm  text-gray-800'>{$row['enrollment_status']}</td>
-                                    
-                                        </tr>";
-                                }
-                                echo "</table>";
-                            } else {
-                                echo "No records found.";
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_id']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_type']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_number_label']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_name']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['school_year_label']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['type']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['track']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['grade_level']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['section_name_labels']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_status']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>" . date('M. d, Y', strtotime($row['date_enrolled'])) . "</td>
+                                    </tr>";
                             }
-                            
-                            // Close the connection
-                            $connection->close();
-                            ?>
+                            echo "</table>";
+                        } else {
+                            echo "No records found.";
+                        }
+
+                        // Close the connection
+                        $connection->close();
+                        ?>
+
                         
                         </tbody>
                 </table>
@@ -172,7 +193,7 @@ $result = $connection->query($sql);
       
     </div>
 
-<script>
+    <script>
     $(document).ready(function () {
         // Initialize DataTable
         var table = $('#example').DataTable({
@@ -181,21 +202,64 @@ $result = $connection->query($sql);
                 {
                     extend: 'excelHtml5',
                     text: 'Export to Excel',
-                    className: 'bg-green-500 text-white px-3 py-2 rounded hover:bg-green-600',
+            
+                    title: function () {
+                        var selectedSchoolYear = $('#schoolYearFilter').val();
+                        if (selectedSchoolYear) {
+                            return 'Sta. Martha Educational Inc. - Enrollment reports of ' + selectedSchoolYear;
+                        }
+                        return 'Enrollment reports';  // Default title
+                    },
+                 
+                    customize: function (xlsx) {
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var rows = sheet.getElementsByTagName('row');
+                        var lastRowIndex = rows.length; // Get the last row index in the sheet
+
+                        // Create the new row data you want to append after the data
+                        var newRow = '<row r="' + (lastRowIndex + 1) + '">';
+                        newRow += '<c t="inlineStr" r="A' + (lastRowIndex + 1) + '"><is><t>Generated by: <?php echo $user_name; ?> | School Year: ' + $('#schoolYearFilter').val() + ' | Date: ' + new Date().toLocaleString() + '</t></is></c>';
+                        newRow += '<c t="inlineStr" r="B' + (lastRowIndex + 1) + '"><is><t></t></is></c>';
+                        newRow += '</row>';
+
+                        // Append the new row to the end of the sheet
+                        sheet.getElementsByTagName('sheetData')[0].innerHTML += newRow;
+                    },
+
+                    
+                    exportOptions: {
+                        columns: ':visible' // Export only visible columns
+                    },
                 },
                 {
                     extend: 'pdfHtml5',
                     text: 'Export to PDF',
-                    className: 'bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600',
+                    title: function () {
+                        var selectedSchoolYear = $('#schoolYearFilter').val();
+                        if (selectedSchoolYear) {
+                            return 'Sta. Martha Educational Inc. - Enrollment reports of ' + selectedSchoolYear;
+                        }
+                        return 'Sta. Martha Educational Inc. - Overall Enrollment reports';  // Default title
+                    }, messageBottom : 'Generated by: <?php echo $user_name; ?> | Date: ' + new Date().toLocaleString(),
+                 
+                    
                 },
                 {
                     extend: 'print',
                     text: 'Print',
-                    className: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600',
+                    title: function () {
+                        var selectedSchoolYear = $('#schoolYearFilter').val();
+                        if (selectedSchoolYear) {
+                            return 'Sta. Martha Educational Inc. - Enrollment reports of ' + selectedSchoolYear;
+                        }
+                        return 'Sta. Martha Educational Inc. - Overall Enrollment reports';  // Default title
+                    }, messageBottom : 'Generated by: <?php echo $user_name; ?> | Date: ' + new Date().toLocaleString(),
+                 
+                    
                 }
             ],
             responsive: true,
-            pageLength: 5,
+            pageLength: 10,
             language: {
                 paginate: {
                     next: 'Next »',
@@ -206,17 +270,19 @@ $result = $connection->query($sql);
 
         // Add event listener for the school year filter dropdown
         $('#schoolYearFilter').on('change', function () {
-            var selectedSchoolYear = $(this).val(); // Get selected value
+            var selectedSchoolYear = $(this).val().trim(); // Trim spaces to ensure consistency
+            console.log("Selected School Year: " + selectedSchoolYear); // Debugging
             if (selectedSchoolYear) {
-                // Filter table based on school year (column index 3 for school year)
-                table.column(3).search('^' + selectedSchoolYear + '$', true, false).draw();
+                // Filter the DataTable based on the selected school year (index 4 for school_year_label column)
+                table.column(4).search('^' + selectedSchoolYear + '$', true, false).draw();
             } else {
                 // Show all rows if "All" is selected
-                table.column(3).search('').draw();
+                table.column(4).search('').draw();
             }
         });
     });
-    </script>
+</script>
+
 
 </body>
 </html>
