@@ -6,7 +6,7 @@ $event_type_filter = isset($_GET['event_type']) ? $_GET['event_type'] : '';
 $search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
 
 // Base SQL query
-$sql = "SELECT * FROM events";
+$sql = "SELECT * FROM events WHERE is_archived = 0";  // Add condition to exclude archived events
 
 // Conditions for filtering and search
 $conditions = [];
@@ -29,7 +29,7 @@ if ($search_query) {
 
 // Combine conditions into the SQL query
 if (!empty($conditions)) {
-    $sql .= " WHERE " . implode(" AND ", $conditions);
+    $sql .= " AND " . implode(" AND ", $conditions); // Use AND to combine conditions
 }
 
 $stmt = $connection->prepare($sql);
@@ -47,9 +47,8 @@ $events = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
 // Close the connection
 $connection->close();
-
-
 ?>
+
 
 
 <!DOCTYPE html>
@@ -140,12 +139,14 @@ $connection->close();
                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
                            Edit
                         </a>
-                        <button onclick="deleteEvent(' . $row['event_id'] . ')" 
+                    
+                        <button onclick="archiveEvent(' . $row['event_id'] . ')" 
                                 type="button" 
-                                class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">
-                                Delete
+                                class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 disabled:opacity-50 disabled:pointer-events-none">
+                                Archive
                         </button>
                       </td>';
+                
                 
 
                         echo '</tr>';
