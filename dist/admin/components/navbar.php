@@ -1,6 +1,4 @@
 
-
-
 <nav class="bg-white md:border-b lg:border-b border-gray-100 shadow md:shadow-none md:bg-transparent p-4 flex justify-between items-center h-20">
     
     <div class="flex items-center gap-6">
@@ -12,7 +10,6 @@
 
 
     </div>
-    
 
 
     <div class="flex items-center gap-4">
@@ -68,3 +65,5 @@
 
 
 </nav>
+
+<script src="../../assets/js/script.js"></script>
