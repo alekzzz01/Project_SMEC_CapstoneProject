@@ -4,8 +4,9 @@ session_start();
 include '../../config/db.php';
 
 
-
     // Add Event
+   
+
     if (isset($_POST['createEvent'])) {
         $eventName = $_POST['eventName'];
         $from = $_POST['date_time_from'];
@@ -14,24 +15,36 @@ include '../../config/db.php';
         $eventType = $_POST['eventType'];
         $eventDescription = $_POST['eventDescription'];
         $organizerName = $_POST['organizer_name'];
-        $organizerType = $_POST['organizer_type'];
-
-        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-        if (in_array($_FILES['banner-Image']['type'], $allowedTypes) && $_FILES['banner-Image']['size'] <= 5 * 1024 * 1024) { // 5MB size limit
-            $bannerImage = file_get_contents($_FILES['banner-Image']['tmp_name']);
-        } else {
-            $_SESSION['error'] = "Invalid file type or size. Only JPEG, PNG, and GIF files are allowed, and size must not exceed 5MB.";
-            header('Location: ' . $_SERVER['PHP_SELF']);
-            exit();
+    
+        $targetDir = "uploads/";
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
         }
-        
-
-        // Prepare and execute the SQL statement
-        $stmt = $connection->prepare("INSERT INTO events (event_name, date_time_from, date_time_to, venue, event_type,  description, organizer_name , organizer_type, banner) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssb", $eventName, $from, $to,  $eventVenue, $eventType, $eventDescription, $organizerName, $organizerType, $bannerImage);
-        $stmt->send_long_data(5, $bannerImage);
-
-
+    
+        $bannerImage = null;
+        if (isset($_FILES['banner-Image']) && $_FILES['banner-Image']['error'] === UPLOAD_ERR_OK) {
+            $fileName = basename($_FILES['banner-Image']['name']);
+            $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+    
+            // Validate file type
+            if (in_array($fileType, $allowedTypes)) {
+                $sanitizedFileName = time() . "_" . preg_replace("/[^a-zA-Z0-9_\.-]/", "", $fileName);
+                $targetFilePath = $targetDir . $sanitizedFileName;
+    
+                if (move_uploaded_file($_FILES['banner-Image']['tmp_name'], $targetFilePath)) {
+                    $bannerImage = $targetFilePath;
+                } else {
+                    die("Failed to upload the file.");
+                }
+            } else {
+                die("Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.");
+            }
+        }
+    
+        $stmt = $connection->prepare("INSERT INTO events (event_name, date_time_from, date_time_to, venue, event_type, description, organizer_name, banner) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssss", $eventName, $from, $to, $eventVenue, $eventType, $eventDescription, $organizerName, $bannerImage);
+    
         if ($stmt->execute()) {
             $_SESSION['message'] = "Event created successfully!";
             header('Location: ' . $_SERVER['PHP_SELF']);
@@ -41,8 +54,8 @@ include '../../config/db.php';
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
-        
     }
+    
 
     // Delete Event from the delete buttonin the event table
 
@@ -279,23 +292,13 @@ include '../../config/db.php';
 
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
+                    
+                        <div>
                                     <label class="text-gray-800 text-sm mb-2 block">Organizer Name</label>
                                     <div class="relative flex items-center">
                                     <input name="organizer_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer name" />
                                 
                                     </div>
-                            </div>
-
-                            <div>
-                                    <label class="text-gray-800 text-sm mb-2 block">Organizer Type</label>
-                                    <div class="relative flex items-center">
-                                    <input name="organizer_type" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer type" />
-                                
-                                    </div>
-                            </div>
-
                         </div>
 
 

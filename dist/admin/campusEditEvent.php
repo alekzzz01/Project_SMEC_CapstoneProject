@@ -2,8 +2,6 @@
 session_start();
 include '../../config/db.php';
 
-
-
 // Check if event_id is provided in the GET request
 if (isset($_GET['event_id'])) {
     $event_id = $_GET['event_id'];
@@ -19,13 +17,13 @@ if (isset($_GET['event_id'])) {
     if ($result->num_rows > 0) {
         // Fetch the event data
         $event = $result->fetch_assoc();
-    
     } else {
         echo json_encode(["error" => "Event not found"]);
+        exit();
     }
-
 } else {
     echo json_encode(["error" => "Event ID not provided"]);
+    exit();
 }
 
 // Check if the 'editEvent' button is pressed
@@ -33,58 +31,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
     // Get form data
     $event_id = $_POST['event_id'];
     $event_name = $_POST['eventName'];
-    $date_time_from = $_POST['date_time_to'];
+    $date_time_from = $_POST['date_time_from'];
     $date_time_to = $_POST['date_time_to'];
     $event_venue = $_POST['eventVenue'];
     $event_type = $_POST['eventType'];
     $event_description = $_POST['eventDescription'];
     $organizer_name = $_POST['organizer_name'];
-    $organizer_type = $_POST['organizer_type'];
 
-    // Handle banner image upload (optional)
-    if (isset($_FILES['banner-Image']) && $_FILES['banner-Image']['error'] == UPLOAD_ERR_OK) {
-        // Check file type and size
-        $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-        $file_type = mime_content_type($_FILES['banner-Image']['tmp_name']);
-        $file_size = $_FILES['banner-Image']['size'];
+    // Handle banner image upload
+    $bannerImage = $event['banner']; // Retain the existing banner by default
+    if (isset($_FILES['banner-Image']) && $_FILES['banner-Image']['error'] === UPLOAD_ERR_OK) {
+        $fileName = basename($_FILES['banner-Image']['name']);
+        $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-        if (in_array($file_type, $allowed_types) && $file_size <= 5 * 1024 * 1024) { // 5MB limit
-            $banner_image = file_get_contents($_FILES['banner-Image']['tmp_name']);
+        // Validate file type
+        if (in_array($fileType, $allowedTypes)) {
+            $sanitizedFileName = time() . "_" . preg_replace("/[^a-zA-Z0-9_\.\-]/", "", $fileName);
+            $targetDir = "uploads/";
+            $targetFilePath = $targetDir . $sanitizedFileName;
+
+            // Ensure the upload directory exists
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+
+            if (move_uploaded_file($_FILES['banner-Image']['tmp_name'], $targetFilePath)) {
+                $bannerImage = $targetFilePath;
+            } else {
+                $_SESSION['error'] = "Failed to upload the file.";
+                header("Location: " . $_SERVER['PHP_SELF'] . "?event_id=" . $event_id);
+                exit();
+            }
         } else {
-            $_SESSION['error'] = "Invalid file type or size. Only JPEG, PNG, and GIF files are allowed, and size must not exceed 5MB.";
-            header('Location: ' . $_SERVER['PHP_SELF'] . "?event_id=" . $event_id);
+            $_SESSION['error'] = "Invalid file type. Only JPG, JPEG, PNG, and GIF are allowed.";
+            header("Location: " . $_SERVER['PHP_SELF'] . "?event_id=" . $event_id);
             exit();
         }
-
-        // SQL query to update the event, including the banner
-        $sql = "UPDATE events SET 
-                    event_name = ?, 
-                    date_time_from = ?,
-                    date_time_to = ?,
-                    venue = ?, 
-                    event_type = ?, 
-                    description = ?,
-                    organizer_name = ?,
-                    organizer_type = ?, 
-                    banner = ? 
-                WHERE event_id = ?";
-        $stmt = $connection->prepare($sql);
-        $stmt->bind_param("ssssssssbi", $event_name, $date_time_from, $date_time_to, $event_venue, $event_type, $event_description, $organizer_name, $organizer_type, $banner_image, $event_id);
-    } else {
-        // No new file uploaded, retain existing banner
-        $sql = "UPDATE events SET 
-                    event_name = ?, 
-                    date_time_from = ?,
-                    date_time_to = ?,
-                    venue = ?, 
-                    event_type = ?, 
-                    description = ?,
-                    organizer_name = ?,
-                    organizer_type = ?
-                WHERE event_id = ?";
-        $stmt = $connection->prepare($sql);
-        $stmt->bind_param("ssssssssi", $event_name, $date_time_from, $date_time_to, $event_venue, $event_type, $event_description, $organizer_name, $organizer_type, $event_id);
     }
+
+    // SQL query to update the event
+    $sql = "UPDATE events SET 
+                event_name = ?, 
+                date_time_from = ?,
+                date_time_to = ?,
+                venue = ?, 
+                event_type = ?, 
+                description = ?,
+                organizer_name = ?,
+                banner = ?
+            WHERE event_id = ?";
+
+    $stmt = $connection->prepare($sql);
+    $stmt->bind_param("ssssssssi", $event_name, $date_time_from, $date_time_to, $event_venue, $event_type, $event_description, $organizer_name, $bannerImage, $event_id);
 
     // Execute the query
     if ($stmt->execute()) {
@@ -93,9 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
         exit();
     } else {
         $_SESSION['error'] = "Error updating event: " . $stmt->error;
+        header("Location: " . $_SERVER['PHP_SELF'] . "?event_id=" . $event_id);
+        exit();
     }
 
-    // Close the database connection
+    // Close the statement and connection
     $stmt->close();
     $connection->close();
 }
@@ -166,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
                                 // Check if there is a banner image
                                 if ($event['banner']) {
                                     // If a banner image exists, display it
-                                    echo '<img src="data:image/jpeg;base64,'.base64_encode($event['banner']).'" alt="Event Banner" class="w-full h-56 object-cover rounded-md mb-6">';
+                                    echo '<img src="'. $event['banner'] . '" alt="Event Banner" class="w-full h-56 object-cover rounded-md mb-6">';
                                 } else {
                                     // If there is no banner, display a message
                                 echo '<p class="mb-6">No banner available for this event.</p>';
@@ -200,23 +201,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
 
                         </div>
 
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
+                     
+                        <div>
                                     <label class="text-gray-800 text-sm mb-2 font-medium block">Organizer Name</label>
                                     <div class="relative flex items-center">
                                     <input name="organizer_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer name" value="<?php echo $event['organizer_name'] ?>" />
                                 
                                     </div>
-                            </div>
-
-                            <div>
-                                    <label class="text-gray-800 text-sm mb-2 font-medium block">Organizer Type</label>
-                                    <div class="relative flex items-center">
-                                    <input name="organizer_type" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter organizer type" value="<?php echo $event['organizer_type'] ?>" />
-                                
-                                    </div>
-                            </div>
-
                         </div>
 
 
@@ -225,11 +216,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['editEvent'])) {
                             <input name="eventVenue" type="text"  required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Venue" value="<?php echo $event['venue'] ?>" />
                         </div>
 
+                        
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Type</label>
-                            <select name="eventType" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo $event['event_type'] ?>">
-                                <option value="Public" <?php echo $event_type == 'Public' ? 'selected' : ''; ?>>Public</option>
-                                <option value="Private" <?php echo $event_type == 'Private' ? 'selected' : ''; ?>>Private</option>
+                            <select name="eventType" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                <option value="Public" <?php echo $event['event_type'] === 'Public' ? 'selected' : ''; ?>>Public</option>
+                                <option value="Private" <?php echo $event['event_type'] === 'Private' ? 'selected' : ''; ?>>Private</option>
                             </select>
                         </div>
 

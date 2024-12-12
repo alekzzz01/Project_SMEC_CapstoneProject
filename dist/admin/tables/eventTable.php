@@ -178,7 +178,7 @@ $connection->close();
             if (!empty($row['banner'])) {
                 echo '<dialog id="imageDialog' . $row['event_id'] . '" class="modal">';
                 echo '<div class="modal-box">';
-                echo '<img src="data:image/jpeg;base64,' . base64_encode($row['banner']) . '" alt="Event Banner" class="w-full h-auto" />';
+                echo '<img src="' . $row['banner'] . '" alt="Event Banner" class="w-full h-auto" />';
                 echo '<div class="modal-action">';
                 // Close button that uses form="dialog"
                 echo '<form method="dialog">';
