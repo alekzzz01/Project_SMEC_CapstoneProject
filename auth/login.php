@@ -202,9 +202,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
             </form>
 
-            
-            <?php if (isset($error)): ?>
-                    <div class="text-red-500 text-sm mt-8"><?php echo $error; ?></div>
+        
+         
+
+            <?php if (isset($_SESSION['error'])): ?>
+                    <div class="text-red-500 text-sm mt-8" ><?= $_SESSION['error']; ?></div>
+                    <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
 
