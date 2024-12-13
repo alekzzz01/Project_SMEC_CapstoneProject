@@ -7,6 +7,16 @@ use PHPMailer\PHPMailer\Exception;
 $dotenv = Dotenv\Dotenv::createImmutable('../config');
 $dotenv->load();
 
+
+
+$sql = "SELECT * FROM customization_table WHERE theme_id = 1";
+$stmt = $connection->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$customization = $result->fetch_assoc();
+
+
 // Check if the user is already logged in (to avoid unnecessary redirects)
 if (isset($_SESSION['user_id'])) {
     // If already logged in, redirect to the appropriate page based on role
@@ -144,13 +154,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <a class="flex items-center gap-4" href="../">
        
-            <img src="../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
+            <!-- <img src="../assets/images/smeclogo.png" alt="" class="w-10 h-10 object-cover"> -->
+
+            <?php
+                        // Check if there is a banner image
+                        if ($customization['school_logo']) {
+                    
+                                   echo '<img src="../dist/admin/'. $customization['school_logo'] . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                        } else {
+                                   // If there is no banner, display a message
+                            echo '  <img src="../../assets/images/defaultLogo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">';
+                        }   
+                ?>
+              
          
         </a>
 
         <div class="m-auto flex flex-col items-center">
             <div class="space-y-3">
-            <h5 class="text-2xl font-bold text-center">Welcome back to Sta. Marta Educational Inc.</h5>
+            <h5 class="text-2xl font-bold text-center">Welcome back to
+                            <?php 
+                                if ($customization['school_name']) {
+                                    echo $customization['school_name'];
+                                } else {
+                                    echo 'School Name';
+                                }
+                            ?>
+
+            </h5>
             <p class="text-slate-500 text-center">Enter your email and password to continue</p>
             </div>
     
