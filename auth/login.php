@@ -157,15 +157,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- <img src="../assets/images/smeclogo.png" alt="" class="w-10 h-10 object-cover"> -->
 
             <?php
-                        // Check if there is a banner image
-                        if ($customization['school_logo']) {
-                    
-                                   echo '<img src="../dist/admin/'. $customization['school_logo'] . '" class="w-10 h-10 object-cover bg-white rounded-full">';
-                        } else {
-                                   // If there is no banner, display a message
-                            echo '  <img src="../../assets/images/defaultLogo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">';
-                        }   
-                ?>
+                // Check if the customization array is set and contains a school_logo key
+                if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
+                    echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                } else {
+                    // Display a default logo if school_logo is not set or empty
+                    echo '<img src="./../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
+                }
+            ?>
+
               
          
         </a>
@@ -173,13 +173,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="m-auto flex flex-col items-center">
             <div class="space-y-3">
             <h5 class="text-2xl font-bold text-center">Welcome back to
-                            <?php 
-                                if ($customization['school_name']) {
-                                    echo $customization['school_name'];
-                                } else {
-                                    echo 'School Name';
-                                }
-                            ?>
+                    <?php 
+                        if (isset($customization['school_name']) && !empty($customization['school_name'])) {
+                            echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
+                        } else {
+                            echo '<p class="text-2xl font-bold text-center">LUMIX</p>';
+                        }
+                    ?>
 
             </h5>
             <p class="text-slate-500 text-center">Enter your email and password to continue</p>
