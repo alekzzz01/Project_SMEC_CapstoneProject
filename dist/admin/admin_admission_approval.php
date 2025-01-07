@@ -84,7 +84,7 @@ if ($updateStmt->execute()) {
             $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
             $mail->SMTPAuth = true;
             $mail->Username = 'sweetmiyagi@gmail.com';  // Your email (sender's email)
-            $mail->Password = 'niui ynqm ojtp bwva';  // Your Gmail app password
+            $mail->Password = 'bhkr axeq ucxc qdhl';  // Your Gmail app password
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS encryption
             $mail->Port = 587;  // SMTP Port
 
