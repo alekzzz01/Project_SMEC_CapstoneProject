@@ -2,7 +2,7 @@
     <div class=" flex items-center justify-between">
 
         <a class="flex items-center gap-4 text-white" href="./">
-            <img src="./assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
+            <img src="./assets/images/smeclogo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
             <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
         </a>
 
