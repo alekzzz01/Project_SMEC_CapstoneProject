@@ -7,6 +7,16 @@ use PHPMailer\PHPMailer\Exception;
 $dotenv = Dotenv\Dotenv::createImmutable('../config');
 $dotenv->load();
 
+
+
+$sql = "SELECT * FROM customization_table WHERE theme_id = 1";
+$stmt = $connection->prepare($sql);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$customization = $result->fetch_assoc();
+
+
 // Check if the user is already logged in (to avoid unnecessary redirects)
 if (isset($_SESSION['user_id'])) {
     // If already logged in, redirect to the appropriate page based on role
@@ -144,13 +154,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <a class="flex items-center gap-4" href="../">
        
-            <img src="../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
+            <!-- <img src="../assets/images/smeclogo.png" alt="" class="w-10 h-10 object-cover"> -->
+
+            <?php
+                // Check if the customization array is set and contains a school_logo key
+                if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
+                    echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                } else {
+                    // Display a default logo if school_logo is not set or empty
+                    echo '<img src="./../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
+                }
+            ?>
+
+              
          
         </a>
 
         <div class="m-auto flex flex-col items-center">
             <div class="space-y-3">
-            <h5 class="text-2xl font-bold text-center">Welcome back to Sta. Marta Educational Inc.</h5>
+            <h5 class="text-2xl font-bold text-center">Welcome back to
+                    <?php 
+                        if (isset($customization['school_name']) && !empty($customization['school_name'])) {
+                            echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
+                        } else {
+                            echo '<p class="text-2xl font-bold text-center">LUMIX</p>';
+                        }
+                    ?>
+
+            </h5>
             <p class="text-slate-500 text-center">Enter your email and password to continue</p>
             </div>
     

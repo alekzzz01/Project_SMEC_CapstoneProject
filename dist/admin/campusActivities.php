@@ -59,10 +59,10 @@ include '../../config/db.php';
  
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
     // Retrieve the event ID from the POST data
- 
+    $event_id = $_POST['archiveEvent'];
 
     // Debug: Check if the event ID is being passed correctly
-    echo "Event ID is: " . $event_id;
+    // echo "Event ID is: " . $event_id;
 
     // Prepare the SQL query to archive the event
     $sql = "UPDATE events SET is_archived = 1 WHERE event_id = ?";
@@ -71,7 +71,8 @@ include '../../config/db.php';
 
     if ($stmt->execute()) {
         // Set a success message in the session
-        $_SESSION['message'] = "Event archived successfully!" . $event_id;
+        $_SESSION['message'] = "Event archived successfully!";
+        // $_SESSION['message'] = "Event archived successfully!" . $event_id;
     } else {
         // Set an error message in the session
         $_SESSION['error'] = "Error archiving event: " . $stmt->error;

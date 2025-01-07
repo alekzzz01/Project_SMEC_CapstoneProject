@@ -28,26 +28,27 @@ $customization = $result->fetch_assoc();
             <a class="flex items-center gap-4" href="./">
                 
                 <?php
-                        // Check if there is a banner image
-                        if ($customization['school_logo']) {
-                    
-                                   echo '<img src="'. $customization['school_logo'] . '" class="w-10 h-10 object-cover bg-white rounded-full">';
-                        } else {
-                                   // If there is no banner, display a message
-                            echo '  <img src="../../assets/images/defaultLogo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">';
-                        }   
+                    // Check if the customization array is set and contains a school_logo key
+                    if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
+                        echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                    } else {
+                        // Display a default logo if school_logo is not set or empty
+                        echo '<img src="./../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
+                    }
                 ?>
               
+        
+
                 <?php 
-                    if ($customization['school_name']) {
-                        echo '<p class="text-lg font-medium tracking-tighter hidden lg:block">' . $customization['school_name'] . '</p>';
-                    } else {
-                        echo '<p class="text-2xl font-bold tracking-tight hidden lg:block">LUMIX</p>';
-                    }
-                        
+                        if (isset($customization['school_name']) && !empty($customization['school_name'])) {
+                            echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
+                        } else {
+                            echo '<p class="text-2xl font-bold tracking-tight hidden lg:block">LUMIX</p>';
+                        }
                 ?>
 
-                <!-- change this if no school name and logo to default logo of lumix -->
+
+                
             </a>
 
 
