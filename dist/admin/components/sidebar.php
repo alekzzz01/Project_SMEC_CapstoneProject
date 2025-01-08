@@ -33,7 +33,7 @@ $customization = $result->fetch_assoc();
                         echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
                     } else {
                         // Display a default logo if school_logo is not set or empty
-                        echo '<img src="./../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
+                        echo '<img src="../../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
                     }
                 ?>
               
