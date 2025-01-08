@@ -191,14 +191,15 @@ if (isset($_POST['submitForm'])) {
 
                 <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
                     
-                            <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
+                     
                             <!-- Name -->
+                            <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
                             <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Name</label>
+                                <label class="text-gray-800 text-sm font-medium mb-2 block">Name</label>
                                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="first-name" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($first_name); ?>" />
+                                        <input name="first-name" type="text" class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($first_name); ?>" />
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -206,7 +207,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="middle-initial" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                        <input name="middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -214,7 +215,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="last-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($last_name); ?>" />
+                                        <input name="last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($last_name); ?>" />
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -222,7 +223,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="lrn" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                                        <input name="lrn" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">LRN</p>
@@ -236,9 +237,9 @@ if (isset($_POST['submitForm'])) {
                                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                     
                                     <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Date</label>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Date</label>
                                         <div class="relative flex items-center">
-                                        <input name="birth-date" type="date"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" value="<?php echo htmlspecialchars($date_of_birth); ?>" />
+                                        <input name="birth-date" type="date"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" value="<?php echo htmlspecialchars($date_of_birth); ?>" />
                                     
                                         </div>
                                     
@@ -246,22 +247,22 @@ if (isset($_POST['submitForm'])) {
 
                                             
                                     <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Gender</label>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Gender</label>
                                         <div class="relative flex items-center">
-                                            <select name="grade-level"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($gender); ?>">
-                                                <option value="grade-1">Male</option>
-                                                <option value="grade-2">Female</option>
+                                            <select name="grade-level" class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                                <option value="male" <?php echo ($gender == 'Male') ? 'selected' : ''; ?>>Male</option>
+                                                <option value="female" <?php echo ($gender == 'Female') ? 'selected' : ''; ?>>Female</option>
                                             </select>
                                         </div>
-                                    
                                     </div>
+
 
 
                                 
                                     <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-6 block">Mobile Number</label>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Mobile Number</label>
                                         <div class="relative flex items-center">
-                                        <input name="mobile-number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($contact_number); ?>"/>
+                                        <input name="mobile-number" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($contact_number); ?>"/>
                                     
                                         </div>
                                     
@@ -275,12 +276,14 @@ if (isset($_POST['submitForm'])) {
                             </div>
 
                             <!-- Parent/Guardian Name -->
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-6 block">Parent/Guardian Name</label>
+                            <h1 class="text-lg font-bold">Emergency Contact <span class="text-red-500">*</span></h1>
+
+                            <div>                          
+                                <label class="text-gray-800 text-sm font-medium mb-2 block">Parent/Guardian Name</label>
                                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="parent-first-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        <input name="parent-first-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">First Name</p>
@@ -288,7 +291,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="parent-middle-initial" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        <input name="parent-middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
@@ -296,7 +299,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="parent-last-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                        <input name="parent-last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">Last Name</p>
@@ -304,7 +307,7 @@ if (isset($_POST['submitForm'])) {
 
                                     <div>
                                         <div class="relative flex items-center">
-                                        <input name="parent-contact-number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        <input name="parent-contact-number" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
                                         <p class="text-sm font-light mt-1 ml-1">Contact Number</p>
@@ -348,7 +351,7 @@ if (isset($_POST['submitForm'])) {
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">School Year</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">School Year</label>
                                     <div class="relative flex items-center">
                                     <select name="school-year" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                         <option value="">Select school year</option>
@@ -369,7 +372,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Type</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Type</label>
                                     <div class="relative flex items-center">
                                         <select id="typeSelect" name="type" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                             <option value="" disabled selected>Select type</option>
@@ -382,7 +385,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Grade Level</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Grade Level</label>
                                     <div class="relative flex items-center">
                                         <select id="gradeLevelSelect" name="grade-level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                             <option value="" disabled selected>Select grade level</option>
@@ -391,7 +394,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div id="trackContainer" style="display: none;">
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Senior High School Program</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Senior High School Program</label>
                                     <div class="relative flex items-center">
                                         <select id="trackSelect" name="track" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                             <option value="" disabled selected>Select Track</option>
@@ -414,7 +417,7 @@ if (isset($_POST['submitForm'])) {
                 
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Birth Certificate</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Certificate</label>
                                         <div class="relative flex items-center">
                                         <input name="birth-certificate" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
         
@@ -422,7 +425,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Report Card</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Report Card</label>
                                         <div class="relative flex items-center">
                                         <input name="report-card" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
         
@@ -430,7 +433,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Good Moral Certificate</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Good Moral Certificate</label>
                                         <div class="relative flex items-center">
                                         <input name="good-moral-certificate" type="file"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
         
@@ -438,7 +441,7 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
                                 <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-6 block">Last School Attended</label>
+                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Last School Attended</label>
                                         <div class="relative flex items-center">
                                         <input name="last-school-attended" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
