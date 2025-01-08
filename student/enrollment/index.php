@@ -136,7 +136,7 @@ unset($_SESSION['warning']);
         
         <a class="flex items-center gap-4" href="../../">
        
-            <img src="../../assets/images/logo.png" alt="" class="w-10 h-10 object-cover">
+            <img src="../../assets/images/defaultLogo.png" alt="" class="w-10 h-10 object-cover">
          
         </a>
 

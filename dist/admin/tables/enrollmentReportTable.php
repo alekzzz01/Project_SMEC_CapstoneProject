@@ -6,12 +6,12 @@ $user_id = $_SESSION['user_id'];
 
 // Prepare and execute the query to fetch the user's name
 $sql = "SELECT name FROM users WHERE user_id = ?";
-$stmt = $connection->prepare($sql);
-$stmt->bind_param("i", $user_id);  // Binding user_id as an integer
-$stmt->execute();
-$stmt->bind_result($user_name);  // Bind the result to the $user_name variable
-$stmt->fetch();  // Fetch the result
-$stmt->close();  // Close the prepared statement
+// $stmt = $connection->prepare($sql);
+// $stmt->bind_param("i", $user_id);  // Binding user_id as an integer
+// $stmt->execute();
+// $stmt->bind_result($user_name);  // Bind the result to the $user_name variable
+// $stmt->fetch();  // Fetch the result
+// $stmt->close();  // Close the prepared statement
 
 // // Check if the name was fetched successfully
 // if ($user_name) {
