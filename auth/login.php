@@ -170,14 +170,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          
         </a>
 
-        <div class="m-auto flex flex-col items-center">
+        <div class="m-auto flex flex-col items-centerlg:w-[580px]">
             <div class="space-y-3">
-            <h5 class="text-2xl font-bold text-center">Welcome back to
+            <h5 class="text-3xl lg:text-4xl font-bold text-center bg-red">Welcome back to
                     <?php 
                         if (isset($customization['school_name']) && !empty($customization['school_name'])) {
                             echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
                         } else {
-                            echo '<p class="text-2xl font-bold text-center">LUMIX</p>';
+                            echo '<span class="text-3xl lg:text-4xl text-blue-800 font-bold text-center">LUMIX - MIS</span>';
                         }
                     ?>
 
@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <p class="text-slate-500 text-center">Enter your email and password to continue</p>
             </div>
     
-            <form method="POST" class="mt-8 space-y-4 w-full lg:w-[580px] ">
+            <form method="POST" class="mt-8 space-y-4 w-full">
                         <div>
                             <label class="text-gray-800 text-sm mb-2 block">Email</label>
                             <div class="relative flex items-center">
@@ -237,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          
 
             <?php if (isset($_SESSION['error'])): ?>
-                    <div class="text-red-500 text-sm mt-8" ><?= $_SESSION['error']; ?></div>
+                    <div class="text-red-500 text-sm mt-8 text-center" ><?= $_SESSION['error']; ?></div>
                     <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
