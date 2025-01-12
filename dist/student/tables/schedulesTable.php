@@ -27,10 +27,19 @@
           <tbody>
             <tr
               class="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 ">
-              <td class="whitespace-nowrap px-6 py-4 font-medium">Computer Programming</td>
-              <td class="whitespace-nowrap px-6 py-4">Mrs. Panganiban</td>
+              <td class="whitespace-nowrap px-6 py-4 font-medium">Sex Education</td>
+              <td class="whitespace-nowrap px-6 py-4">Mr. Burat</td>
               <td class="whitespace-nowrap px-6 py-4">1</td>
               <td class="whitespace-nowrap px-6 py-4">01:30 PM - 4:30 PM</td>
+              <td class="whitespace-nowrap px-6 py-4">Monday</td>
+            </tr>
+
+            <tr
+              class="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 ">
+              <td class="whitespace-nowrap px-6 py-4 font-medium">College Crush</td>
+              <td class="whitespace-nowrap px-6 py-4">Mrs. Jasmin Fajartin</td>
+              <td class="whitespace-nowrap px-6 py-4">1</td>
+              <td class="whitespace-nowrap px-6 py-4">04:30 PM - 6:30 PM</td>
               <td class="whitespace-nowrap px-6 py-4">Monday</td>
             </tr>
 
@@ -39,16 +48,7 @@
               <td class="whitespace-nowrap px-6 py-4 font-medium">Computer Programming</td>
               <td class="whitespace-nowrap px-6 py-4">Mrs. Panganiban</td>
               <td class="whitespace-nowrap px-6 py-4">1</td>
-              <td class="whitespace-nowrap px-6 py-4">01:30 PM - 4:30 PM</td>
-              <td class="whitespace-nowrap px-6 py-4">Monday</td>
-            </tr>
-
-            <tr
-              class="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 ">
-              <td class="whitespace-nowrap px-6 py-4 font-medium">Computer Programming</td>
-              <td class="whitespace-nowrap px-6 py-4">Mrs. Panganiban</td>
-              <td class="whitespace-nowrap px-6 py-4">1</td>
-              <td class="whitespace-nowrap px-6 py-4">01:30 PM - 4:30 PM</td>
+              <td class="whitespace-nowrap px-6 py-4">06:30 PM - 9:30 PM</td>
               <td class="whitespace-nowrap px-6 py-4">Monday</td>
             </tr>
            
