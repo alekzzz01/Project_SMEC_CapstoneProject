@@ -167,18 +167,23 @@ $connection->close();
             <?php endif; ?>
 
             <div class="flex items-center justify-between">
+                
                 <div>
                     <h1 class="text-lg font-bold mb-1">User management</h1>
                     <p class="text-gray-400 text-sm">Manage users and change account roles here.</p>
                 </div>
                 
-                <button onclick="add_user.showModal()" class=" inline-flex items-center text-sm  gap-1.5 font-medium  text-white border border-blue-500 hover:border-blue-600 bg-blue-500 hover:bg-blue-700 rounded-md px-4 py-2  transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                <button onclick="add_user.showModal()" class="text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
                             <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
                             </svg>
 
                             Add User
                 </button>
+
+                
+           
+    
 
             </div>
 
@@ -455,56 +460,64 @@ $connection->close();
 <script>
     // JavaScript function to hide/show fields and manage 'required' validation based on the selected role
     function toggleStudentNumberField() {
-        var role = document.getElementById('role').value;
-        var studentNumberField = document.getElementById('student_number_field');
-        var first_name_field = document.getElementById('first_name_field');
-        var last_name_field = document.getElementById('last_name_field');
-        var dob_field = document.getElementById('dob_field');
-        var gender_field = document.getElementById('gender_field');
-        var contact_field = document.getElementById('contact_field');
-        
-        var firstNameInput = document.getElementsByName('first_name')[0];
-        var lastNameInput = document.getElementsByName('last_name')[0];
-        var dobInput = document.getElementsByName('dob')[0];
-        var genderInput = document.getElementsByName('gender')[0];
-        var contactInput = document.getElementsByName('contact_number')[0];
-        
-        // Show/hide the input fields based on the selected role
-        if (role === 'student') {
-            // For student, show student number and hide other fields
-            studentNumberField.classList.remove('hidden');
-            first_name_field.classList.add('hidden');
-            last_name_field.classList.add('hidden');
-            dob_field.classList.add('hidden');
-            gender_field.classList.add('hidden');
-            contact_field.classList.add('hidden');
+    var role = document.getElementById('role').value;
+    var studentNumberField = document.getElementById('student_number_field');
+    var first_name_field = document.getElementById('first_name_field');
+    var last_name_field = document.getElementById('last_name_field');
+    var dob_field = document.getElementById('dob_field');
+    var gender_field = document.getElementById('gender_field');
+    var contact_field = document.getElementById('contact_field');
+    
+    var firstNameInput = document.getElementsByName('first_name')[0];
+    var lastNameInput = document.getElementsByName('last_name')[0];
+    var dobInput = document.getElementsByName('dob')[0];
+    var genderInput = document.getElementsByName('gender')[0];
+    var contactInput = document.getElementsByName('contact_number')[0];
+    var studentNumberInput = document.getElementsByName('student_number')[0];
+    
+    // Show/hide the input fields based on the selected role
+    if (role === 'student') {
+        // For student, show student number and hide other fields
+        studentNumberField.classList.remove('hidden');
+        first_name_field.classList.add('hidden');
+        last_name_field.classList.add('hidden');
+        dob_field.classList.add('hidden');
+        gender_field.classList.add('hidden');
+        contact_field.classList.add('hidden');
 
-            // Remove required validation from non-student fields
-            firstNameInput.removeAttribute('required');
-            lastNameInput.removeAttribute('required');
-            dobInput.removeAttribute('required');
-            genderInput.removeAttribute('required');
-            contactInput.removeAttribute('required');
-        } else {
-            // For teacher or admin, show other fields and hide student number
-            studentNumberField.classList.add('hidden');
-            first_name_field.classList.remove('hidden');
-            last_name_field.classList.remove('hidden');
-            dob_field.classList.remove('hidden');
-            gender_field.classList.remove('hidden');
-            contact_field.classList.remove('hidden');
+        // Remove required validation from non-student fields
+        firstNameInput.removeAttribute('required');
+        lastNameInput.removeAttribute('required');
+        dobInput.removeAttribute('required');
+        genderInput.removeAttribute('required');
+        contactInput.removeAttribute('required');
+        
+        // Ensure student number is required
+        studentNumberInput.setAttribute('required', 'required');
+    } else {
+        // For teacher or admin, show other fields and hide student number
+        studentNumberField.classList.add('hidden');
+        first_name_field.classList.remove('hidden');
+        last_name_field.classList.remove('hidden');
+        dob_field.classList.remove('hidden');
+        gender_field.classList.remove('hidden');
+        contact_field.classList.remove('hidden');
 
-            // Add required validation for non-student fields
-            firstNameInput.setAttribute('required', 'required');
-            lastNameInput.setAttribute('required', 'required');
-            dobInput.setAttribute('required', 'required');
-            genderInput.setAttribute('required', 'required');
-            contactInput.setAttribute('required', 'required');
-        }
+        // Add required validation for non-student fields
+        firstNameInput.setAttribute('required', 'required');
+        lastNameInput.setAttribute('required', 'required');
+        dobInput.setAttribute('required', 'required');
+        genderInput.setAttribute('required', 'required');
+        contactInput.setAttribute('required', 'required');
+
+        // Remove required from student number
+        studentNumberInput.removeAttribute('required');
     }
+}
 
-    // Initialize the form with correct visibility state on page load
-    window.onload = function() {
-        toggleStudentNumberField();
-    };
+// Initialize the form with the correct visibility state on page load
+window.onload = function() {
+    toggleStudentNumberField();
+};
+
 </script>
