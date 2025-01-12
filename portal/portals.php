@@ -88,7 +88,7 @@ include '../config/db.php';
                         <img src="" alt="" class="w-full h-[200px]">
                         <p class=" text-xl mb-6 mt-3 font-semibold">Online Admission</p>
     
-                         <a href="../student/admission/" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
+                         <a href="../schoolServices/admission/" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
                                 <span>View Portal</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
