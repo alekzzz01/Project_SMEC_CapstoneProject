@@ -82,10 +82,15 @@ $result = $connection->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
+     <!-- DataTables CSS -->
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-    <!-- DataTables -->
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
     <!-- Buttons Extensions -->
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
@@ -94,10 +99,7 @@ $result = $connection->query($sql);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js"></script>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/jquery.dataTables.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+  
 
 
 
@@ -106,11 +108,12 @@ $result = $connection->query($sql);
 
     <div class="container mx-auto">
 
-    <div class="mb-4 flex justify-between items-center">
+    <div class="flex justify-between items-center">
+            <p class="font-bold">All Enrollment</p>
             <!-- School Year Filter -->
-            <div>
-                <label for="schoolYearFilter" class="text-gray-700 mr-2">Filter by School Year:</label>
-                    <select id="schoolYearFilter" class="border border-gray-300 rounded py-1 px-2">
+            <div class="flex items-center gap-2">
+                <label for="schoolYearFilter" class="text-gray-700 mr-2 ">Filter by School Year:</label>
+                    <select id="schoolYearFilter" class="select select-bordered select-sm ">
                         <option value="">All</option>
                             <?php
                                 // Fetch distinct school years for the filter dropdown
@@ -132,6 +135,8 @@ $result = $connection->query($sql);
         <div class="p-1.5 min-w-full inline-block align-middle">
           <div class="divide-y divide-gray-200">
             <div class="overflow-hidden">
+
+
                 <table id="example" class="min-w-full divide-y divide-gray-200">
 
                     <thead class="border border-gray-300  text-sm">
@@ -171,10 +176,7 @@ $result = $connection->query($sql);
                                     </tr>";
                             }
                             echo "</table>";
-                        } else {
-                            echo "No records found.";
                         }
-
                         // Close the connection
                         $connection->close();
                         ?>
@@ -286,3 +288,15 @@ $result = $connection->query($sql);
 
 </body>
 </html>
+
+<script>
+$(document).ready(function () {
+    $('#example').DataTable({
+        searching: true, // Enables the search box
+        paging: true,    // Enables pagination
+        ordering: true,  // Enables column sorting
+        info: true       // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
+    });
+});
+</script>
+

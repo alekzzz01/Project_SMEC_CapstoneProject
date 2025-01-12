@@ -186,7 +186,12 @@ include '../../config/db.php';
         <?php endif; ?>
 
 
-        <div class="flex items-center justify-end">
+        <div class="flex items-center justify-between">
+
+            <div>
+                <h1 class="text-lg font-bold mb-1">Campus Activities</h1>
+                <p class="text-gray-400 text-sm">Manage events, announcements, and services</p>
+            </div>
 
             <div class="flex items-center justify-end gap-3">
               
