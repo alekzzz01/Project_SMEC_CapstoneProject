@@ -147,7 +147,7 @@ $customization = $result->fetch_assoc();
                     </summary>
                     <ul>
                         <li><a href="admin_admission_approval.php">Admissions</a></li>
-                        <li><a>Enrollment</a></li>
+                        <li><a href="admin_enrollment_approval.php">Enrollment</a></li>
                         <li><a>Fees</a></li>
                        
                     </ul>
