@@ -144,7 +144,12 @@ if (isset($_POST['removeLogo'])) {
         <?php include('./components/navbar.php'); ?>
 
         <div class="p-7 bg-gray-50 h-full">
-                <h1 class="text-2xl font-bold">Theme Customization</h1>
+            
+                <div>
+                    <h1 class="text-lg font-bold mb-1">Theme Customization</h1>
+                    <p class="text-sm text-gray-400">Customize the theme of your school.</p>
+    
+                </div>
 
                 <form class="p-6 bg-white rounded-md my-7 grid grid-cols-1 lg:grid-cols-2 gap-16" method="POST" enctype="multipart/form-data">
 
@@ -155,7 +160,8 @@ if (isset($_POST['removeLogo'])) {
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div>
                                 <p class="text-lg font-bold">School name</p>
-                                <p class="text-gray-400">Enter your school name.</p>
+                                <p class=" text-gray-400 ">Enter the name of school.</p>
+                               
                             </div>
 
                         
@@ -165,6 +171,7 @@ if (isset($_POST['removeLogo'])) {
                                     type="text" 
                                     class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" 
                                     value="<?php echo isset($customization['school_name']) ? htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8') : ''; ?>" 
+                                     placeholder="Enter School Name"
                                 />
                             </div>
     
