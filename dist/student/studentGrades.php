@@ -292,3 +292,4 @@ $general_average = $total_subjects > 0 ? round($total_final_grades / $total_subj
     
 </body>
 </html>
+
