@@ -169,14 +169,15 @@ $connection->close();
             <div class="flex items-center justify-between">
                 
                 <div>
-                    <h1 class="text-lg font-bold mb-1">User management</h1>
-                    <p class="text-gray-400 text-sm">Manage users and change account roles here.</p>
+                    <h1 class="text-lg font-medium mb-1">User management</h1>
+                    <p class="text-base-content/70">Manage users and change account roles here.</p>
                 </div>
                 
-                <button onclick="add_user.showModal()" class="text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-4">
-                            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25V15a.75.75 0 0 0 1.5 0v-2.25H15a.75.75 0 0 0 0-1.5h-2.25V9Z" clip-rule="evenodd" />
-                            </svg>
+                <button onclick="add_user.showModal()" class="btn btn-sm rounded bg-blue-600 hover:bg-blue-800 text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" class="size-4 text-white">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+
 
                             Add User
                 </button>

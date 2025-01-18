@@ -25,7 +25,7 @@ $customization = $result->fetch_assoc();
       <div class="flex justify-between items-center p-6 h-20 ">
           <div>
            
-            <a class="flex items-center gap-4" href="./">
+            <a class="flex items-center gap-2" href="./">
                 
                 <?php
                     // Check if the customization array is set and contains a school_logo key
@@ -41,7 +41,7 @@ $customization = $result->fetch_assoc();
 
                 <?php 
                         if (isset($customization['school_name']) && !empty($customization['school_name'])) {
-                            echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
+                            echo '<p class="font-bold">' . htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8') . '</p>';
                         } else {
                             echo '<p class="text-2xl font-bold tracking-tight hidden lg:block">LUMIX</p>';
                         }
