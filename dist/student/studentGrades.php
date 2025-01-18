@@ -3,22 +3,28 @@ session_start();
 
 include '../../config/db.php';
 
+// Ensure the session has user_id
+if (!isset($_SESSION['user_id'])) {
+    die('User ID is not set in the session.');
+}
+
 $user = $_SESSION['user_id'];
+$selected_grade_level = isset($_GET['grade_level']) ? strtolower(str_replace(' ', '-', $_GET['grade_level'])) : 'grade-11';
 
+// Initialize default values to avoid undefined variable errors
+$studentDetails = array_fill_keys(['student_id', 'first_name', 'last_name', 'gender', 'dob', 'contact_number', 'grade_level', 'section', 'school_year'], '');
+$grades = [];
 
-
-$selected_grade_level = isset($_GET['grade_level']) ? $_GET['grade_level'] : 'Grade 12'; // Default to Grade 12 if not set
-    
-// SQL query to fetch student details and grades information (including grade level, section, and school year)
+// SQL query
 $sql = "
     SELECT s.student_id, s.user_id, s.student_number, s.first_name, s.last_name, s.date_of_birth, s.gender, s.contact_number,
            g.grade_level, g.section, g.school_year,
            sub.subject_name, g.grade, g.Quarter
     FROM students s
-    LEFT JOIN grades g ON s.student_id = g.student_id
-    LEFT JOIN subjects sub ON g.subject_id = sub.subject_id
-    WHERE s.user_id = ? AND g.grade_level = ?";  // Added grade_level filter
-
+    INNER JOIN grades g ON s.student_id = g.student_id
+    INNER JOIN subjects sub ON g.subject_id = sub.subject_id
+    WHERE s.user_id = ? AND g.grade_level = ?;
+";
 
 // Prepare statement
 $stmt = $connection->prepare($sql);
@@ -26,26 +32,18 @@ if ($stmt === false) {
     die('Error preparing statement: ' . $connection->error);
 }
 
-// Bind the session user ID as parameter to the prepared statement
+// Bind parameters
+$stmt->bind_param("is", $user, $selected_grade_level);
 
-$stmt->bind_param("is", $user, $selected_grade_level); // "i" for integer, "s" for string
+// Execute statement
+if (!$stmt->execute()) {
+    die('Query execution failed: ' . $stmt->error);
+}
 
-
-// Execute the statement
-$stmt->execute();
-
-// Get the result
+// Get results
 $result = $stmt->get_result();
-
-// Check if results exist
 if ($result->num_rows > 0) {
-    // Fetch the student details first
-    $studentDetails = [];
-    $grades = [];
-
     while ($row = $result->fetch_assoc()) {
-
-   
         $studentDetails['student_id'] = $row["student_id"];
         $studentDetails['first_name'] = $row["first_name"];
         $studentDetails['last_name'] = $row["last_name"];
@@ -56,31 +54,16 @@ if ($result->num_rows > 0) {
         $studentDetails['section'] = $row["section"];
         $studentDetails['school_year'] = $row["school_year"];
 
-        $grades[] = $row; // Collect grade data for later use in the table
+        $grades[] = $row; // Collect grade data
     }
-
-    // Calculate age from date of birth
-    // $dob = new DateTime($studentDetails['dob']);
-    // $currentDate = new DateTime(); // Current date and time
-    // $age = $dob->diff($currentDate)->y; // 'y' returns the difference in years
-    
-
-
-} else {
-    // Default values if no student found
-    $studentDetails = array_fill_keys(['student_id', 'first_name', 'last_name', 'gender', 'dob', 'contact_number', 'grade_level', 'section', 'school_year'], '');
-    $grades = [];
-    // $age = '';
-    
 }
 
-
-
-
-// Close the statement and connection
+// Close statement and connection
 $stmt->close();
 $connection->close();
 ?>
+
+
 
 
 
@@ -211,62 +194,85 @@ $connection->close();
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        // Group grades by subject
-                            $subjects = [];
-                            foreach ($grades as $grade) {
-                                $subjects[$grade['subject_name']][] = $grade;
-                            }
+    <?php
+   // Group grades by subject
+$subjects = [];
+foreach ($grades as $grade) {
+    $subjects[$grade['subject_name']][] = $grade;
+}
 
-                            // Display grades for each subject in different quarters
-                            foreach ($subjects as $subject => $subject_grades) {
-                                echo "<tr>";
-                                echo "<td class='border border-gray-300 px-4 py-2 text-left'>" . htmlspecialchars($subject) . "</td>";
+// Initialize variables for General Average
+$total_final_grades = 0;
+$total_subjects = 0;
 
-                                // Initialize variables for each quarter
-                                $quarter_1 = $quarter_2 = $quarter_3 = $quarter_4 = '';
+// Display grades for each subject and calculate final grades
+foreach ($subjects as $subject => $subject_grades) {
+    echo "<tr>";
+    echo "<td class='border border-gray-300 px-4 py-2 text-left'>" . htmlspecialchars($subject) . "</td>";
 
-                                // Iterate over the grades to assign them to the appropriate quarter
-                                foreach ($subject_grades as $grade) {
-                                    // Round the grade to the nearest whole number
-                                    $roundedGrade = round($grade['grade']);
+    // Initialize variables for each quarter
+    $quarter_1 = $quarter_2 = $quarter_3 = $quarter_4 = 0;
+    $total_grade = 0;
+    $quarters_count = 0;
 
-                                    // Check the Quarter value and assign the grade accordingly
-                                    switch ($grade['Quarter']) {
-                                        case '1st':
-                                            $quarter_1 = $roundedGrade;
-                                            break;
-                                        case '2nd':
-                                            $quarter_2 = $roundedGrade;
-                                            break;
-                                        case '3rd':
-                                            $quarter_3 = $roundedGrade;
-                                            break;
-                                        case '4th':
-                                            $quarter_4 = $roundedGrade;
-                                            break;
-                                    }
-                                }
+    // Iterate over the grades to assign them to the appropriate quarter
+    foreach ($subject_grades as $grade) {
+        $roundedGrade = round($grade['grade']);
 
-                                // Output the grades for each quarter
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_1) . "</td>";
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_2) . "</td>";
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_3) . "</td>";
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_4) . "</td>";
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_4) . "</td>"; // Final Grade
-                                echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_4) . "</td>"; // Remarks
-                                echo "</tr>";
-                            }
+        switch ($grade['Quarter']) {
+            case '1st':
+            case '1':
+                $quarter_1 = $roundedGrade;
+                break;
+            case '2nd':
+            case '2':
+                $quarter_2 = $roundedGrade;
+                break;
+            case '3rd':
+            case '3':
+                $quarter_3 = $roundedGrade;
+                break;
+            case '4th':
+            case '4':
+                $quarter_4 = $roundedGrade;
+                break;
+        }
 
-                        
-                        ?>
-                         <tr>
-                            <td class="border border-gray-300 px-4 py-2 text-left font-bold">General Average</td>
-                            <td colspan="4" class="border border-gray-300 px-4 py-2"></td>
-                            <td class="border border-gray-300 px-4 py-2"></td>
-                            <td class="border border-gray-300 px-4 py-2"></td>
-                        </tr>
-                    </tbody>
+        // Add to total grade and increment the count
+        $total_grade += $roundedGrade;
+        $quarters_count++;
+    }
+
+    // Calculate the final grade (average of all quarters)
+    $final_grade = $quarters_count > 0 ? round($total_grade / $quarters_count) : 0;
+
+    // Add final grade to total for general average
+    $total_final_grades += $final_grade;
+    $total_subjects++;
+
+    // Determine remarks based on final grade
+    $remarks = $final_grade >= 75 ? "Passed" : "Failed";
+
+    // Output the grades for each quarter
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_1) . "</td>";
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_2) . "</td>";
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_3) . "</td>";
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($quarter_4) . "</td>";
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($final_grade) . "</td>";
+    echo "<td class='border border-gray-300 px-4 py-2'>" . htmlspecialchars($remarks) . "</td>";
+    echo "</tr>";
+}
+
+// Calculate general average
+$general_average = $total_subjects > 0 ? round($total_final_grades / $total_subjects) : 0;
+?>
+<tr>
+    <td class="border border-gray-300 px-4 py-2 text-left font-bold">General Average</td>
+    <td colspan="4" class="border border-gray-300 px-4 py-2"></td>
+    <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($general_average); ?></td>
+    <td class="border border-gray-300 px-4 py-2"><?php echo htmlspecialchars($general_average >= 75 ? "Passed" : "Failed"); ?></td>
+</tr>
+</tbody>
                 </table>
         </div>
 
