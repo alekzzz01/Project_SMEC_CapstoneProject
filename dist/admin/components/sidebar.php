@@ -18,7 +18,7 @@ $customization = $result->fetch_assoc();
 
 
 
-<div id="sidebar" class="bg-white border-r border-gray-100 w-full md:w-80 lg:w-96 h-full fixed md:relative lg:relative transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 z-50">
+<div id="sidebar" class="bg-white border-r border-gray-200 w-full md:w-80 lg:w-96 h-screen fixed md:relative lg:relative transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 z-50">
     
     
     

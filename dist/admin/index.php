@@ -75,7 +75,7 @@ $total_admins = $employeeRow['total_admins'];
         
         <!-- Content -->
 
-        <div class="p-7 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#f2f5f8] h-full">
             <h1 class="text-lg font-medium">Dashboard</h1>
             <div class="mt-7 grid grid-cols-1 lg:grid-cols-4 gap-6">
 
@@ -124,11 +124,11 @@ $total_admins = $employeeRow['total_admins'];
             </div>
 
             <div class="mt-7 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="rounded p-4 bg-white shadow col-span-2">
+                    <div class="rounded p-4 bg-white border border-gray-200 col-span-2">
                         <?php include 'charts/studentGender.php'; ?>
                     </div>
 
-                    <div class="rounded p-4 bg-white shadow col-span-1">
+                    <div class="rounded p-4 bg-white border border-gray-200 col-span-1">
                         <?php include 'charts/userNumbers.php'; ?>
                     </div>
             </div>

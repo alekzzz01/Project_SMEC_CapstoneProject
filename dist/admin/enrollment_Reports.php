@@ -51,8 +51,8 @@ if(!isset($_SESSION['user_id'])){
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-7 bg-gray-50 h-full">
-                <h1 class="text-lg font-bold">Enrollment Reports</h1>
+        <div class="p-6 bg-[#f2f5f8] h-full">
+                <h1 class="text-lg font-medium mb-1">Enrollment Reports</h1>
 
                 <div class=" p-6 bg-white rounded-md mt-7">
                 <div>

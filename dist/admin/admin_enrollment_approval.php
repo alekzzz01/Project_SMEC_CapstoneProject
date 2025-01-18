@@ -68,15 +68,13 @@ if ($result->num_rows > 0) {
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-7 bg-gray-50 h-full">
+        <div class="p-6 bg-[#f2f5f8] h-full">
 
                 <div class="flex justify-between items-center">
-                    <div>
-                        <h1 class="text-lg font-bold mb-1">Enrollment Approval</h1>
-                        <p class="text-gray-400">Approve enrollment for the open school year.</p>
-                    </div>
 
-                    <p class="text-gray-400">Current School Year: <span class="text-black"><?php echo $school_year ?></span></p>
+                    <h1 class="text-lg font-medium mb-1">Enrollment Approval</h1>
+                               
+                    <p class="text-gray-400 text-sm">Current School Year: <span class="text-black font-medium"><?php echo $school_year ?></span></p>
                 </div>
 
                 <div class=" p-6 bg-white rounded-md mt-7">

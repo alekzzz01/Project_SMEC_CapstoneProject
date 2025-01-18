@@ -143,12 +143,12 @@ if (isset($_POST['removeLogo'])) {
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-7 bg-gray-50 h-full">
+        <div class="p-6 bg-[#f2f5f8] h-full">
             
+                      
                 <div>
-                    <h1 class="text-lg font-bold mb-1">Theme Customization</h1>
-                    <p class="text-sm text-gray-400">Customize the theme of your school.</p>
-    
+                    <h1 class="text-lg font-medium mb-1">Theme Customization</h1>
+                    <p class="text-base-content/70">Customize the theme of your school.</p>
                 </div>
 
                 <form class="p-6 bg-white rounded-md my-7 grid grid-cols-1 lg:grid-cols-2 gap-16" method="POST" enctype="multipart/form-data">
@@ -159,8 +159,8 @@ if (isset($_POST['removeLogo'])) {
             
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div>
-                                <p class="text-lg font-bold">School name</p>
-                                <p class=" text-gray-400 ">Enter the name of school.</p>
+                                <p class="font-medium"><span class="text-red-500">* </span>School name</p>
+                                <p class="text-sm text-base-content/70">Enter the name of school.</p>
                                
                             </div>
 
@@ -183,8 +183,8 @@ if (isset($_POST['removeLogo'])) {
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div>
-                                <p class="text-lg font-bold">School logo</p>
-                                <p class=" text-gray-400">Choose a file to upload for the school logo.</p>
+                                <p class="font-medium"><span class="text-red-500">* </span>School logo</p>
+                                <p class=" text-sm text-base-content/70">Choose a file to upload for the school logo.</p>
                             </div>
 
 
@@ -199,8 +199,8 @@ if (isset($_POST['removeLogo'])) {
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div>
-                                <p class="text-lg font-bold">Brand color</p>
-                                <p class=" text-gray-400">Select or customize your brand color.</p>
+                                <p class="font-medium"><span class="text-red-500">* </span>Brand color</p>
+                                <p class=" text-sm text-base-content/70">Select or customize your brand color.</p>
                             </div>
 
 
