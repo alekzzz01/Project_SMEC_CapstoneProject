@@ -173,7 +173,7 @@ include '../../config/db.php';
 <?php include('./components/navbar.php'); ?>
 
 
-    <div class="p-7 bg-gray-50 h-full">
+    <div class="p-6 bg-[#f2f5f8] h-full">
 
         <?php if (isset($_SESSION['message'])): ?>
                 <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>
@@ -188,10 +188,11 @@ include '../../config/db.php';
 
         <div class="flex items-center justify-between">
 
+          
             <div>
-                <h1 class="text-lg font-bold mb-1">Campus Activities</h1>
-                <p class="text-gray-400 text-sm">Manage events, announcements, and services</p>
-            </div>
+                    <h1 class="text-lg font-medium mb-1">Campus Activities</h1>
+                    <p class="text-base-content/70">Manage events, announcements, and services</p>
+                </div>
 
             <div class="flex items-center justify-end gap-3">
               

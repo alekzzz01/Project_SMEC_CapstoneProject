@@ -1,5 +1,5 @@
 
-<nav class="bg-white md:border-b lg:border-b border-gray-100 shadow md:shadow-none md:bg-transparent p-4 flex justify-between items-center h-20">
+<nav class="bg-white md:border-b lg:border-b border-gray-200 shadow md:shadow-none md:bg-transparent p-2 flex justify-between items-center">
     
     <div class="flex items-center gap-6">
         <button id="toggleSidebar" class="md:hidden focus:outline-none btn btn-ghost">

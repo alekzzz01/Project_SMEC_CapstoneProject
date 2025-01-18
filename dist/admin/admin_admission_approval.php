@@ -44,10 +44,10 @@
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-7 bg-gray-50 h-full">
+        <div class="p-6 bg-[#f2f5f8] h-full">
 
             
-                <h1 class="text-lg font-bold">Admission Approval</h1>
+                <h1 class="text-lg font-medium mb-1">Admission Approval</h1>
 
                 <div class=" p-6 bg-white rounded-md mt-7">
                 <div>

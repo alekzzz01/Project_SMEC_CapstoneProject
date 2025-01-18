@@ -170,7 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
          
         </a>
 
-        <div class="m-auto flex flex-col items-centerlg:w-[580px]">
+        <div class="m-auto flex flex-col items-center lg:w-[580px]">
             <div class="space-y-3">
             <h5 class="text-3xl lg:text-4xl font-bold text-center bg-red">Welcome back to
                     <?php 
