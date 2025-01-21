@@ -54,12 +54,11 @@ if(!isset($_SESSION['user_id'])){
         <div class="p-6 bg-[#f2f5f8] h-full">
                 <h1 class="text-lg font-medium mb-1">Enrollment Reports</h1>
 
-                <div class=" p-6 bg-white rounded-md mt-7">
                 <div>
+               
                     <?php include('./tables/enrollmentReportTable.php'); ?>
+           
                 </div>
-
-            </div>
         </div>
 
 

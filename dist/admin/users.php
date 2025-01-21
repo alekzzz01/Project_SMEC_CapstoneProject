@@ -154,7 +154,7 @@ $connection->close();
     <?php include('./components/navbar.php'); ?>
 
 
-        <div class="p-7 bg-gray-50 h-full">
+        <div class="p-6 bg-[#f2f5f8] h-full">
             
             <?php if (isset($_SESSION['message'])): ?>
                     <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>

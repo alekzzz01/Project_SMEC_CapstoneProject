@@ -77,12 +77,12 @@ if ($result->num_rows > 0) {
                     <p class="text-gray-400 text-sm">Current School Year: <span class="text-black font-medium"><?php echo $school_year ?></span></p>
                 </div>
 
-                <div class=" p-6 bg-white rounded-md mt-7">
+           
                 <div>
                     <?php include('./tables/enrollment_approvalTable.php'); ?>
                 </div>
 
-            </div>
+         
         </div>
 
 
