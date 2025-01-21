@@ -6,20 +6,6 @@ $user_id = $_SESSION['user_id'];
 
 // Prepare and execute the query to fetch the user's name
 $sql = "SELECT name FROM users WHERE user_id = ?";
-// $stmt = $connection->prepare($sql);
-// $stmt->bind_param("i", $user_id);  // Binding user_id as an integer
-// $stmt->execute();
-// $stmt->bind_result($user_name);  // Bind the result to the $user_name variable
-// $stmt->fetch();  // Fetch the result
-// $stmt->close();  // Close the prepared statement
-
-// // Check if the name was fetched successfully
-// if ($user_name) {
-//     echo "Welcome, " . $user_name;  // Display the user's name
-// } else {
-//     echo "User not found.";  // If user is not found in the database
-// }
-
 
 
 $sql = "
@@ -104,12 +90,12 @@ $result = $connection->query($sql);
 
 
 </head>
-<body class="bg-gray-100 py-10">
+<body >
 
-    <div class="container mx-auto">
+    <div class="space-y-3.5 mt-7">
 
-    <div class="flex justify-between items-center">
-            <p class="font-bold">All Enrollment</p>
+    <div class="flex justify-between items-center p-6 bg-white rounded-md border border-gray-200">
+    
             <!-- School Year Filter -->
             <div class="flex items-center gap-2">
                 <label for="schoolYearFilter" class="text-gray-700 mr-2 ">Filter by School Year:</label>
@@ -130,7 +116,7 @@ $result = $connection->query($sql);
 
     </div>
 
-    <div class="flex flex-col mt-7">
+    <div class="flex flex-col p-6 bg-white rounded-md border border-gray-200">
       <div class="-m-1.5 overflow-x-auto">
         <div class="p-1.5 min-w-full inline-block align-middle">
           <div class="divide-y divide-gray-200">

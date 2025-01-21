@@ -14,7 +14,7 @@ $sql = "
         e.section,
         e.date_enrolled,
         e.status AS enrollment_status,
-
+        s.student_id,
         sy.school_year AS school_year_label,
 
         s.student_number AS student_number_label,
@@ -61,25 +61,29 @@ $result = $connection->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    
+    <!-- DataTables CSS (Hover Styling) -->
+    <link href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" rel="stylesheet">
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
     <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
+    <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
     
 </head>
 <body>
 
-<div class="flex justify-end items-center">
+<div class="space-y-3.5 mt-7">
+
+
+
+    <div class="flex items-center p-6 bg-white rounded-md border border-gray-200">
       
             <!-- School Year Filter -->
             <div class="flex items-center gap-2">
-                <label for="schoolYearFilter" class="text-gray-700 mr-2 ">Filter by Status:</label>
-                <select id="schoolYearFilter" class="select select-bordered select-sm">
+                <label for="statusFilter" class="text-gray-700 mr-2 ">Filter by Status:</label>
+                <select id="statusFilter" class="select select-bordered select-sm">
                     <option value="">All</option>
                     <option value="Approved">Approved</option>
                     <option value="Pending">Pending</option>
@@ -93,31 +97,29 @@ $result = $connection->query($sql);
 
 
 
-    <div class="flex flex-col mt-7">
-        <div class="-m-1.5 overflow-x-auto">
-            <div class="p-1.5 min-w-full inline-block align-middle">
-            <div class="divide-y divide-gray-200">
+    <div class="p-6 bg-white rounded-md border border-gray-200">
+    
                 <div class="overflow-hidden">
                             <table id="example" class="min-w-full divide-y divide-gray-200">
-                                <thead class="border border-gray-300  text-sm">
+                                <thead class=" text-sm">
                                     <tr>
                                          <th>Enrollment ID No.</th>
                                         <th>Student Type</th>
                                         <th>Student Number</th>
                                         <th>Student Name</th>
                                         <th>Grade Level</th>
-                                        <th>Section</th>                      
-                                        <th>Track</th>
                                         <th>Type</th>                 
                                         <th>Status</th>
                                         <th>Date Enrolled</th>
+                                        <th>Details</th>
                                         <th>Actions</th>
-                                        <th></th>
+                                  
+                                      
                                     
                                     </tr>
                                 </thead>
 
-                                <tbody class="divide-y divide-gray-200 border border-gray-300 ">
+                                <tbody class="">
                                             <?php
                                             if ($result->num_rows > 0) {
                                                 while ($row = $result->fetch_assoc()) {
@@ -126,22 +128,23 @@ $result = $connection->query($sql);
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_type']}</td>
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_number_label']}</td>
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_name']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['grade_level']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['section_name_labels']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['track']}</td>
+                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['grade_level']}</td>                                   
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['type']}</td>                                                                                                             
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['enrollment_status']}</td>
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>" . date('M. d, Y', strtotime($row['date_enrolled'])) . "</td>
+                                                            <td class='px-6 py-4 whitespace-nowrap text-sm hover:underline text-gray-800'>
+                                                                    <a class='text-green-500' href='view_student.php?student_id={$row['student_id']}'>[View Details]</a>                                                                
+                                                            </td>
                                                             <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>
                                                                 <form>
-                                                                    <button class='text-green-500'>[Approve]</button>
-                                                                    <button class='text-red-500'>[Reject]</button>
-                                                                       <button class='text-amber-500'>[Verify Payment]</button>
+                                                                    <button class='text-green-500 text-sm hover:underline'>[Approve]</button>
+                                                                    <button class='text-red-500 text-sm hover:underline'>[Reject]</button>
+                                                                       <button class='text-amber-500 text-sm hover:underline'>[Verify Payment]</button>
                                                                 </form>
                                                             </td>
-                                                            <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>
-                                                                    <a class='text-green-500'>[View Details]</a>                                                                
-                                                            </td>
+
+                                              
+                                                            
                                                         </tr>";
                                                 }
                                                 echo "</table>";
@@ -156,12 +159,10 @@ $result = $connection->query($sql);
                             </table>
 
                     </div>
-                </div>
-            </div>
-        </div>
+                
     </div>
 
-
+</div>
 
 
 
@@ -225,16 +226,19 @@ $(document).ready(function () {
     });
 
     // Event listener for the filter dropdown
-    $('#schoolYearFilter').on('change', function () {
-        var filterValue = $(this).val(); // Get the selected value
-
-        // If value is empty (All), remove the filter
-        if (filterValue) {
-            table.column(8).search('^' + filterValue + '$', true, false).draw();
-        } else {
-            table.column(8).search('').draw();
-        }
+    $('#statusFilter').on('change', function () {
+            var status = $(this).val();
+            if (status) {
+                table.column(6).search('^' + status + '$', true, false).draw(); // Exact match filtering
+            } else {
+                table.column(6).search('').draw(); // Reset filter
+            }
     });
+
+
+
+
+
 });
 
 </script>
