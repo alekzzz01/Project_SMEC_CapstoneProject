@@ -44,11 +44,11 @@ if (isset($_POST['submitForm'])) {
 
             // Execute the query
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Enrollment form submitted successfully!";
+            $_SESSION['enrollment_form_success_message'] = "Enrollment form submitted successfully!";
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         } else {
-            $_SESSION['error'] = "Error: Unable to submit enrollment form.";
+            $_SESSION['enrollment_form_error'] = "Error: Unable to submit enrollment form.";
             header('Location: ' . $_SERVER['PHP_SELF']);
             exit();
         }
@@ -178,14 +178,14 @@ if (isset($_POST['submitForm'])) {
 
            
                
-                <?php if (isset($_SESSION['message'])): ?>
-                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>
-                        <?php unset($_SESSION['message']); ?>
+                <?php if (isset($_SESSION['enrollment_form_success_message'])): ?>
+                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['enrollment_form_success_message']; ?></div>
+                        <?php unset($_SESSION['enrollment_form_success_message']); ?>
                 <?php endif; ?>
 
-                <?php if (isset($_SESSION['error'])): ?>
+                <?php if (isset($_SESSION['enrollment_form_error'])): ?>
                         <div class="rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7" ><?= $_SESSION['error']; ?></div>
-                        <?php unset($_SESSION['error']); ?>
+                        <?php unset($_SESSION['enrollment_form_error']); ?>
                 <?php endif; ?>
 
 

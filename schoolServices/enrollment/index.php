@@ -81,6 +81,7 @@ if (isset($_POST['proceed'])) {
             $_SESSION['date_of_birth'] = $student['date_of_birth'];
             $_SESSION['gender'] = $student['gender'];
             $_SESSION['contact_number'] = $student['contact_number'];
+            
 
             // Redirect to the enrollment form
             header("Location: enrollmentForm.php");

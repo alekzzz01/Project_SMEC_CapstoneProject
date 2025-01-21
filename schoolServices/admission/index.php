@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Execute the query
         if ($stmt->execute()) {
-            $_SESSION['message'] = "Your admission form has been successfully submitted.";
+            $_SESSION['admission_success_message'] = "Your admission form has been successfully submitted.";
             header("Location: ./admission_pending.php");
             exit();
         } else {
