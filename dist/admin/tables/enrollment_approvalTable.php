@@ -1,8 +1,51 @@
 <?php
+ob_start(); // Start output buffering
+include '../../config/db.php'; // Include the database connection
 
-include '../../config/db.php';
+// Handle Approve Action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
+    if (isset($_POST['enrollment_id'])) {
+        $enrollmentId = $_POST['enrollment_id'];
 
-// Query to fetch enrollment details for open school year
+        // Update the status to 'enrolled'
+        $sql = "UPDATE student_enrollment SET status = 'enrolled' WHERE enrollment_id = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("i", $enrollmentId);
+
+        if ($stmt->execute()) {
+            $successMessage = "Enrollment approved successfully!";
+        } else {
+            $errorMessage = "Error: Unable to approve enrollment.";
+        }
+
+        $stmt->close();
+    }
+
+}
+
+// Handle Reject Action
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
+    if (isset($_POST['enrollment_id'])) {
+        $enrollmentId = $_POST['enrollment_id'];
+
+        // Update the status to 'rejected'
+        $sql = "UPDATE student_enrollment SET status = 'rejected' WHERE enrollment_id = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("i", $enrollmentId);
+
+        if ($stmt->execute()) {
+            $successMessage = "Enrollment rejected successfully!";
+        } else {
+            $errorMessage = "Error: Unable to reject enrollment.";
+        }
+
+        $stmt->close();
+    }
+
+    
+}
+
+// Query to fetch only pending enrollments
 $sql = "
     SELECT 
         e.enrollment_id,
@@ -16,42 +59,22 @@ $sql = "
         e.status AS enrollment_status,
         s.student_id,
         sy.school_year AS school_year_label,
-
         s.student_number AS student_number_label,
         CONCAT(s.first_name, ' ', s.last_name) AS student_name,
-
         sec.section_name AS section_name_labels
-     
     FROM 
         student_enrollment e
-
-
-    LEFT JOIN     -- Join the school_year tabel to get school year details from the school_year_id column of enrollment_table
-        school_year sy 
-    ON 
-        e.school_year_id = sy.school_year_id
-
-    LEFT JOIN  -- Join the students table to get student details from the student_id column of enrollment_table
-        students s 
-    ON 
-        e.student_id = s.student_id
-
- 
-    LEFT JOIN -- Join the sections table to get section details from the section_id column of enrollment_table
-        sections sec
-    ON
-        e.section = sec.section_id
-
+    LEFT JOIN school_year sy ON e.school_year_id = sy.school_year_id
+    LEFT JOIN students s ON e.student_id = s.student_id
+    LEFT JOIN sections sec ON e.section = sec.section_id
     WHERE 
-        sy.status = 'Open' -- Filter to show only open school years
-
+        sy.status = 'Open' AND e.status = 'Pending'
     ORDER BY 
         e.date_enrolled DESC
 ";
 
 $result = $connection->query($sql);
-
-
+ob_end_flush(); // Flush the buffered output
 ?>
 
 
@@ -120,41 +143,37 @@ $result = $connection->query($sql);
                                 </thead>
 
                                 <tbody class="">
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo "<tr>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['enrollment_id']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_type']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_number_label']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['student_name']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['grade_level']}</td>                                   
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['type']}</td>                                                                                                             
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>{$row['enrollment_status']}</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>" . date('M. d, Y', strtotime($row['date_enrolled'])) . "</td>
-                                                            <td class='px-6 py-4 whitespace-nowrap text-sm hover:underline text-gray-800'>
-                                                                    <a class='text-green-500' href='view_student.php?student_id={$row['student_id']}'>[View Details]</a>                                                                
-                                                            </td>
-                                                            <td class='px-6 py-4 whitespace-nowrap  text-gray-800'>
-                                                                <form>
-                                                                    <button class='text-green-500 text-sm hover:underline'>[Approve]</button>
-                                                                    <button class='text-red-500 text-sm hover:underline'>[Reject]</button>
-                                                                       <button class='text-amber-500 text-sm hover:underline'>[Verify Payment]</button>
-                                                                </form>
-                                                            </td>
-
-                                              
-                                                            
-                                                        </tr>";
-                                                }
-                                                echo "</table>";
-                                            }
-                                            // Close the connection
-                                            $connection->close();
-                                            ?>
-
-                                            
-                                </tbody>
+    <?php
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['enrollment_id']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['student_type']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['student_number_label']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['student_name']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['grade_level']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['type']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['enrollment_status']) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . date('M. d, Y', strtotime($row['date_enrolled'])) . "</td>
+                    <td class='px-6 py-4 whitespace-nowrap text-sm hover:underline text-gray-800'>
+                        <a class='text-green-500' href='view_student.php?student_id=" . htmlspecialchars($row['student_id']) . "'>[View Details]</a>
+                    </td>
+                    <td class='px-6 py-4 whitespace-nowrap text-gray-800'>
+                        <form method='POST'>
+                            <input type='hidden' name='enrollment_id' value='" . htmlspecialchars($row['enrollment_id']) . "'>
+                            <button type='submit' name='approve' class='text-green-500 text-sm hover:underline'>[Approve]</button>
+                            <button type='submit' name='reject' class='text-red-500 text-sm hover:underline'>[Reject]</button>
+                            <button type='button' class='text-amber-500 text-sm hover:underline'>[Verify Payment]</button>
+                        </form>
+                    </td>
+                </tr>";
+        }
+        echo "</table>";
+    }
+    // Close the connection
+    $connection->close();
+    ?>
+</tbody>
                             
                             </table>
 

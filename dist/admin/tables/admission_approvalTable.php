@@ -10,66 +10,134 @@ include '../../config/db.php';
 
 ob_start(); // Start output buffering to prevent header issues
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['approve'])) {
-    $studentId = $_POST['student_id'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['approve'])) {
+        $studentId = $_POST['student_id'];
 
-    // Fetch student details from the admission_form table
-    $query = "SELECT * FROM admission_form WHERE id = ?";
-    $stmt = $connection->prepare($query);
-    $stmt->bind_param("i", $studentId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $admissionData = $result->fetch_assoc();
+        // Fetch student details from the admission_form table
+        $query = "SELECT * FROM admission_form WHERE id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $admissionData = $result->fetch_assoc();
 
-    if (!$admissionData) {
-        echo "No admission record found.";
-        exit;
-    }
+        if (!$admissionData) {
+            exit;
+        }
 
-    // Generate the sequential student number
-    $currentYear = date("Y");
-    $numericGradeLevel = preg_replace('/[^0-9]/', '', $admissionData['year_level']);
-    $formattedGradeLevel = str_pad($numericGradeLevel, 2, "0", STR_PAD_LEFT);
-    $studentNumberPrefix = $currentYear . '-' . $formattedGradeLevel . '-';
+        // Generate student number
+        $currentYear = date("Y");
+        $numericGradeLevel = preg_replace('/[^0-9]/', '', $admissionData['year_level']);
+        $formattedGradeLevel = str_pad($numericGradeLevel, 2, "0", STR_PAD_LEFT);
+        $studentNumberPrefix = $currentYear . '-' . $formattedGradeLevel . '-';
 
-    // Query to find the last sequence
-    $query = "SELECT MAX(CAST(SUBSTRING(student_number, 10) AS UNSIGNED)) AS last_seq 
-              FROM students 
-              WHERE SUBSTRING(student_number, 1, 9) = ?";
-    $stmt = $connection->prepare($query);
-    $stmt->bind_param("s", $studentNumberPrefix);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $lastSeq = $row['last_seq'] ?? 0;
-    $newSeq = str_pad($lastSeq + 1, 4, "0", STR_PAD_LEFT);
-    $studentNumber = $studentNumberPrefix . $newSeq;
+        // Query to find the last sequence for this prefix
+        $query = "SELECT MAX(CAST(SUBSTRING_INDEX(student_number, '-', -1) AS UNSIGNED)) AS last_seq 
+                  FROM students 
+                  WHERE student_number LIKE CONCAT(?, '%')";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("s", $studentNumberPrefix);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $lastSeq = $row['last_seq'] ?? 0;
 
-    // Insert data into the students table
-    $insertQuery = "INSERT INTO students (student_number, first_name, last_name, date_of_birth, gender, contact_number) 
-                    VALUES (?, ?, ?, ?, ?, ?)";
-    $insertStmt = $connection->prepare($insertQuery);
-    $insertStmt->bind_param(
-        "ssssss",
-        $studentNumber,
-        $admissionData['first_name'],
-        $admissionData['last_name'],
-        $admissionData['birth_date'],
-        $admissionData['gender'],
-        $admissionData['phone']
-    );
+        // Increment the sequence to generate a new student number
+        $newSeq = str_pad($lastSeq + 1, 4, "0", STR_PAD_LEFT);
+        $studentNumber = $studentNumberPrefix . $newSeq;
 
-    if ($insertStmt->execute()) {
-        // Update the is_confirmed field in the admission_form table
-        $updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
-        $updateStmt = $connection->prepare($updateQuery);
-        $updateStmt->bind_param("i", $studentId);
-        $updateStmt->execute();
+        // Insert student data into the students table
+        $defaultUserId = NULL; // Set user_id to NULL temporarily
+        $insertQuery = "INSERT INTO students 
+                        (user_id, student_number, first_name, middle_initial, last_name, date_of_birth, gender, year_level, 
+                         parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, 
+                         zip_code, contact_number, email, emergency_first_name, emergency_last_name, relationship) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $insertStmt = $connection->prepare($insertQuery);
+        $insertStmt->bind_param(
+            "issssssssssssssssssss", // Exactly 21 placeholders
+            $defaultUserId, // Matches the first `?`
+            $studentNumber,
+            $admissionData['first_name'],
+            $admissionData['middle_initial'],
+            $admissionData['last_name'],
+            $admissionData['birth_date'],
+            $admissionData['gender'],
+            $admissionData['year_level'],
+            $admissionData['parent_first_name'],
+            $admissionData['parent_middle_initial'],
+            $admissionData['parent_last_name'],
+            $admissionData['region'],
+            $admissionData['province'],
+            $admissionData['city'],
+            $admissionData['barangay'],
+            $admissionData['zip_code'],
+            $admissionData['phone'],
+            $admissionData['email'],
+            $admissionData['emergency_first_name'],
+            $admissionData['emergency_last_name'],
+            $admissionData['relationship']
+        );
 
-        // Send an email with PHPMailer
+        if ($insertStmt->execute()) {
+            // Send approval email
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'sweetmiyagi@gmail.com'; // Sender's email
+                $mail->Password = 'vbzj pxng toyc xmht';  // Gmail app password
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                // Sender and recipient details
+                $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
+                $mail->addAddress($admissionData['email'], $admissionData['first_name']);
+                $mail->isHTML(true);
+                $mail->Subject = 'Admission Approved';
+                $mail->Body = "Dear {$admissionData['first_name']},<br>
+                               Your admission has been approved. Your student number is <b>{$studentNumber}</b>.<br>
+                               Please wait for further instructions regarding enrollment.";
+
+                $mail->send();
+            } catch (Exception $e) {
+                exit;
+            }
+
+            // Update the is_confirmed field in the admission_form table
+            $updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
+            $updateStmt = $connection->prepare($updateQuery);
+            $updateStmt->bind_param("i", $studentId);
+
+            if ($updateStmt->execute()) {
+                // Success
+            } else {
+                echo "Error updating admission status: " . $updateStmt->error;
+            }
+        } else {
+            echo "Error inserting student data: " . $insertStmt->error;
+            exit;
+        }
+    } elseif (isset($_POST['reject'])) {
+        $studentId = $_POST['student_id'];
+
+        // Fetch student details from the admission_form table
+        $query = "SELECT * FROM admission_form WHERE id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $admissionData = $result->fetch_assoc();
+
+        if (!$admissionData) {
+            exit;
+        }
+
+        // Send rejection email
         $mail = new PHPMailer(true);
         try {
-            // SMTP configuration
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
@@ -82,28 +150,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['approve'])) {
             $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
             $mail->addAddress($admissionData['email'], $admissionData['first_name']);
             $mail->isHTML(true);
-            $mail->Subject = 'Your Admission Has Been Approved';
-            $mail->Body = "Dear {$admissionData['first_name']},<br><br>
-                           Congratulations! Your admission has been approved. Your student number is: <b>{$studentNumber}</b>.<br><br>
-                           Regards,<br>School Administration";
+            $mail->Subject = 'Admission Rejected';
+            $mail->Body = "Dear {$admissionData['first_name']},<br>
+                           We regret to inform you that your admission application has been rejected.<br>
+                           Thank you for your interest in Sta. Marta Educational Center.";
 
             $mail->send();
         } catch (Exception $e) {
-            echo "Email could not be sent. Mailer Error: {$mail->ErrorInfo}";
+            exit;
         }
 
-        echo "<div class='rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7'>
-        Student data inserted successfully, and email sent!
-         </div>";
-    } else {
-        echo "<div class='rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7'>
-        Error: " . $connection->error . "
-        </div>";
+        // Update the is_confirmed field in the admission_form table
+        $updateQuery = "UPDATE admission_form SET is_confirmed = -1 WHERE id = ?";
+        $updateStmt = $connection->prepare($updateQuery);
+        $updateStmt->bind_param("i", $studentId);
+
+        if ($updateStmt->execute()) {
+            // Success
+        } else {
+            echo "Error updating rejection status: " . $updateStmt->error;
+        }
     }
 }
 
 ob_end_flush(); // End output buffering
 ?>
+
+
 
 
 
