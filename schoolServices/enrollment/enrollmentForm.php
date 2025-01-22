@@ -92,6 +92,8 @@ if (isset($_POST['submitForm'])) {
      
      
 </head>
+
+
 <body>
 
     <div id="navbar" class="px-4 py-2 fixed w-full top-0 left-0 z-10 transition duration-300 text-white">
@@ -172,69 +174,68 @@ if (isset($_POST['submitForm'])) {
 
     </div>
 
-    <div class="py-16 px-4 lg:px-12"> 
+    <div class="py-16 px-4 lg:px-12 bg-[#f2f5f8]"> 
             
             <div class=" max-w-7xl mx-auto space-y-7">
 
            
                
-                <?php if (isset($_SESSION['enrollment_form_success_message'])): ?>
-                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['enrollment_form_success_message']; ?></div>
-                        <?php unset($_SESSION['enrollment_form_success_message']); ?>
+                <?php if (isset($_SESSION['message'])): ?>
+                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['message']; ?></div>
+                        <?php unset($_SESSION['message']); ?>
                 <?php endif; ?>
 
-                <?php if (isset($_SESSION['enrollment_form_error'])): ?>
+                <?php if (isset($_SESSION['error'])): ?>
                         <div class="rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7" ><?= $_SESSION['error']; ?></div>
-                        <?php unset($_SESSION['enrollment_form_error']); ?>
+                        <?php unset($_SESSION['error']); ?>
                 <?php endif; ?>
 
 
-                <form action="" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form action="" method="POST" enctype="multipart/form-data" class="space-y-10">
                     
-                     
+                        <div class="border border-gray-300 rounded bg-white">
                             <!-- Name -->
-                            <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
-                            <div>
-                                <label class="text-gray-800 text-sm font-medium mb-2 block">Name</label>
-                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
+                            <h1 class="text-lg font-bold p-5 bg-blue-50 rounded-t text-blue-600">Personal Details <span class="text-red-500">*</span></h1>
+
+                       
+                       
+                            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full p-5">
                                     <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">First Name</label>
                                         <div class="relative flex items-center">
                                         <input name="first-name" type="text" class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($first_name); ?>" />
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                                       
                                     </div>
 
                                     <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Middle Initial</label>
                                         <div class="relative flex items-center">
                                         <input name="middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
+                                       
                                     </div>
 
                                     <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Last Name</label>
                                         <div class="relative flex items-center">
                                         <input name="last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($last_name); ?>" />
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">Last Name</p>
+                                       
                                     </div>
 
                                     <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">LRN</label>
                                         <div class="relative flex items-center">
                                         <input name="lrn" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">LRN</p>
+                                     
                                     </div>
-                                </div>
-                            </div>
 
-                            <!-- Birthdate, Gender and Year Level -->
-                            <div>
-                            
-                                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                     
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Date</label>
@@ -269,64 +270,75 @@ if (isset($_POST['submitForm'])) {
                                     </div>
 
 
-                                
-
-                            
-                                </div>
+                             
                             </div>
 
-                            <!-- Parent/Guardian Name -->
-                            <h1 class="text-lg font-bold">Emergency Contact <span class="text-red-500">*</span></h1>
+          
+                          
+                        </div>
 
-                            <div>                          
-                                <label class="text-gray-800 text-sm font-medium mb-2 block">Parent/Guardian Name</label>
+
+                        <!-- Parent/Guardian Name -->
+
+                        <div class="border border-gray-300 rounded bg-white">
+
+
+                         
+                            <h1 class="text-lg font-bold p-5 bg-blue-50 rounded-t text-blue-600">Emergency Contact <span class="text-red-500">*</span></h1>
+
+                            <div class="p-5">                          
+                            
                                 <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                                     <div>
+                                        <p class="text-gray-800 text-sm font-medium mb-2 block">First Name</p>
                                         <div class="relative flex items-center">
                                         <input name="parent-first-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                                    
                                     </div>
 
                                     <div>
+                                        <p class="text-gray-800 text-sm font-medium mb-2 block">Middle Initial</p>
                                         <div class="relative flex items-center">
                                         <input name="parent-middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
+                                       
                                     </div>
 
                                     <div>
+                                        <p class="text-gray-800 text-sm font-medium mb-2 block">Last Name</p>
                                         <div class="relative flex items-center">
                                         <input name="parent-last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">Last Name</p>
+                                      
                                     </div>
 
                                     <div>
+                                        <p class="text-gray-800 text-sm font-medium mb-2 block">Contact Number</p>
                                         <div class="relative flex items-center">
                                         <input name="parent-contact-number" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
                                     
                                         </div>
-                                        <p class="text-sm font-light mt-1 ml-1">Contact Number</p>
+                                        
                                     </div>
                                 </div>
                             </div>
 
+                        </div>
 
 
+                        <!-- Academic -->
 
-                            <div class="border-b border-gray-100"></div>
-
-
+                        <div class="border border-gray-300 rounded bg-white">
                         
-                            <h1 class="text-lg font-bold">Academic <span class="text-red-500">*</span></h1>
+                            <h1 class="text-lg font-bold p-5 bg-blue-50 text-blue-600">Academic <span class="text-red-500">*</span></h1>
 
                             <!-- Student Type -->
 
-                            <div class="flex flex-col gap-4">
+                            <div class="flex flex-col gap-4 p-5">
 
                                     <div class="flex items-center gap-3">
                                             <input type="radio" name="student-type" class="radio radio-info" value="New Student" required />
@@ -344,11 +356,9 @@ if (isset($_POST['submitForm'])) {
                                     </div>
 
                             </div>
-                        
 
-                
-                        <!-- Grade level, School year, Last School Attended -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
+                             <!-- Grade level, School year, Last School Attended -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full p-5">
 
                                 <div>
                                     <label class="text-gray-800 text-sm font-medium mb-2 block">School Year</label>
@@ -368,7 +378,7 @@ if (isset($_POST['submitForm'])) {
                                     </select>
 
                                     </div>
-                                
+
                                 </div>
 
                                 <div>
@@ -405,74 +415,82 @@ if (isset($_POST['submitForm'])) {
                                 </div>
 
 
-                        </div>
-
-                        <div class="border-gray-100 border-b"></div>
-
-                        <h1 class="text-lg font-bold">For New Student <span class="text-red-500">*</span></h1>
-                    
-                        <!-- File Inputs -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
-
-                
-
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Certificate</label>
-                                        <div class="relative flex items-center">
-                                        <input name="birth-certificate" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-        
-                                        </div>
-                                </div>
-
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Report Card</label>
-                                        <div class="relative flex items-center">
-                                        <input name="report-card" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-        
-                                        </div>
-                                </div>
-
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Good Moral Certificate</label>
-                                        <div class="relative flex items-center">
-                                        <input name="good-moral-certificate" type="file"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
-        
-                                        </div>
-                                </div>
-
-                                <div>
-                                    <label class="text-gray-800 text-sm font-medium mb-2 block">Last School Attended</label>
-                                        <div class="relative flex items-center">
-                                        <input name="last-school-attended" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                    
-                                        </div>
-                                
-                                </div>
-
-                                <p class="text-gray-400 text-sm">*Note: New student should submit their birth certificate, report card and good moral certificate.</p>
-
-
-
-                        </div>
-                    
-                        <div class="border-gray-100 border-b"></div>
-
-                        <div class="space-y-2">
-                            <div class="flex items-center gap-3">
-                                <input type="checkbox"  required class="checkbox" />
-                                <p class="font-medium text-sm">I confirm that the information provided is accurate.</p>
                             </div>
-                            <p class="text-gray-400 text-sm">By checking this box, you agree to our <a class="text-black hover:underline">Terms and Conditions</a> and <a class="text-black hover:underline">Privacy Policy.</a></p>
+                        
                         </div>
 
+                        <!-- File Inputs -->
+                        <div class="border border-gray-300 rounded bg-white">
+                
+                    
+                            <h1 class="text-lg font-bold bg-blue-50 text-blue-600 p-5">For New Student <span class="text-red-500">*</span></h1>
                         
+                          
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full p-5">
+
+                    
+
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Certificate</label>
+                                            <div class="relative flex items-center">
+                                            <input name="birth-certificate" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+            
+                                            </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Report Card</label>
+                                            <div class="relative flex items-center">
+                                            <input name="report-card" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+            
+                                            </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Good Moral Certificate</label>
+                                            <div class="relative flex items-center">
+                                            <input name="good-moral-certificate" type="file"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+            
+                                            </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Last School Attended</label>
+                                            <div class="relative flex items-center">
+                                            <input name="last-school-attended" type="text" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        
+                                            </div>
+                                    
+                                    </div>
+
+                                    <p class="text-gray-400 text-sm">*Note: New student should submit their birth certificate, report card and good moral certificate.</p>
+
+
+
+                            </div>
+
+                        </div>   
+                        
+                    
+                        <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <input type="checkbox"  required class="checkbox border-black" />
+                                    <p class="font-medium text-sm">I confirm that the information provided is accurate.</p>
+                                </div>
+                                <p class="text-gray-400 text-sm">By checking this box, you agree to our <a class="text-black hover:underline">Terms and Conditions</a> and <a class="text-black hover:underline">Privacy Policy.</a></p>
+                        </div>
+
+                            
                         <div class=" flex items-center justify-end">
-                        <button type="submit" name="submitForm" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
-                    </div>
+                            <button type="submit" name="submitForm" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit Form</button>
+                        </div>
+
+
+          
 
                 </form>
-
-                <div class="border-gray-100 border-b"></div>
+            </div>
+            
 
                 
     
@@ -512,11 +530,12 @@ if (isset($_POST['submitForm'])) {
                     <?php endif; ?>
 
         
-
+    </div>
   
 
     
 </body>
+
 </html>
 
 

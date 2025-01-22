@@ -143,7 +143,19 @@ unset($_SESSION['warning']);
 
         <div class="m-auto flex flex-col items-center w-full lg:w-[580px] ">
             <div class="space-y-3 w-full text-center">
-                <h5 class="text-2xl font-bold">Enrollment A.Y. 2024-2025</h5>
+                <h5 class="text-2xl font-bold">Enrollment 
+                    <?php
+                    $schoolYearQuery = "SELECT school_year FROM school_year WHERE status = 'open' LIMIT 1";
+                    $schoolYearResult = $connection->query($schoolYearQuery);
+                    if ($schoolYearResult->num_rows > 0) {
+                        $schoolYear = $schoolYearResult->fetch_assoc();
+                        echo "for A.Y " . $schoolYear['school_year'];
+                    } else {
+                        echo "Closed";
+                    }
+                    
+                    ?>
+                </h5>
                 <p class="text-slate-500">Begin your enrollment process by providing the required information below.</p>
             </div>
     

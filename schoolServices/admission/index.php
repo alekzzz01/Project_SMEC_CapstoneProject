@@ -208,69 +208,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
 
             <div class="max-w-7xl mx-auto ">
-                <form action="" method="POST" class="space-y-6 ">
+                <form action="" method="POST" class="space-y-10">
+
+
                 <!-- Name -->
-                <div>
-                    <label class="text-gray-800 text-sm font-medium mb-6 block">1. Personal Information</label>
+                <div class="space-y-5">
+                   
+                    <h1 class="text-lg font-bold text-base-content/70">Personal Details <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">First Name</p>
                             <div class="relative flex items-center">
-                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="first_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="First Name" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                            
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Middle Initial</p>
                             <div class="relative flex items-center">
-                            <input name="middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="middle_initial" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="M.I" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
+                            
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Last Name</p>
                             <div class="relative flex items-center">
-                            <input name="last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="last_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Last Name"  />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Last Name</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Birthdate, Gender and Year Level -->
-                <div>
-                  
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
-                        
-                        <div>
-           
-                            <div class="relative flex items-center">
-                            <input name="birth_date" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
-                            </div>
-                            <p class="text-sm font-light mt-1 ml-1">Birth Date</p>
-                          
+                            
                         </div>
 
                         <div>
-                       
+                            <p class="text-sm mb-1 ml-1 font-medium">Birth Date</p>
                             <div class="relative flex items-center">
-                                <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <input name="birth_date" type="date" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter your email" />
+                            </div>
+                            
+                            
+                        </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Gender</p>
+                            <div class="relative flex items-center">
+                                <select name="gender" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                     <option value="" disabled selected>Select your gender</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Gender</p>
-                           
+                            
+                            
                         </div>
 
                         <div>
-                   
+                            <p class="text-sm mb-1 ml-1 font-medium">Year Level to Enroll On</p>
                             <div class="relative flex items-center">
-                                <select name="year_level" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                                <select name="year_level" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
                                     <option value="" disabled selected>Select year level</option>
                                     <option >Grade 1</option>
                                     <option >Grade 2</option>
@@ -278,100 +277,119 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     <option >Grade 4</option>
                                     <option >Grade 5</option>
                                     <option >Grade 6</option>
+                                    <option >Grade 7</option>
+                                    <option >Grade 8</option>
+                                    <option >Grade 9</option>
+                                    <option >Grade 10</option>
+                                    <option >Grade 11</option>
+                                    <option >Grade 12</option>
                                 </select>
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Year Level to Enroll On</p>
-                         
+                          
+                            
                         </div>
+
 
                     </div>
                 </div>
+
+                <div class="border-gray-200 border-b"></div>
+
 
                 <!-- Parent/Guardian Name -->
-                <div>
-                    <label class="text-gray-800 text-sm font-medium mb-6 block">2. Parent/Guardian Name</label>
+                <div class="space-y-5">
+                   
+                    <h1 class="text-lg font-bold text-base-content/70">Parent/Guardian Name <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">First Name</p>
                             <div class="relative flex items-center">
-                            <input name="parent_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_first_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="First Name" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                           
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Middle Initial</p>
                             <div class="relative flex items-center">
-                            <input name="parent_middle_initial" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="parent_middle_initial" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="M.I" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Middle Initial</p>
+                           
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Last Name</p>
                             <div class="relative flex items-center">
-                            <input name="parent_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"  />
+                            <input name="parent_last_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Last Name"  />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Last Name</p>
+                           
                         </div>
                     </div>
                 </div>
 
+                <div class="border-gray-200 border-b"></div>
 
                 <!-- Address -->
-                <div>
-                    <label class="text-gray-800 text-sm font-medium mb-6 block">3. Address</label>
+                <div class="space-y-5">
+                <h1 class="text-lg font-bold text-base-content/70">Address <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
+                            <label class="text-sm mb-1 ml-1 font-medium">Region</label>
                             <div class="relative flex items-center">
-                            <select id="region" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
+                            <select id="region" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
                             <input type="hidden" name="region_text" id="region-text">
     
                             </div>
-                            <label class="text-sm font-light mt-1 ml-1">Region</label>
+                            
                         </div>
 
                         <div>
+                            <label class="text-sm mb-1 ml-1 font-medium">Province</label>
                             <div class="relative flex items-center">
                         
-                            <select id="province" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
+                            <select id="province" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
                             <input type="hidden" name="province_text" id="province-text">
     
                             </div>
-                            <label class="text-sm font-light mt-1 ml-1">Province</label>
+                            
                         </div>
 
                         <div>
+                            <label class="text-sm mb-1 ml-1 font-medium">City</label>
                             <div class="relative flex items-center">
                         
-                            <select id="city" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
+                            <select id="city" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
                             <input type="hidden" name="city_text" id="city-text">
 
     
                             </div>
-                            <label class="text-sm font-light mt-1 ml-1">City</label>
+                          
                         </div>
 
 
 
                         <div>
+                            <label class="text-sm mb-1 ml-1 font-medium">Barangay</label>
                             <div class="relative flex items-center">
                         
-                            <select id="barangay" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
+                            <select id="barangay" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"></select>
                             <input type="hidden" name="barangay_text" id="barangay-text">
     
                             </div>
-                            <label class="text-sm font-light mt-1 ml-1">Barangay</label>
+                            
                         </div>
 
                                  
                         <div>
-                          
+                            <label class="text-sm mb-1 ml-1 font-medium">Zip Code</label>
                             <div class="relative flex items-center">
-                            <input name="zip_code" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="zip_code" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
                         
                             </div>
-                            <label class="text-sm font-light mt-1 ml-1">Zip Code</label>
+                          
                           
                         </div>
 
@@ -380,63 +398,72 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
                 </div>
 
+                <div class="border-gray-200 border-b"></div>
+
                 <!-- Contact Information -->
-                <div>
-                    <label class="text-gray-800 text-sm font-medium mb-6 block">4. Contact Information</label>
+                <div class="space-y-5">
+                <h1 class="text-lg font-bold text-base-content/70">Contact Information <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Phone Number</p>
                             <div class="relative flex items-center">
-                            <input name="phone" type="number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="phone" type="number" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Phone number" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Phone Number</p>
+                           
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Email</p>
                             <div class="relative flex items-center">
-                            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="email" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Email" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Email</p>
+                            
                         </div>
 
                         
                     </div>
                 </div>
+
+                <div class="border-gray-200 border-b"></div>
 
                 <!-- Emergency Contact -->
-                <div>
-                    <label class="text-gray-800 text-sm font-medium mb-6 block">5. Emergency Contact</label>
+                <div class="space-y-5">
+                <h1 class="text-lg font-bold text-base-content/70">Emergency Contact <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">First Name</p>
                             <div class="relative flex items-center">
-                            <input name="emergency_first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_first_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="First Name" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">First Name</p>
+                           
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Last Name</p>
                             <div class="relative flex items-center">
-                            <input name="emergency_last_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="emergency_last_name" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Last Name" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Last Name</p>
+                            
                         </div>
 
                         <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Relationship</p>
                             <div class="relative flex items-center">
-                            <input name="relationship" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                            <input name="relationship" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Relationship" />
                         
                             </div>
-                            <p class="text-sm font-light mt-1 ml-1">Relationship</p>
+                        
                         </div>
 
                         
                     </div>
                 </div>
 
-                <div class="border-gray-100 border-b"></div>
+                <div class="border-gray-200 border-b"></div>
 
                 <!-- Submit Form -->
                 <div class=" flex items-center justify-end">
@@ -451,66 +478,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     
-    <footer class="h-full pt-24 px-4 mx-auto max-w-7xl">
+    <footer class="h-full py-16 px-4  bg-gray-900">
 
+        <div class="mx-auto max-w-7xl">
 
-        <div class="pb-8 flex flex-col md:flex-row lg:flex-row items-start justify-between gap-16 ">
+        <div class="pb-8 flex flex-col md:flex-row lg:flex-row items-start justify-between gap-16 border-b border-gray-800">
 
-        
-            <p class="text-xl font-black tracking-tighter">Sta. Marta Educational Center Inc.</p>
             
+            <a class="text-white" href="./">
+        
+                <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
+            </a>
 
-            <div class="flex flex-col sm:flex-row lg:flex-row gap-16 lg:gap-16 items-start">
+            <div class="flex flex-col sm:flex-row lg:flex-row gap-16 lg:gap-16 items-start ">
                 <div class="space-y-8 text-sm">
-                        <p>Quick Links</p>
+                        <p class="font-medium text-white">Quick Links</p>
 
-                        <div class="font-medium space-y-4 flex flex-col">
-                            <a href="#" class="hover:text-blue-500 transition-colors group">About</a>
-                            <a href="#" class="hover:text-blue-500 transition-colors group">Academic Programs</a>
-                            <a href="#" class="hover:text-blue-500 transition-colors group">News & Events</a>
+                        <div class="space-y-4 flex flex-col text-gray-400">
+                            <a href="#" class="hover:text-white transition-colors group">About</a>
+                            <a href="#" class="hover:text-white transition-colors group">Academic Programs</a>
+                            <a href="#" class="hover:text-white transition-colors group">News & Events</a>
                         </div>
                 </div>
 
                 <div class="space-y-8 text-sm">
-                        <p>Contact Us</p>
+                        <p class="font-medium text-white">Contact Us</p>
 
-                        <div class="font-medium space-y-4 flex flex-col">
-                            <a href="#" class="hover:text-blue-500 transition-colors group">#01 Dolmar Subdivision, Kalawaan, Pasig City </a>
-                            <a href="#" class="hover:text-blue-500 transition-colors group">Phone: 8642-2591</a>
-                            <a href="#" class="hover:text-blue-500 transition-colors group">Email: smecdolmarpasig@gmail.com | smec_dolmarpasig@yahoo.com</a>
+                        <div class="space-y-4 flex flex-col text-gray-400">
+                            <a href="#" class="hover:text-white transition-colors group">#01 Dolmar Subdivision, Kalawaan, Pasig City </a>
+                            <a href="#" class="hover:text-white transition-colors group">Phone: 8642-2591</a>
+                            <a href="#" class="hover:text-white transition-colors group">Email: smecdolmarpasig@gmail.com | smec_dolmarpasig@yahoo.com</a>
                         </div>
                 </div>
 
                 <div class="space-y-8 text-sm">
-                        <p>Connect</p>
+                        <p class="font-medium text-white">Connect</p>
 
-                        <div class="font-medium space-y-4 flex flex-col">
-                            <a href="#" class="hover:text-blue-500 transition-colors group">Facebook</a>
-                            <a href="#" class="hover:text-blue-500 transition-colors group">Instagram</a>
-                    
+                        <div class="space-y-4 flex flex-col text-gray-400">
+                            <a href="#" class="hover:text-white transition-colors group">Facebook</a>
+                            <a href="#" class="hover:text-white transition-colors group">Instagram</a>
+                
                         </div>
                 </div>
 
             </div>
 
-                
+        
 
-                
-                </div>
+        
+        </div>
 
-                <div class="h-full py-8 container mx-auto text-gray-400 ">
+        <div class="flex items-center justify-between pt-8 text-gray-400 font-medium">
 
-                    <div class="text-xs flex flex-wrap items-center gap-8 ">
-                        <p>© 2024 SMEC. All Rights Reserved.</p>
-                        <a href="" class="hover:text-black transition-colors">Privacy</a>
-                        <a href="" class="hover:text-black transition-colors">Cookies Policy</a>
-                    </div>
+            <div class="text-xs flex flex-wrap items-center gap-8 ">
+                <p class="hover:text-white transition-colors">© 2024 SMEC. All Rights Reserved.</p>
+                <a href="" class="hover:text-white transition-colors">Privacy</a>
+                <a href="" class="hover:text-white transition-colors">Cookies Policy</a>
+            </div>
+
+            <div>
+            <p class="hover:text-white transition-colors text-xs">Developed by:</p>
+            </div>
 
 
-                </div>
+        </div>
+
+
+    
+        </div>
 
 
     </footer>
+
+
+
+
 
 
 
