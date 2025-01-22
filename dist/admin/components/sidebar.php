@@ -128,7 +128,7 @@ $customization = $result->fetch_assoc();
                     </summary>
                     <ul>
                         <li><a>Student Reports</a></li>
-
+                        <li><a>Teacher Reports</a></li>
                         <li><a href="enrollment_Reports.php">Enrollment Reports</a></li>
                         
                        
@@ -147,7 +147,9 @@ $customization = $result->fetch_assoc();
                     </summary>
                     <ul>
                         <li><a href="admin_admission_approval.php">Admissions</a></li>
-                        <li><a href="admin_enrollment_approval.php">Enrollment</a></li>
+                        <li><a href="admin_enrollment_approval.php">Enrollment</a></li> 
+                        <li><a>Student List</a></li>
+                        <li><a>Teacher List</a></li>
                         <li><a>Fees</a></li>
                        
                     </ul>
@@ -165,11 +167,9 @@ $customization = $result->fetch_assoc();
                     </summary>
                     <ul>
                         <li><a>Term</a></li>
-                        <li><a>Section</a></li>
+                        <li><a href="class_section.php">Section</a></li>
                         <li><a>Subject</a></li>  
-                        <li><a>Schedule</a></li>  
-                   
-                   
+                    
                      
                     </ul>
                     </details>
