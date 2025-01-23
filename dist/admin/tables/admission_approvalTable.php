@@ -220,7 +220,7 @@ ob_end_flush(); // End output buffering
                                 <th>Submission Date</th>
                                 <th>Status</th>
                                 <th>Action</th>
-                                <th></th>
+                             
                             
                             </tr>
                         </thead>
@@ -245,25 +245,9 @@ ob_end_flush(); // End output buffering
                                         <form method="POST" >
                                             <input type="hidden" name="student_id" value="<?php echo $row['id']; ?>">
                                         
-                                            <div class="dropdown  dropdown-left dropdown-end">
-                                                
-                                                    <div tabindex="0" role="button" class="btn btn-circle btn-ghost btn-sm">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                                    </svg>
-
-                                                    </div>
-                                                
-                                                <div
-                                                        tabindex="1"
-                                                        class="menu dropdown-content bg-base-100 z-[1] rounded-md mt-4 w-52 p-2 shadow">
-                                                        <li>  <button type="submit" name="approve" class="text-sm font-semibold">Approve</button></li>
-                                                        <li>  <button type="submit" name="reject" class="text-sm font-semibold">Reject</button></li>
-                                                    
-                
-                                                </div>
-                                            </div>
-
+                                            <button type='submit' name='approve' class='text-green-500 text-sm hover:underline'>[Approve]</button>
+                                            <button type='submit' name='reject' class='text-red-500 text-sm hover:underline'>[Reject]</button>
+                                            <button type='button' class='text-amber-500 text-sm hover:underline'>[Send Email]</button>
                                         
                         
                                         
@@ -272,17 +256,7 @@ ob_end_flush(); // End output buffering
                                     
                                     
                                     </td>
-                                    <td>
-                                        <div class="tooltip tooltip-left" data-tip="Send Email to Applicant">
-            
-                                        <button onclick="send_email.showModal()" class="btn btn-circle btn-ghost btn-sm"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-                                            </svg>
-                                        </button>
-
-                                    
-                                        </div>
-                                    </td>
+                 
                                 
 
                                 </tr>
