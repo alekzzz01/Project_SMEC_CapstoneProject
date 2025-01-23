@@ -58,34 +58,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param('sssss', $name, $email, $hashed_password, $role, $created_at);
 
             if ($stmt->execute()) {
-                $mail = new PHPMailer(true);
-                try {
-                    $mail->isSMTP();
-                    $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
-                    $mail->SMTPAuth = true;
-                    $mail->Username = 'sweetmiyagi@gmail.com';  // Your email (sender's email)
-                    $mail->Password = 'vbzj pxng toyc xmht';  // Your Gmail app password
-                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                    $mail->Port = 587;
+                $user_id = $stmt->insert_id; // Get the last inserted user_id
+                
+                // Update the students table with the generated user_id
+                $updateQuery = "
+                    UPDATE students 
+                    SET user_id = ? 
+                    WHERE student_number = ? AND email = ?
+                ";
+                $updateStmt = $connection->prepare($updateQuery);
+                $updateStmt->bind_param('iss', $user_id, $student_number, $email);
 
-                    $mail->setFrom('sweetmiyagi@gmail.com', 'SMEC Portal');
-                    $mail->addAddress($email);
+                if ($updateStmt->execute()) {
+                    // Email notification
+                    $mail = new PHPMailer(true);
+                    try {
+                        $mail->isSMTP();
+                        $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
+                        $mail->SMTPAuth = true;
+                        $mail->Username = 'sweetmiyagi@gmail.com';  // Your email (sender's email)
+                        $mail->Password = 'vbzj pxng toyc xmht';  // Your Gmail app password
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                        $mail->Port = 587;
 
-                    $mail->isHTML(true);
-                    $mail->Subject = 'Registration Complete';
-                    $mail->Body = "
-                        <p>Dear $name,</p>
-                        <p>Your registration on the portal is successful.</p>
-                        <p><strong>Your generated password is: $generated_password</strong></p>
-                        <p>We require you to change your password immediately after you login for security purposes.</p>
-                        <p>Best regards,</p>
-                        <p>Portal Team</p>
-                    ";
+                        $mail->setFrom('sweetmiyagi@gmail.com', 'SMEC Portal');
+                        $mail->addAddress($email);
 
-                    $mail->send();
-                    echo "Email sent.";
-                } catch (Exception $e) {
-                    echo "Mailer Error: " . $mail->ErrorInfo;
+                        $mail->isHTML(true);
+                        $mail->Subject = 'Registration Complete';
+                        $mail->Body = "
+                            <p>Dear $name,</p>
+                            <p>Your registration on the portal is successful.</p>
+                            <p><strong>Your generated password is: $generated_password</strong></p>
+                            <p>We require you to change your password immediately after you login for security purposes.</p>
+                            <p>Best regards,</p>
+                            <p>Portal Team</p>
+                        ";
+
+                        $mail->send();
+                        echo "Registration successful. Email sent.";
+                    } catch (Exception $e) {
+                        echo "Mailer Error: " . $mail->ErrorInfo;
+                    }
+                } else {
+                    echo "Failed to update student user_id.";
                 }
             } else {
                 echo "Failed to create user account.";

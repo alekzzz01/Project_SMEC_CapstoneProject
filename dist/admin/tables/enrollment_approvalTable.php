@@ -1,11 +1,51 @@
 <?php
 ob_start(); // Start output buffering
-include '../../config/db.php'; // Include the database connection
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require '../../vendor/autoload.php'; 
+include '../../config/db.php';
+
+// Function to send email
+function sendEmail($email, $name, $status) {
+    $mail = new PHPMailer(true);
+    try {
+        // SMTP configuration
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'sweetmiyagi@gmail.com'; // Sender's email
+        $mail->Password = 'vbzj pxng toyc xmht';  // Gmail app password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        // Sender and recipient details
+        $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
+        $mail->addAddress($email, $name);
+        $mail->isHTML(true);
+        $mail->Subject = 'Enrollment Status Update';
+        $mail->Body = "Dear $name,<br><br>Your enrollment status has been updated to: <strong>$status</strong>.<br><br>Thank you.";
+
+        $mail->send();
+    } catch (Exception $e) {
+        error_log("Email sending failed: {$mail->ErrorInfo}");
+    }
+}
 
 // Handle Approve Action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
     if (isset($_POST['enrollment_id'])) {
         $enrollmentId = $_POST['enrollment_id'];
+
+        // Fetch student's email and name
+        $query = "SELECT s.email, CONCAT(s.first_name, ' ', s.last_name) AS name FROM students s
+                  INNER JOIN student_enrollment e ON s.student_id = e.student_id
+                  WHERE e.enrollment_id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("i", $enrollmentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $student = $result->fetch_assoc();
 
         // Update the status to 'enrolled'
         $sql = "UPDATE student_enrollment SET status = 'enrolled' WHERE enrollment_id = ?";
@@ -14,19 +54,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
 
         if ($stmt->execute()) {
             $successMessage = "Enrollment approved successfully!";
+            sendEmail($student['email'], $student['name'], 'Enrolled');
         } else {
             $errorMessage = "Error: Unable to approve enrollment.";
         }
 
         $stmt->close();
     }
-
 }
 
 // Handle Reject Action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
     if (isset($_POST['enrollment_id'])) {
         $enrollmentId = $_POST['enrollment_id'];
+
+        // Fetch student's email and name
+        $query = "SELECT s.email, CONCAT(s.first_name, ' ', s.last_name) AS name FROM students s
+                  INNER JOIN student_enrollment e ON s.student_id = e.student_id
+                  WHERE e.enrollment_id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param("i", $enrollmentId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $student = $result->fetch_assoc();
 
         // Update the status to 'rejected'
         $sql = "UPDATE student_enrollment SET status = 'rejected' WHERE enrollment_id = ?";
@@ -35,14 +85,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
 
         if ($stmt->execute()) {
             $successMessage = "Enrollment rejected successfully!";
+            sendEmail($student['email'], $student['name'], 'Rejected');
         } else {
             $errorMessage = "Error: Unable to reject enrollment.";
         }
 
         $stmt->close();
     }
-
-    
 }
 
 // Query to fetch only pending enrollments
@@ -98,27 +147,6 @@ ob_end_flush(); // Flush the buffered output
 <body>
 
 <div class="space-y-3.5 mt-7">
-
-
-
-    <div class="flex items-center p-6 bg-white rounded-md border border-gray-200">
-      
-            <!-- School Year Filter -->
-            <div class="flex items-center gap-2">
-                <label for="statusFilter" class="text-gray-700 mr-2 ">Filter by Status:</label>
-                <select id="statusFilter" class="select select-bordered select-sm">
-                    <option value="">All</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Rejected">Rejected</option>
-                    <option value="Correction">Needs Correction</option>
-                </select>
-
-            </div>
-
-    </div>
-
-
 
     <div class="p-6 bg-white rounded-md border border-gray-200">
     
@@ -243,17 +271,6 @@ $(document).ready(function () {
         ordering: true,  // Enables column sorting
         info: true       // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
     });
-
-    // Event listener for the filter dropdown
-    $('#statusFilter').on('change', function () {
-            var status = $(this).val();
-            if (status) {
-                table.column(6).search('^' + status + '$', true, false).draw(); // Exact match filtering
-            } else {
-                table.column(6).search('').draw(); // Reset filter
-            }
-    });
-
 
 
 
