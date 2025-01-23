@@ -98,10 +98,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         Go back to Login
    </a>
 
-    <div class="relative max-w-md mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
+    <div class="relative max-w-2xl mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
         <header class="mb-8">
-            <h1 class="text-2xl font-bold mb-1">OTP Authentication</h1>
-            <p class="text-[15px] text-slate-500">Please enter the OTP sent to your email.</p>
+            <h1 class="text-2xl font-extrabold mb-1">OTP Authentication</h1>
+            <p class="text-[15px] text-gray-700">Please enter the OTP sent to your email.</p>
         </header>
         <form action="otpAuth.php" method="POST">
             <div class="flex items-center justify-center gap-3">
