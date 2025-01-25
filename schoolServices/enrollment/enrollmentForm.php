@@ -1,9 +1,7 @@
 <?php 
 
-
 session_start();
 include '../../config/db.php'; // Include the database connection
-
 
 if (isset($_SESSION['student_id'])) {
     $student_id = $_SESSION['student_id'];
@@ -21,28 +19,62 @@ if (isset($_SESSION['student_id'])) {
 
 if (isset($_POST['submitForm'])) {
     $student_type = $_POST['student-type'];
-    $type = $_POST['type'];
+    $type = $_POST['type']; // Add the $type variable here
     $school_year_id = $_POST['school-year'];
     $grade_level = $_POST['grade-level'];
     $track = isset($_POST['track']) ? $_POST['track'] : null;
+    $parent_contact_number = $_POST['parent-contact-number'];
+    $last_school_attended = $_POST['last-school-attended'];
 
+    // Initialize file variables
+    $birth_certificate = null;
+    $report_card = null;
+    $good_moral_certificate = null;
 
+    // Check and retrieve uploaded files
+    if (isset($_FILES['birth_certificate']) && $_FILES['birth_certificate']['error'] === 0) {
+        $birth_certificate = file_get_contents($_FILES['birth_certificate']['tmp_name']);
+    }
 
-   
-               
-    $sql = "INSERT INTO student_enrollment (student_id, student_type, school_year_id, type, grade_level, track, date_enrolled, status) 
-                        VALUES (?, ?, ?, ?, ?, ?, NOW(), 'Pending')";
+    if (isset($_FILES['report_card']) && $_FILES['report_card']['error'] === 0) {
+        $report_card = file_get_contents($_FILES['report_card']['tmp_name']);
+    }
+
+    if (isset($_FILES['good_moral_certificate']) && $_FILES['good_moral_certificate']['error'] === 0) {
+        $good_moral_certificate = file_get_contents($_FILES['good_moral_certificate']['tmp_name']);
+    }
+
+    $sql = "
+        INSERT INTO student_enrollment (
+            student_id, student_type, type, school_year_id, grade_level, 
+            track, date_enrolled, parent_contact_number, last_school_attended,
+            birth_certificate, report_card, good_moral_certificate, status
+        ) 
+        VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, 'Pending')
+    ";
 
     if ($stmt = $connection->prepare($sql)) {
-               
         if (empty($track)) {
             $track = NULL; // If track is empty, set it as NULL
         }
 
-    // Bind parameters
-    $stmt->bind_param("isisss", $student_id, $student_type, $school_year_id, $type, $grade_level, $track);
+        // Bind parameters
+        $stmt->bind_param(
+            "ississssbbb", 
+            $student_id, 
+            $student_type, 
+            $type, 
+            $school_year_id, 
+            $grade_level, 
+            $track, 
+            $parent_contact_number, 
+            $last_school_attended, 
+            $birth_certificate, 
+            $report_card, 
+            $good_moral_certificate
+        );
 
-            // Execute the query
+        // Execute the query
         if ($stmt->execute()) {
             $_SESSION['enrollment_form_success_message'] = "Enrollment form submitted successfully!";
             header('Location: ' . $_SERVER['PHP_SELF']);
@@ -54,12 +86,14 @@ if (isset($_POST['submitForm'])) {
         }
 
         $stmt->close();
-    } 
+    } else {
+        $_SESSION['enrollment_form_error'] = "Error: Unable to prepare statement.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
 }
-
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -433,7 +467,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Certificate</label>
                                             <div class="relative flex items-center">
-                                            <input name="birth-certificate" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="birth-certificate" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
@@ -441,7 +475,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Report Card</label>
                                             <div class="relative flex items-center">
-                                            <input name="report-card" type="file"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="report-card" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
@@ -449,7 +483,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Good Moral Certificate</label>
                                             <div class="relative flex items-center">
-                                            <input name="good-moral-certificate" type="file"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="good-moral-certificate" type="file" enctype="multipart/form-data"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
