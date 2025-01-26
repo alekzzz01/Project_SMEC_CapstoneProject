@@ -1,82 +1,29 @@
-<?php
-
+<?php 
 include '../../config/db.php';
-
-// Function to calculate age based on birthday
-function calculateAge($birthday) {
-    $birthDate = new DateTime($birthday);
-    $today = new DateTime();
-    $age = $today->diff($birthDate)->y;
-    return $age;
-}
-
 // Check if `student_id` is set in the URL
 if (isset($_GET['student_id'])) {
     $student_id = intval($_GET['student_id']); // Use intval to ensure it's an integer
-
-
-    // Query to fetch data from admission_form, students, and student_enrollment tables
-    $stmt = $connection->prepare("
-    SELECT 
-        admission_form.first_name,
-        admission_form.middle_initial,
-        admission_form.last_name,
-        admission_form.birth_date AS birthday,
-        admission_form.gender,
-        CONCAT_WS(', ', admission_form.barangay, admission_form.city, admission_form.province, admission_form.region) AS address,
-        admission_form.city,
-        admission_form.barangay,
-        admission_form.province,
-        admission_form.zip_code,
-        students.year_level AS `grade_level`,
-        CONCAT(
-            COALESCE(students.parent_first_name, ''), ' ', 
-            COALESCE(students.parent_middle_initial, ''), ' ', 
-            COALESCE(students.parent_last_name, '')
-        ) AS guardian_full_name,
-        students.relationship AS guardian_relationship,
-        student_enrollment.parent_contact_number AS guardian_contact_number,
-        school_year.school_year AS `academic_year`
-    FROM 
-        students
-    JOIN 
-        admission_form 
-    ON 
-        students.email = admission_form.email
-    JOIN 
-        student_enrollment 
-    ON 
-        students.student_id = student_enrollment.student_id
-    JOIN
-        school_year
-    ON
-        student_enrollment.school_year_id = school_year.school_year_id
-    WHERE 
-        students.student_id = ? AND school_year.status = 'Open'
-");
-
-$stmt->bind_param("i", $student_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
+    // Fetch student details using a prepared statement
+    $stmt = $connection->prepare("SELECT * FROM students WHERE student_id = ?");
+    $stmt->bind_param("i", $student_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     // Check if a student with this ID exists
     if ($result->num_rows > 0) {
         // Fetch the student's details
         $student = $result->fetch_assoc();
+              
+        // Calculate the age
+        $dob = new DateTime($student['date_of_birth']);
+        $today = new DateTime(); // Get the current date
+        $age = $today->diff($dob)->y; // Calculate age in years
 
-        // Calculate the age if a valid birthday exists
-        if (!empty($student['birthday'])) {
-            $student['age'] = calculateAge($student['birthday']);
-        } else {
-            $student['age'] = 'Field is Blank'; // Handle cases where birthday is missing
-        }
+        $address = $student['barangay'] . ', ' . $student['city'] . ', ' . $student['province'] . ', ' . $student['region'];
 
-        // Check for blank fields
-        foreach ($student as $key => $value) {
-            if (empty($value)) {
-                $student[$key] = 'Field is Blank'; // Mark blank fields
-            }
-        }
+        $parentFullName = $student['emergency_first_name'] . ' ' . $student['emergency_last_name'];
+
+
+
     } else {
         echo "No student found with ID: " . htmlspecialchars($student_id);
         exit;
@@ -85,13 +32,10 @@ $result = $stmt->get_result();
     echo "No student ID provided!";
     exit;
 }
-
 // Close the statement and connection
 $stmt->close();
 $connection->close();
-
 ?>
-
 
 
 
@@ -156,7 +100,7 @@ $connection->close();
                     <div>
                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Grade Level</p>
                             <div class="relative flex items-center">
-                            <input name="grade-level" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['grade_level']); ?>" />
+                            <input name="grade-level" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly  />
                         
                             </div>
                        
@@ -165,7 +109,7 @@ $connection->close();
                     <div>
                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Academic Year</p>
                             <div class="relative flex items-center">
-                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['academic_year']); ?>" />
+                            <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly  />
                         
                             </div>
                        
@@ -184,6 +128,7 @@ $connection->close();
 
                 <!-- Personal Details -->
                 <input type="radio" name="my_tabs_1" role="tab" class="tab"  checked="checked" aria-label="Basic Info" />
+
                 <div role="tabpanel" class="tab-content pt-14 px-4 space-y-6">
                     <h1 class="text-lg font-bold">Personal Details <span class="text-red-500">*</span></h1>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
@@ -226,7 +171,7 @@ $connection->close();
                                     <div>
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Age</p>
                                         <div class="relative flex items-center">
-                                        <input name="age" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['age']); ?>"  />
+                                        <input name="age" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly  value="<?php echo $age ?>" />
                                     
                                         </div>
                                     
@@ -262,7 +207,7 @@ $connection->close();
                                     <div>
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Birthday</p>
                                         <div class="relative flex items-center">
-                                        <input name="birthday" type="date"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['birthday']); ?>"   />
+                                        <input name="birthday" type="date"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['date_of_birth']); ?>"   />
                                     
                                         </div>
                                     
@@ -278,10 +223,10 @@ $connection->close();
                                     
                                     </div>
 
-                                    <div>
+                                    <div class="col-span-2">
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Address</p>
                                         <div class="relative flex items-center">
-                                        <input name="address" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['address']); ?>"   />
+                                        <input name="address" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo $address ?>"    />
                                     
                                         </div>
                                     
@@ -294,10 +239,10 @@ $connection->close();
 
                 <!-- Guardian Information -->
 
-                <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Guardian Info" />
+                <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Emergency Contact" />
                 <div role="tabpanel" class="tab-content pt-14 px-4 space-y-6">
 
-                    <h1 class="text-lg font-bold">Guardian Details <span class="text-red-500">*</span></h1>
+                    <h1 class="text-lg font-bold">Emergency Contact <span class="text-red-500">*</span></h1>
                   
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 w-full">
 
@@ -305,7 +250,7 @@ $connection->close();
                                     <div>
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Full Name</p>
                                         <div class="relative flex items-center">
-                                        <input name="guardian-full-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['guardian_full_name']); ?>"   />
+                                        <input name="guardian-full-name" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo  $parentFullName ?>"   />
                                     
                                         </div>
                                     
@@ -315,7 +260,7 @@ $connection->close();
                                     <div>
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Contact No.</p>
                                         <div class="relative flex items-center">
-                                        <input name="guardian_contact_number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['guardian_contact_number']); ?>"  />
+                                        <input name="guardian_contact_number" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['emergency_number']); ?>"  />
                                     
                                         </div>
                                     
@@ -324,7 +269,7 @@ $connection->close();
                                     <div>
                                         <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Relationship to the Student</p>
                                         <div class="relative flex items-center">
-                                        <input name="guardian_relationship" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['guardian_relationship']); ?>"   />
+                                        <input name="guardian_relationship" type="text"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-amber-50" readonly value="<?php echo htmlspecialchars($student['relationship']); ?>"   />
                                     
                                         </div>
                                     

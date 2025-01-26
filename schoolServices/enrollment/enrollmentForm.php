@@ -295,7 +295,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Religion</p>
                                         <div class="relative flex items-center">
-                                        <input name="religion" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Religion"  />
+                                        <input name="religion" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Religion"  />
                                     
                                         </div>
                                         
@@ -304,7 +304,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Citizenship</p>
                                         <div class="relative flex items-center">
-                                        <input name="citizenship" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Citizenship"  />
+                                        <input name="citizenship" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Citizenship"  />
                                     
                                         </div>
                                         
@@ -313,7 +313,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Civil Status</p>
                                         <div class="relative flex items-center">
-                                        <input name="civilstatus" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Civil Status"  />
+                                        <input name="civilstatus" type="text"  class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Civil Status"  />
                                     
                                         </div>
                                         
@@ -322,12 +322,11 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Birthplace</p>
                                         <div class="relative flex items-center">
-                                        <input name="birthplace" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Birthplace"  />
+                                        <input name="birthplace" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Birthplace"  />
                                     
                                         </div>
                                         
                                     </div>
-
 
 
                                 
