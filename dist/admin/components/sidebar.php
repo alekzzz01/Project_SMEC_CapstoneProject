@@ -1,66 +1,39 @@
-<?php 
-
-
+<?php
 include '../../config/db.php';
-
 
 $sql = "SELECT * FROM customization_table WHERE theme_id = 1";
 $stmt = $connection->prepare($sql);
 $stmt->execute();
 $result = $stmt->get_result();
-
 $customization = $result->fetch_assoc();
-
-
-
-
 ?>
 
-
-
 <div id="sidebar" class="bg-white border-r border-gray-200 w-full md:w-80 lg:w-96 h-screen fixed md:relative lg:relative transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 z-50">
-    
-    
-    
-      <div class="flex justify-between items-center p-6 h-20 ">
-          <div>
-           
+    <div class="flex justify-between items-center p-6 h-20">
+        <div>
             <a class="flex items-center gap-2" href="./">
-                
                 <?php
-                    // Check if the customization array is set and contains a school_logo key
-                    if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
-                        echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
-                    } else {
-                        // Display a default logo if school_logo is not set or empty
-                        echo '<img src="../../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
-                    }
+                if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
+                    echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                } else {
+                    echo '<img src="../../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
+                }
+
+                if (isset($customization['school_name']) && !empty($customization['school_name'])) {
+                    echo '<p class="font-bold">' . htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8') . '</p>';
+                } else {
+                    echo '<p class="text-2xl font-bold tracking-tight hidden lg:block">LUMIX</p>';
+                }
                 ?>
-              
-        
-
-                <?php 
-                        if (isset($customization['school_name']) && !empty($customization['school_name'])) {
-                            echo '<p class="font-bold">' . htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8') . '</p>';
-                        } else {
-                            echo '<p class="text-2xl font-bold tracking-tight hidden lg:block">LUMIX</p>';
-                        }
-                ?>
-
-
-                
             </a>
+        </div>
 
-
-          </div>
-
-          <button id="closeSidebar" class="btn btn-ghost block md:hidden lg:hidden">
+        <button id="closeSidebar" class="btn btn-ghost block md:hidden lg:hidden">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
-
-      </div>
+    </div>
 
       <ul class="menu text-base p-4">
         

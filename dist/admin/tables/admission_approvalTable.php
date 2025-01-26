@@ -1,14 +1,11 @@
 <?php
-
-// fix the resubmission issue
-
+ob_start(); // Start output buffering to prevent header issues
+$response = null; // Variable to store the response status
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 require '../../vendor/autoload.php'; 
 include '../../config/db.php';
-
-ob_start(); // Start output buffering to prevent header issues
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['approve'])) {
@@ -23,6 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admissionData = $result->fetch_assoc();
 
         if (!$admissionData) {
+            $response = 'error'; // No data found
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=error';</script>";
             exit;
         }
 
@@ -56,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insertStmt = $connection->prepare($insertQuery);
         $insertStmt->bind_param(
-            "issssssssssssssssssss", // Exactly 21 placeholders
-            $defaultUserId, // Matches the first `?`
+            "issssssssssssssssssss", 
+            $defaultUserId, 
             $studentNumber,
             $admissionData['first_name'],
             $admissionData['middle_initial'],
@@ -87,12 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mail->isSMTP();
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
-                $mail->Username = 'sweetmiyagi@gmail.com'; // Sender's email
-                $mail->Password = 'vbzj pxng toyc xmht';  // Gmail app password
+                $mail->Username = 'sweetmiyagi@gmail.com';
+                $mail->Password = 'vbzj pxng toyc xmht'; 
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 
-                // Sender and recipient details
                 $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
                 $mail->addAddress($admissionData['email'], $admissionData['first_name']);
                 $mail->isHTML(true);
@@ -102,28 +100,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                Please wait for further instructions regarding enrollment.";
 
                 $mail->send();
+                $response = 'success'; // Approval successful
+                $action = 'approve';
             } catch (Exception $e) {
-                exit;
+                $response = 'error'; // Email sending failed
             }
 
             // Update the is_confirmed field in the admission_form table
             $updateQuery = "UPDATE admission_form SET is_confirmed = 1 WHERE id = ?";
             $updateStmt = $connection->prepare($updateQuery);
             $updateStmt->bind_param("i", $studentId);
-
-            if ($updateStmt->execute()) {
-                // Success
-            } else {
-                echo "Error updating admission status: " . $updateStmt->error;
-            }
+            $updateStmt->execute();
         } else {
-            echo "Error inserting student data: " . $insertStmt->error;
-            exit;
+            $response = 'error'; // Insert failed
         }
     } elseif (isset($_POST['reject'])) {
         $studentId = $_POST['student_id'];
 
-        // Fetch student details from the admission_form table
+        // Fetch student details and send rejection email
         $query = "SELECT * FROM admission_form WHERE id = ?";
         $stmt = $connection->prepare($query);
         $stmt->bind_param("i", $studentId);
@@ -132,6 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $admissionData = $result->fetch_assoc();
 
         if (!$admissionData) {
+            $response = 'error'; // No data found
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=error';</script>";
             exit;
         }
 
@@ -141,12 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'sweetmiyagi@gmail.com'; // Sender's email
-            $mail->Password = 'vbzj pxng toyc xmht';  // Gmail app password
+            $mail->Username = 'sweetmiyagi@gmail.com';
+            $mail->Password = 'vbzj pxng toyc xmht';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
-            // Sender and recipient details
             $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
             $mail->addAddress($admissionData['email'], $admissionData['first_name']);
             $mail->isHTML(true);
@@ -156,25 +151,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                            Thank you for your interest in Sta. Marta Educational Center.";
 
             $mail->send();
+            $response = 'success'; // Rejection successful
+            $action = 'reject';
         } catch (Exception $e) {
-            exit;
+            $response = 'error'; // Email sending failed
         }
 
         // Update the is_confirmed field in the admission_form table
         $updateQuery = "UPDATE admission_form SET is_confirmed = -1 WHERE id = ?";
         $updateStmt = $connection->prepare($updateQuery);
         $updateStmt->bind_param("i", $studentId);
-
-        if ($updateStmt->execute()) {
-            // Success
-        } else {
-            echo "Error updating rejection status: " . $updateStmt->error;
-        }
+        $updateStmt->execute();
     }
+
+    // Redirect with JavaScript
+    echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=$response&action=$action';</script>";
+    exit;
+
 }
+
+
 
 ob_end_flush(); // End output buffering
 ?>
+
 
 
 
@@ -193,6 +193,12 @@ ob_end_flush(); // End output buffering
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf/notyf.min.css">
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script>
 
     
 </head>
@@ -336,4 +342,42 @@ $(document).ready(function () {
         info: true       // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
     });
 });
+</script>
+
+<script>
+    // Initialize Notyf
+const notyf = new Notyf({
+    duration: 3000, // Duration of the notification (3 seconds)
+    position: {
+        x: 'center', // Align notifications to the center
+        y: 'top'    // Show notifications at the top
+    }
+});
+
+// Check for `status` and `action` query parameters in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const status = urlParams.get('status');
+const action = urlParams.get('action');
+
+// Display notifications based on `status` and `action`
+if (status === 'success') {
+    if (action === 'approve') {
+        notyf.success('Admission Approved!');
+    } else if (action === 'reject') {
+        notyf.success('Admission Rejected!');
+    }
+} else if (status === 'error') {
+    notyf.error('An error occurred. Please try again.');
+}
+</script>
+
+<script>
+    // Remove the 'status' query parameter after the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('status')) {
+            url.searchParams.delete('status'); // Remove the 'status' parameter
+            window.history.replaceState({}, document.title, url.pathname); // Update the URL without reloading
+        }
+    });
 </script>
