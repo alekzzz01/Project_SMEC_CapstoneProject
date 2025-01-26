@@ -49,20 +49,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Insert student data into the students table
         $defaultUserId = NULL; // Set user_id to NULL temporarily
         $insertQuery = "INSERT INTO students 
-                        (user_id, student_number, first_name, middle_initial, last_name, date_of_birth, gender, year_level, 
+                        (user_id, student_number, first_name, middle_initial, last_name, date_of_birth, gender, religion, citizenship, civil_status, birth_place, year_level, 
                          parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, 
-                         zip_code, contact_number, email, emergency_first_name, emergency_last_name, relationship) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                         zip_code, contact_number, email, emergency_first_name, emergency_last_name, emergency_number, relationship) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insertStmt = $connection->prepare($insertQuery);
         $insertStmt->bind_param(
-            "issssssssssssssssssss", 
-            $defaultUserId, 
+            "issssssssssssssssssss", // Exactly 21 placeholders
+            $defaultUserId, // Matches the first `?`
             $studentNumber,
             $admissionData['first_name'],
             $admissionData['middle_initial'],
             $admissionData['last_name'],
             $admissionData['birth_date'],
             $admissionData['gender'],
+            $admissionData['religion'],
+            $admissionData['citizenship'],
+            $admissionData['civil_status'],
+            $admissionData['birth_place'],
             $admissionData['year_level'],
             $admissionData['parent_first_name'],
             $admissionData['parent_middle_initial'],
@@ -72,10 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $admissionData['city'],
             $admissionData['barangay'],
             $admissionData['zip_code'],
-            $admissionData['phone'],
+            $admissionData['contact_number'],
             $admissionData['email'],
             $admissionData['emergency_first_name'],
             $admissionData['emergency_last_name'],
+            $admissionData['emergency_number'],
             $admissionData['relationship']
         );
 
@@ -242,7 +247,7 @@ ob_end_flush(); // End output buffering
                                     </td>
                                     <td><?php echo $row['year_level']; ?></td>
                                     <td><?php echo $row['created_at']; ?></td>
-                                    <td><?php echo $row['phone']; ?></td>
+                                    <td><?php echo $row['contact_number']; ?></td>
 
                             
 

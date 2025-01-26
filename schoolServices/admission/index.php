@@ -10,6 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $last_name = $_POST['last_name'];
     $birth_date = $_POST['birth_date'];
     $gender = $_POST['gender'];
+    $religion = $_POST['religion'];
+    $citizenship = $_POST['citizenship'];
+    $civilstatus = $_POST['civilstatus'];
+    $birthplace = $_POST['birthplace'];
     $year_level = $_POST['year_level'];
     $parent_first_name = $_POST['parent_first_name'];
     $parent_middle_initial = $_POST['parent_middle_initial'];
@@ -23,24 +27,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $emergency_first_name = $_POST['emergency_first_name'];
     $emergency_last_name = $_POST['emergency_last_name'];
+    $emergency_number = $_POST['emergency_number'];
     $relationship = $_POST['relationship'];
 
     $query = "INSERT INTO admission_form 
-    (is_confirmed, first_name, middle_initial, last_name, birth_date, gender, year_level, 
+    (is_confirmed, first_name, middle_initial, last_name, birth_date, gender, religion, citizenship, civil_status, birth_place, year_level, 
     parent_first_name, parent_middle_initial, parent_last_name, region, province, city, barangay, zip_code, 
-    phone, email, emergency_first_name, emergency_last_name, relationship, created_at) 
+    contact_number, email, emergency_first_name, emergency_last_name, emergency_number, relationship, created_at) 
     VALUES 
-    (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+    (0, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
     
     if ($stmt = $connection->prepare($query)) {
         // Bind the parameters (20 total)
         $stmt->bind_param(
-            "sssssssssssssssssss",
+            "ssssssssssssssssssssssss",
             $first_name,
             $middle_initial,
             $last_name,
             $birth_date,
             $gender,
+            $religion,
+            $citizenship,
+            $civilstatus,
+            $birthplace,
             $year_level,
             $parent_first_name,
             $parent_middle_initial,
@@ -54,8 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $email,
             $emergency_first_name,
             $emergency_last_name,
+            $emergency_number,
             $relationship
         );
+        
 
         // Execute the query
         if ($stmt->execute()) {
@@ -110,8 +121,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="navbar" class="px-4 py-2 fixed w-full top-0 left-0 z-10 transition duration-300">
         <div class=" flex items-center justify-between">
 
-            <a class="flex items-center gap-4 text-white" href="./">
-                <img src="../../assets/images/logo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
+            <a class="flex items-center gap-4 text-white" href="../../index.php">
+                <img src="../../assets/images/smeclogo.png" alt="" class="w-10 h-10 object-cover bg-white rounded-full">
                 <p class="text-2xl font-medium tracking-tighter hidden lg:block">Sta. Marta Educational Center Inc.</p>
             </a>
 
@@ -208,6 +219,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
 
             <div class="max-w-7xl mx-auto ">
+
+                <!-- SUCCESS MODAL -->
+               
+                <?php if (isset($_SESSION['admission_success_message'])): ?>
+                        <div class="rounded-md bg-green-50 px-2 py-1 font-medium text-green-600 ring-1 ring-inset ring-green-500/10 mb-7"   ><?= $_SESSION['admission_success_message']; ?></div>
+                        <?php unset($_SESSION['admission_success_message']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                        <div class="rounded-md bg-red-50 px-2 py-1 font-medium text-red-600 ring-1 ring-inset ring-red-500/10 mb-7" ><?= $_SESSION['error']; ?></div>
+                        <?php unset($_SESSION['error']); ?>
+                <?php endif; ?>
+
                 <form action="" method="POST" class="space-y-10">
 
 
@@ -263,6 +287,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 </select>
                             </div>
                             
+                            
+                        </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Religion</p>
+                            <div class="relative flex items-center">
+                            <input name="religion" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Religion"  />
+                        
+                            </div>
+                            
+                        </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Citizenship</p>
+                            <div class="relative flex items-center">
+                            <input name="citizenship" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Citizenship"  />
+                        
+                            </div>
+                            
+                        </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Civil Status</p>
+                            <div class="relative flex items-center">
+                            <input name="civilstatus" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Civil Status"  />
+                        
+                            </div>
+                            
+                        </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Birthplace</p>
+                            <div class="relative flex items-center">
+                            <input name="birthplace" type="text" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Birthplace"  />
+                        
+                            </div>
                             
                         </div>
 
@@ -449,6 +509,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                             
                         </div>
+
+                        <div>
+                            <p class="text-sm mb-1 ml-1 font-medium">Phone Number</p>
+                            <div class="relative flex items-center">
+                            <input name="emergency_number" type="number" required class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Phone number" />
+                        
+                            </div>
+                           
+                        </div>
+
 
                         <div>
                             <p class="text-sm mb-1 ml-1 font-medium">Relationship</p>
