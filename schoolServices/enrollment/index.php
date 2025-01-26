@@ -77,10 +77,18 @@ if (isset($_POST['proceed'])) {
             $_SESSION['student_id'] = $student['student_id'];
             $_SESSION['student_number'] = $student['student_number'];
             $_SESSION['first_name'] = $student['first_name'];
+            $_SESSION['middle_initial'] = $student['middle_initial'];
             $_SESSION['last_name'] = $student['last_name'];
             $_SESSION['date_of_birth'] = $student['date_of_birth'];
             $_SESSION['gender'] = $student['gender'];
+            $_SESSION['religion'] = $student['religion'];
+            $_SESSION['citizenship'] = $student['citizenship'];
+            $_SESSION['civil_status'] = $student['civil_status'];
+            $_SESSION['birth_place'] = $student['birth_place'];
             $_SESSION['contact_number'] = $student['contact_number'];
+            $_SESSION['emergency_first_name'] = $student['emergency_first_name'];
+            $_SESSION['emergency_last_name'] = $student['emergency_last_name'];
+            $_SESSION['emergency_number'] = $student['emergency_number'];
             
 
             // Redirect to the enrollment form

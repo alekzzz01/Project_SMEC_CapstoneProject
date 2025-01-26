@@ -55,8 +55,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
         if ($stmt->execute()) {
             $successMessage = "Enrollment approved successfully!";
             sendEmail($student['email'], $student['name'], 'Enrolled');
+            // JavaScript redirection after successful action
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=approved';</script>";
+            exit(); // Stop the PHP script after redirection
         } else {
             $errorMessage = "Error: Unable to approve enrollment.";
+            // JavaScript redirection after error
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=error';</script>";
+            exit(); // Stop the PHP script after redirection
         }
 
         $stmt->close();
@@ -86,8 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
         if ($stmt->execute()) {
             $successMessage = "Enrollment rejected successfully!";
             sendEmail($student['email'], $student['name'], 'Rejected');
+            // JavaScript redirection after successful action
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=rejected';</script>";
+            exit(); // Stop the PHP script after redirection
         } else {
             $errorMessage = "Error: Unable to reject enrollment.";
+            // JavaScript redirection after error
+            echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=error';</script>";
+            exit(); // Stop the PHP script after redirection
         }
 
         $stmt->close();
@@ -142,6 +154,9 @@ ob_end_flush(); // Flush the buffered output
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js"></script>
     
 </head>
 <body>
@@ -277,4 +292,49 @@ $(document).ready(function () {
 
 });
 
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Check for `status` query parameter in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+
+    // Display notifications based on `status`
+    if (status === 'approved') {
+        const notyf = new Notyf({
+            duration: 3000, // Duration of the notification (3 seconds)
+            position: {
+                x: 'right', // Align notifications to the center
+                y: 'top'     // Show notifications at the top
+            }
+        });
+        notyf.success('Enrollment has been approved successfully!');
+    } else if (status === 'rejected') {
+        const notyf = new Notyf({
+            duration: 3000, // Duration of the notification (3 seconds)
+            position: {
+                x: 'right', // Align notifications to the center
+                y: 'top'     // Show notifications at the top
+            }
+        });
+        notyf.error('Enrollment has been rejected.');
+    } else if (status === 'error') {
+        const notyf = new Notyf({
+            duration: 3000, // Duration of the notification (3 seconds)
+            position: {
+                x: 'right', // Align notifications to the center
+                y: 'top'     // Show notifications at the top
+            }
+        });
+        notyf.error('An error occurred. Please try again.');
+    }
+
+    // Remove the 'status' query parameter after the page loads
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('status')) {
+        url.searchParams.delete('status'); // Remove the 'status' parameter
+        window.history.replaceState({}, document.title, url.pathname); // Update the URL without reloading
+    }
+});
 </script>
