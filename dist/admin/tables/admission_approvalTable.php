@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $insertStmt = $connection->prepare($insertQuery);
         $insertStmt->bind_param(
-            "issssssssssssssssssss", // Exactly 21 placeholders
+            "isssssssssssssssssssssssss",
             $defaultUserId, // Matches the first `?`
             $studentNumber,
             $admissionData['first_name'],
