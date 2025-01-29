@@ -351,29 +351,30 @@ $(document).ready(function () {
 
 <script>
     // Initialize Notyf
-const notyf = new Notyf({
-    duration: 3000, // Duration of the notification (3 seconds)
-    position: {
-        x: 'center', // Align notifications to the center
-        y: 'top'    // Show notifications at the top
-    }
-});
+    const notyf = new Notyf({
+        duration: 3000, // Duration of the notification (3 seconds)
+        position: {
+            x: 'right', // Align notifications to the right
+            y: 'top'    // Show notifications at the top
+        }
+    });
 
-// Check for `status` and `action` query parameters in the URL
-const urlParams = new URLSearchParams(window.location.search);
-const status = urlParams.get('status');
-const action = urlParams.get('action');
+    // Check for `status` and `action` query parameters in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get('status');
+    const action = urlParams.get('action');
 
-// Display notifications based on `status` and `action`
-if (status === 'success') {
-    if (action === 'approve') {
-        notyf.success('Admission Approved!');
-    } else if (action === 'reject') {
-        notyf.success('Admission Rejected!');
+    // Display notifications based on `status` and `action`
+    if (status === 'success') {
+        if (action === 'approve') {
+            notyf.success('Admission Approved!');
+        } else if (action === 'reject') {
+            // You can change the color for the reject action as well
+            notyf.error('Admission Rejected!');
+        }
+    } else if (status === 'error') {
+        notyf.error('An error occurred. Please try again.');
     }
-} else if (status === 'error') {
-    notyf.error('An error occurred. Please try again.');
-}
 </script>
 
 <script>

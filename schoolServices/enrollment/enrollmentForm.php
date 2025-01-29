@@ -7,10 +7,18 @@ if (isset($_SESSION['student_id'])) {
     $student_id = $_SESSION['student_id'];
     $student_number = $_SESSION['student_number'];
     $first_name = $_SESSION['first_name'];
+    $middle_initial = $_SESSION['middle_initial'];
     $last_name = $_SESSION['last_name'];
     $date_of_birth = $_SESSION['date_of_birth'];
     $gender = $_SESSION['gender'];
+    $religion = $_SESSION['religion'];
+    $citizenship = $_SESSION['citizenship'];
+    $civil_status = $_SESSION['civil_status'];
+    $birth_place = $_SESSION['birth_place'];
     $contact_number = $_SESSION['contact_number'];
+    $emergency_first_name = $_SESSION['emergency_first_name'];
+    $emergency_last_name = $_SESSION['emergency_last_name'];
+    $emergency_number = $_SESSION['emergency_number'];
 } else {
     // Redirect back if session variables are not set
     header("Location: index.php");
@@ -74,21 +82,21 @@ if (isset($_POST['submitForm'])) {
             $good_moral_certificate
         );
 
-        // Execute the query
-        if ($stmt->execute()) {
-            $_SESSION['enrollment_form_success_message'] = "Enrollment form submitted successfully!";
-            header('Location: ' . $_SERVER['PHP_SELF']);
+         // Execute the query
+         if ($stmt->execute()) {
+            // Redirect with success status
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?status=success');
             exit();
         } else {
-            $_SESSION['enrollment_form_error'] = "Error: Unable to submit enrollment form.";
-            header('Location: ' . $_SERVER['PHP_SELF']);
+            // Redirect with error status
+            header('Location: ' . $_SERVER['PHP_SELF'] . '?status=error');
             exit();
         }
 
         $stmt->close();
     } else {
-        $_SESSION['enrollment_form_error'] = "Error: Unable to prepare statement.";
-        header('Location: ' . $_SERVER['PHP_SELF']);
+        // Error in preparing statement
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?status=error');
         exit();
     }
 }
@@ -108,6 +116,9 @@ if (isset($_POST['submitForm'])) {
     <script src="../../assets/js/script.js"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
 
@@ -225,7 +236,7 @@ if (isset($_POST['submitForm'])) {
                 <?php endif; ?>
 
 
-                <form action="" method="POST" enctype="multipart/form-data" class="space-y-10">
+                <form action="" id="enrollmentForm" method="POST" enctype="multipart/form-data" class="space-y-10">
                     
                         <div class="border border-gray-300 rounded bg-white">
                             <!-- Name -->
@@ -246,7 +257,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Middle Initial</label>
                                         <div class="relative flex items-center">
-                                        <input name="middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                        <input name="middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($middle_initial); ?>" />
                                     
                                         </div>
                                        
@@ -295,7 +306,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Religion</p>
                                         <div class="relative flex items-center">
-                                        <input name="religion" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Religion"  />
+                                        <input name="religion" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Religion" value="<?php echo htmlspecialchars($religion); ?>"  />
                                     
                                         </div>
                                         
@@ -304,7 +315,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Citizenship</p>
                                         <div class="relative flex items-center">
-                                        <input name="citizenship" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Citizenship"  />
+                                        <input name="citizenship" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Citizenship" value="<?php echo htmlspecialchars($citizenship); ?>"  />
                                     
                                         </div>
                                         
@@ -313,7 +324,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Civil Status</p>
                                         <div class="relative flex items-center">
-                                        <input name="civilstatus" type="text"  class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Civil Status"  />
+                                        <input name="civilstatus" type="text"  class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Civil Status" value="<?php echo htmlspecialchars($civil_status); ?>"  />
                                     
                                         </div>
                                         
@@ -322,7 +333,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-sm mb-1 ml-1 font-medium">Birthplace</p>
                                         <div class="relative flex items-center">
-                                        <input name="birthplace" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Birthplace"  />
+                                        <input name="birthplace" type="text" class="w-full bg-gray-50 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Birthplace" value="<?php echo htmlspecialchars($birth_place); ?>"  />
                                     
                                         </div>
                                         
@@ -362,25 +373,16 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-gray-800 text-sm font-medium mb-2 block">First Name</p>
                                         <div class="relative flex items-center">
-                                        <input name="parent-first-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        <input name="parent-first-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($emergency_first_name); ?>"/>
                                     
                                         </div>
                                     
-                                    </div>
-
-                                    <div>
-                                        <p class="text-gray-800 text-sm font-medium mb-2 block">Middle Initial</p>
-                                        <div class="relative flex items-center">
-                                        <input name="parent-middle-initial" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
-                                    
-                                        </div>
-                                       
                                     </div>
 
                                     <div>
                                         <p class="text-gray-800 text-sm font-medium mb-2 block">Last Name</p>
                                         <div class="relative flex items-center">
-                                        <input name="parent-last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                        <input name="parent-last-name" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($emergency_last_name); ?>"/>
                                     
                                         </div>
                                       
@@ -389,7 +391,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <p class="text-gray-800 text-sm font-medium mb-2 block">Contact Number</p>
                                         <div class="relative flex items-center">
-                                        <input name="parent-contact-number" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600"/>
+                                        <input name="parent-contact-number" type="text"  class="bg-gray-50 w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" value="<?php echo htmlspecialchars($emergency_number); ?>"/>
                                     
                                         </div>
                                         
@@ -601,9 +603,7 @@ if (isset($_POST['submitForm'])) {
 
         
     </div>
-  
-
-    
+   
 </body>
 
 </html>
@@ -687,3 +687,37 @@ if (isset($_POST['submitForm'])) {
         });
     });
 </script>
+
+<script>
+// Initialize Notyf
+const notyf = new Notyf({
+    duration: 3000, // Duration of the notification (3 seconds)
+    position: {
+        x: 'right', // Align notifications to the center
+        y: 'top'     // Show notifications at the top
+    }
+});
+
+// Check for `status` query parameter in the URL
+const urlParams = new URLSearchParams(window.location.search);
+const status = urlParams.get('status');
+
+// Display notifications based on `status`
+if (status === 'success') {
+    notyf.success('Enrollment form submitted successfully!');
+} else if (status === 'error') {
+    notyf.error('An error occurred while submitting the form. Please try again.');
+}
+</script>
+
+<script>
+// Remove the 'status' query parameter after the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('status')) {
+        url.searchParams.delete('status'); // Remove the 'status' parameter
+        window.history.replaceState({}, document.title, url.pathname); // Update the URL without reloading
+    }
+});
+</script>
+
