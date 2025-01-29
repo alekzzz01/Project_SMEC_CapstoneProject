@@ -139,9 +139,9 @@ $customization = $result->fetch_assoc();
                         Class Management
                     </summary>
                     <ul>
-                        <li><a>Term</a></li>
+                        <li><a href="class_term.php">Term</a></li>
                         <li><a href="class_section.php">Section</a></li>
-                        <li><a>Subject</a></li>  
+                        <li><a href="class_subject.php">Subject</a></li>  
                     
                      
                     </ul>
