@@ -50,11 +50,8 @@
 
         <div class="p-6 bg-[#f2f5f8] h-full">
 
-            <div>
-                    <h1 class="text-lg font-medium mb-1">Term</h1>
-            </div>
 
-            <div class="border border-gray-300 rounded bg-white mt-7">
+            <div class="border border-gray-300 rounded bg-white">
 
                 <h1 class="font-semibold p-5 bg-blue-50 rounded-t text-blue-600">Add Term</h1>
 
@@ -82,6 +79,11 @@
 
 
             </div>
+
+            <div>
+                    <h1 class="text-lg font-medium mb-1 mt-7">View All Term</h1>
+            </div>
+
 
 
             <div class="border border-gray-300 rounded bg-white mt-3.5 p-6">
@@ -136,11 +138,11 @@
 
 <script>
     $(document).ready(function () {
-        var table = $('example').DataTable ({
+        var table = $('#example').DataTable ({
             searching: true, // Enables the search box
             paging: true,    // Enables pagination
             ordering: true,  // Enables column sorting
-            info: true,      // Displays table information
+            info: true      // Displays table information
         });
 
     });
