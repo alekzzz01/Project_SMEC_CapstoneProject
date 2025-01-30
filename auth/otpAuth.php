@@ -46,9 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Redirect to the appropriate dashboard based on role
             if ($user['role'] == 'admin') {
-                header('Location: ../dist/admin/index.php');  // Admin dashboard
+                header('Location: loading.php?target=../dist/admin/index.php');  // Admin dashboard
             } elseif ($user['role'] == 'student') {
-                header('Location: ../dist/student/dashboard.php');  // Student dashboard
+                header('Location: loading.php?target=../dist/student/dashboard.php');  // Student dashboard
             } else {
                 $_SESSION['error'] = "Invalid role. Access denied.";
                 header('Location: otpAuth.php'); // Redirect back to OTP page for retry
