@@ -63,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
+        $name = $user['name'];
+
         // Verify password
         if (password_verify($password, $user['password'])) {
             // Generate OTP
@@ -77,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             // Store the email in session to validate the OTP later
             $_SESSION['otp_email'] = $email;
+            $_SESSION['otp_name'] = $name;
 
             // Send OTP to user via email using PHPMailer
             try {
@@ -91,18 +94,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                 // Sender and recipient details
                 $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');  // Sender's email
-                $mail->addAddress($email, $first_name);  // Recipient's email (the student's email from DB)
+                $mail->addAddress($email);  // Recipient's email (the student's email from DB)
+
+
+                ob_start();
+                include 'otpEmail_Template.php';  // Include the template
+                $emailBody = ob_get_clean();  // Get the output and store it in a variable
 
                 // Content
                 $mail->isHTML(true);
                 $mail->Subject = 'Your OTP for Login';
-                $mail->Body    = 'Your OTP is: ' . $otp;
+                $mail->Body    = $emailBody; 
 
                 $mail->send();
               
 
                 // Redirect to OTP verification page
-                header('Location: otpAuth.php');
+                header('Location: loading.php?target=otpAuth.php');
                 exit();
 
             } catch (Exception $e) {
