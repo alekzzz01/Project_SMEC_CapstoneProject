@@ -42,6 +42,7 @@ if (isset($_POST['submitForm'])) {
     // Check and retrieve uploaded files
     if (isset($_FILES['birth_certificate']) && $_FILES['birth_certificate']['error'] === 0) {
         $birth_certificate = file_get_contents($_FILES['birth_certificate']['tmp_name']);
+        error_log("Birth Certificate (binary data): " . substr($birth_certificate, 0, 100)); // Log first 100 bytes of binary data
     }
 
     if (isset($_FILES['report_card']) && $_FILES['report_card']['error'] === 0) {
@@ -82,13 +83,18 @@ if (isset($_POST['submitForm'])) {
             $good_moral_certificate
         );
 
+        // Send large data for the BLOB fields
+        $stmt->send_long_data(8, $birth_certificate);  // Index 8 for birth_certificate (parameter position)
+        $stmt->send_long_data(9, $report_card);       // Index 9 for report_card (parameter position)
+        $stmt->send_long_data(10, $good_moral_certificate); // Index 10 for good_moral_certificate (parameter position)
+
          // Execute the query
          if ($stmt->execute()) {
-            // Redirect with success status
+            error_log("Query executed successfully.");
             header('Location: ' . $_SERVER['PHP_SELF'] . '?status=success');
             exit();
         } else {
-            // Redirect with error status
+            error_log("Error executing query: " . $stmt->error); // Log the query error
             header('Location: ' . $_SERVER['PHP_SELF'] . '?status=error');
             exit();
         }
@@ -96,6 +102,7 @@ if (isset($_POST['submitForm'])) {
         $stmt->close();
     } else {
         // Error in preparing statement
+        error_log("Error preparing statement: " . $connection->error); // Log error if statement preparation fails
         header('Location: ' . $_SERVER['PHP_SELF'] . '?status=error');
         exit();
     }
@@ -505,7 +512,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Birth Certificate</label>
                                             <div class="relative flex items-center">
-                                            <input name="birth-certificate" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="birth_certificate" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
@@ -513,7 +520,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Report Card</label>
                                             <div class="relative flex items-center">
-                                            <input name="report-card" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="report_card" type="file" enctype="multipart/form-data"  class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
@@ -521,7 +528,7 @@ if (isset($_POST['submitForm'])) {
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Good Moral Certificate</label>
                                             <div class="relative flex items-center">
-                                            <input name="good-moral-certificate" type="file" enctype="multipart/form-data"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
+                                            <input name="good_moral_certificate" type="file" enctype="multipart/form-data"   class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" />
             
                                             </div>
                                     </div>
