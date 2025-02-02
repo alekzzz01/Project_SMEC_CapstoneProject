@@ -1,3 +1,46 @@
+<?php
+// Database connection
+include '../../config/db.php';
+
+// Fetch school years
+$schoolYears = [];
+$query = "SELECT school_year_id, school_year, status FROM school_year ORDER BY school_year ASC";
+$result = $connection->query($query);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $schoolYears[] = $row;
+    }
+}
+
+// Handle status change
+if (isset($_POST['approve']) || isset($_POST['reject'])) {
+    $school_year_id = $_POST['school_year_id'];
+    $new_status = isset($_POST['approve']) ? 'Open' : 'Close';
+    $update_query = "UPDATE school_year SET status = '$new_status' WHERE school_year_id = '$school_year_id'";
+    $connection->query($update_query);
+    header("Location: class_term.php");
+    exit();
+}
+
+// Handle adding new term
+if (isset($_POST['add_term'])) {
+    $new_school_year = $_POST['new_school_year'];
+
+    // Fetch the latest school_year_id
+    $latest_id_query = "SELECT MAX(school_year_id) AS max_id FROM school_year";
+    $latest_id_result = $connection->query($latest_id_query);
+    $latest_id_row = $latest_id_result->fetch_assoc();
+    $new_school_year_id = $latest_id_row['max_id'] + 1;
+
+    // Insert the new school year with status 'Close'
+    $insert_query = "INSERT INTO school_year (school_year_id, school_year, status) VALUES ('$new_school_year_id', '$new_school_year', 'Close')";
+    $connection->query($insert_query);
+    header("Location: class_term.php");
+    exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,13 +98,13 @@
 
                 <h1 class="font-semibold p-5 bg-blue-50 rounded-t text-blue-600">Add Term</h1>
 
-                <form class="p-5 space-y-6">
+                <form action="class_term.php" method="POST" class="p-5 space-y-6">
 
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
                         <div>
-                            <label class="text-gray-800 text-sm font-medium mb-2 block">Input Year</label>
+                            <label for="new_school_year" class="text-gray-800 text-sm font-medium mb-2 block">Input Year</label>
                             <div class="relative flex items-center">
-                            <input name="" type="text" class="bg-gray-50 w-full text-gray-800 input input-bordered" placeholder="e.g. 2024-2025"/>
+                            <input id="new_school_year" name="new_school_year" type="text" class="bg-gray-50 w-full text-gray-800 input input-bordered" placeholder="e.g. 2024-2025"/>
                             </div>
                                        
                         </div>
@@ -69,7 +112,7 @@
                     </div>
                     
                     <div class=" flex items-center justify-center">
-                        <button type="submit" name="submitForm" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit</button>
+                        <button type="submit" name="add_term" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Submit</button>
                     </div>
                         
 
@@ -100,26 +143,20 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-200 border border-gray-300">
+                    <?php foreach ($schoolYears as $year): ?>
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">1</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">2024-2025</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">Open</td>
-                 
-                            <td>
-                                    
-                                    <form method="POST" >
-                                        <input type="hidden" name="student_id" value="<?php echo $row['id']; ?>">
-                                    
-                                        <button type='submit' name='approve' class='text-green-600 text-sm hover:underline'>[Open]</button>
-                                        <button type='submit' name='reject' class='text-red-500 text-sm hover:underline'>[Close]</button>
-                                                         
-                                    </form>
-
-                                
-                                
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($year['school_year_id']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($year['school_year']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($year['status']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                                <form method="POST">
+                                    <input type="hidden" name="school_year_id" value="<?= htmlspecialchars($year['school_year_id']) ?>">
+                                    <button type="submit" name="approve" class="text-green-600 text-sm hover:underline">[Open]</button>
+                                    <button type="submit" name="reject" class="text-red-500 text-sm hover:underline">[Close]</button>
+                                </form>
                             </td>
                         </tr>
-
+                    <?php endforeach; ?>
                     </tbody>
 
                 </table>

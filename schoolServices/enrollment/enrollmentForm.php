@@ -19,6 +19,7 @@ if (isset($_SESSION['student_id'])) {
     $emergency_first_name = $_SESSION['emergency_first_name'];
     $emergency_last_name = $_SESSION['emergency_last_name'];
     $emergency_number = $_SESSION['emergency_number'];
+    
 } else {
     // Redirect back if session variables are not set
     header("Location: index.php");
