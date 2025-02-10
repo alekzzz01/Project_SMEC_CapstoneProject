@@ -27,8 +27,8 @@ $target = $_GET['target']; // Get the target page from URL
             background-color: #f4f4f4;
         }
         .loader {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
+            border: 5px solid #3b82f6;
+            border-top: 5px solid #d4d4d8;
             border-radius: 50%;
             width: 50px;
             height: 50px;
