@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Redirect to the appropriate dashboard based on role
             if ($user['role'] == 'admin') {
                 header('Location: loading.php?target=../dist/admin/index.php');  // Admin dashboard
+            } elseif ($user['role'] == 'teacher') {
+                header('Location: loading.php?target=../dist/teacher/index.php');  // Teacher dashboard
             } elseif ($user['role'] == 'student') {
                 header('Location: loading.php?target=../dist/student/dashboard.php');  // Student dashboard
             } else {
