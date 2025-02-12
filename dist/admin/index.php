@@ -79,7 +79,7 @@ $total_admins = $employeeRow['total_admins'];
             <h1 class="text-lg font-medium">Dashboard</h1>
             <div class="mt-7 grid grid-cols-1 lg:grid-cols-4 gap-6">
 
-                <div class="flex items-center justify-between rounded p-4 bg-white shadow">
+                <div class="flex items-center justify-between rounded-2xl p-4 bg-white shadow ">
                     <div>
                         <p class="text-base-content/70 font-medium">Students</p>
                         <p class="text-4xl font-semibold mt-2"><?php echo $total_students; ?> </p>
@@ -89,7 +89,7 @@ $total_admins = $employeeRow['total_admins'];
                         </svg>
                 </div>
 
-                <div class="flex items-center justify-between rounded p-4 bg-white shadow">
+                <div class="flex items-center justify-between rounded-2xl p-4 bg-white shadow  ">
                     <div>
                         <p class="text-base-content/70 font-medium">Teachers</p>
                         <p class="text-4xl font-semibold mt-2"><?php echo $total_teachers; ?></p>
@@ -101,7 +101,7 @@ $total_admins = $employeeRow['total_admins'];
 
                 </div>
 
-                <div class="flex items-center justify-between rounded p-4 bg-white shadow">
+                <div class="flex items-center justify-between rounded-2xl p-4 bg-white shadow ">
                     <div>
                         <p class="text-base-content/70 font-medium">Employees</p>
                         <p class="text-4xl font-semibold mt-2"><?php echo $total_admins; ?></p>
@@ -111,7 +111,7 @@ $total_admins = $employeeRow['total_admins'];
                     </svg>
                 </div>
 
-                <div class="flex items-center justify-between rounded p-4 bg-white shadow">
+                <div class="flex items-center justify-between rounded-2xl p-4 bg-white shadow ">
                     <div>
                         <p class="text-base-content/70 font-medium">Events</p>
                         <p class="text-4xl font-semibold mt-2"><?php echo $total_events; ?></p>
@@ -124,11 +124,11 @@ $total_admins = $employeeRow['total_admins'];
             </div>
 
             <div class="mt-7 grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="rounded p-4 bg-white border border-gray-200 col-span-2">
+                    <div class="rounded-2xl p-4 bg-white  col-span-2 shadow">
                         <?php include 'charts/studentGender.php'; ?>
                     </div>
 
-                    <div class="rounded p-4 bg-white border border-gray-200 col-span-1">
+                    <div class="rounded-2xl p-4 bg-white  col-span-1 shadow">
                         <?php include 'charts/userNumbers.php'; ?>
                     </div>
             </div>
