@@ -1,3 +1,109 @@
+<?php 
+include '../../config/db.php';
+
+// Fetch sections for the dropdown
+$sql = "SELECT section_name, grade_level FROM sections";
+$result = $connection->query($sql);
+$sections = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $sections[] = $row;
+    }
+}
+
+// Fetch details for a selected section
+$sectionDetails = null;
+if (isset($_GET['section'])) {
+    $section = $_GET['section'];
+    
+    // Query to fetch the section details, adviser, and students
+    $sql = "
+        SELECT s.section_name, s.grade_level, CONCAT(t.First_Name, ' ', t.Last_Name) AS adviser, 
+            se.student_id, st.first_name, st.last_name, st.gender
+        FROM sections s
+        JOIN teachers t ON s.adviser_id = t.teacher_id
+        LEFT JOIN student_enrollment se ON se.section = s.section_id
+        LEFT JOIN students st ON se.student_id = st.student_id
+        WHERE s.section_name = '$section'
+        ";
+
+    $result = $connection->query($sql);
+
+    if ($result->num_rows > 0) {
+        $students = [];
+        $maleCount = 0;
+        $femaleCount = 0;
+        $maleStudents = [];
+        $femaleStudents = [];
+
+        // Get section and adviser details from the first row
+        $row = $result->fetch_assoc();
+        $sectionDetails['section_name'] = $row['section_name'];
+        $sectionDetails['grade_level'] = $row['grade_level'];
+        $sectionDetails['adviser'] = $row['adviser'];
+
+        // Rewind the result set to fetch students again
+        $result->data_seek(0);
+
+        // Categorize students by gender
+        while ($row = $result->fetch_assoc()) {
+            if (isset($row['gender']) && $row['gender'] !== NULL) {
+                // Add student details to the array
+                $students[] = array(
+                    'first_name' => $row['first_name'],
+                    'last_name' => $row['last_name'],
+                    'gender' => $row['gender']
+                );
+
+                // Count male and female students
+                if ($row['gender'] == 'male') {
+                    $maleCount++;
+                    $maleStudents[] = $row['first_name'] . " " . $row['last_name'];
+                } elseif ($row['gender'] == 'female') {
+                    $femaleCount++;
+                    $femaleStudents[] = $row['first_name'] . " " . $row['last_name'];
+                }
+            }
+        }
+
+        $sectionDetails['students'] = $students;
+    }
+
+    // Schedule query to fetch class schedule for the selected section
+    $scheduleSql = "
+    SELECT sub.subject_code, sub.subject_name, sc.time_in, sc.time_out, sc.day, 
+           CONCAT(t.First_Name, ' ', t.Last_Name) AS teacher
+    FROM schedules sc
+    JOIN subjects sub ON sc.subject_id = sub.subject_id  -- joining the subjects table on subject_id
+    JOIN teachers t ON sc.teacher_id = t.teacher_id  -- referencing teacher_id in the schedules table
+    WHERE sc.section = (SELECT section_name FROM sections WHERE section_name = '$section')
+    ";
+
+
+
+
+
+    $scheduleResult = $connection->query($scheduleSql);
+
+    if ($scheduleResult->num_rows > 0) {
+        $scheduleDetails = [];
+        while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+            $scheduleDetails[] = array(
+                'subject_code' => $scheduleRow['subject_code'],
+                'subject_name' => $scheduleRow['subject_name'],
+                'time_in' => $scheduleRow['time_in'],
+                'time_out' => $scheduleRow['time_out'],
+                'day' => $scheduleRow['day'],
+                'teacher' => $scheduleRow['teacher']
+            );
+        }
+        $sectionDetails['schedule'] = $scheduleDetails;
+    }
+}
+
+$connection->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +151,7 @@
                 <ul>
                     <li><a href="index.php">Dashboard</a></li>
                     <li><a href="class_section.php">Class List</a></li>
-                    <li>Grade 5 (A.Y. 2025-2026)</li>
+                    <li>Class List for Sections</li>
                 </ul>
             </div>
 
@@ -66,10 +172,12 @@
         <div class="relative flex items-center w-full mt-7">
                             <select name="gradelevel" id="gradelevel" required class="select select-bordered w-full" >
                                 <option value="" disabled selected>Select Section</option>
-                                <option value="Grade-1">Ammolite</option>
-                                <option value="Grade-1">Anatase</option>
-                               
-        
+                                    <?php
+                                    foreach ($sections as $section) {
+                                        echo "<option value='" . $section['section_name'] . "'>" . $section['section_name'] . "</option>
+";
+                                    }
+                                    ?>
                             </select>
         </div>
 
@@ -108,97 +216,95 @@
                         </div>
                 </div>
 
-                <div class="p-12 flex flex-col items-center justify-center gap-8 ">
+            <div id="section-details" class="mt-7">
+                <?php
+                if ($sectionDetails) {
+                    // Display Section Information (adviser and students)
+                    echo "<h1 class='text-3xl font-bold'>" . $sectionDetails['grade_level'] . " - " . $sectionDetails['section_name'] . "</h1>";
+                    echo "<p class='text-sm font-medium'>Adviser: " . $sectionDetails['adviser'] . "</p>";
 
-                            <div class="text-center">
-                                <h1 class="text-3xl font-bold mb-1">Grade 5 - Ammolite</h1>
-                                <p class="text-base-content/70 text-sm font-medium">Class List for A.Y. 2025-2026</p>
-                            </div>
+                    // Initialize gender counts
+                    $maleCount = 0;
+                    $femaleCount = 0;
+                    $maleStudents = [];
+                    $femaleStudents = [];
 
-                            <div class=" flex justify-between gap-[180px]">
+                    // Categorize students by gender
+                    foreach ($sectionDetails['students'] as $student) {
+                        if ($student['gender'] == 'male') {
+                            $maleCount++;
+                            $maleStudents[] = $student['first_name'] . " " . $student['last_name'];
+                        } else {
+                            $femaleCount++;
+                            $femaleStudents[] = $student['first_name'] . " " . $student['last_name'];
+                        }
+                    }
+                ?>
+                    <div class="flex justify-between gap-[180px] mt-5">
+                        <div>
+                            <h1 class="text-lg font-medium mb-1">Boys</h1>
+                            <p>Count: <?php echo $maleCount; ?></p>
+                            <ul class="list-decimal">
+                                <?php foreach ($maleStudents as $male) { ?>
+                                    <li><?php echo $male; ?></li>
+                                <?php } ?>
+                            </ul>
+                        </div>
 
-                                    <div>
-                                        <h1 class="text-lg font-medium mb-1">Boys</h1>
-                                        <ol class="list-decimal">
-                                        <li>Juan Miguel</li>
-                                        <li>Andreigh Jed</li>
-                                        <li>Carlos</li>
-                                        </ol> 
-                                    </div>
-
-                                    <div>
-                                        <h1 class="text-lg font-medium mb-1">Girls</h1>
-                                        <ol class="list-decimal">
-                                        <li>Juan Miguel</li>
-                                        <li>Andreigh Jed</li>
-                                        <li>Carlos</li>
-                                        </ol> 
-                                    </div>
-
-
-
-                            </div>
-
-                            <p class="text-lg font-semibold">Adviser: Ms. Marie Angela C. Garcia</p>
-
-                </div>
-
-      
-   
-
-        </div>
-
-
-        <div class="border border-gray-300 rounded bg-white mt-3.5">
-
-            <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule A.Y. 2025-2026</h1>
-            
-            <div class="overflow-hidden p-5">
-                <table class="min-w-full divide-y divide-gray-200">
-
-                    <thead>
-
-                        <tr>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Day</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
-                        </tr>
-                        
-                        
-                    </thead>
-
-                    <tbody class="divide-y divide-gray-200">
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">123</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Mathematics</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">8:00 AM - 9:00 AM</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">MWF</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Ms. Marie Angela C. Garcia</td>
-                        </tr>
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">123</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Mathematics</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">8:00 AM - 9:00 AM</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">MWF</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Ms. Marie Angela C. Garcia</td>
-                        </tr>
-
-
-
-
-                    </tbody>
-
-                </table>
-
-
-
-
+                        <div>
+                            <h1 class="text-lg font-medium mb-1">Girls</h1>
+                            <p>Count: <?php echo $femaleCount; ?></p>
+                            <ul class="list-decimal">
+                                <?php foreach ($femaleStudents as $female) { ?>
+                                    <li><?php echo $female; ?></li>
+                                <?php } ?>
+                            </ul>
+                        </div>
+                    </div>
+                <?php } ?>
             </div>
-        </div>
+
+
+    <script>
+        // Handle the selection of section and fetch the details dynamically
+        document.getElementById('gradelevel').addEventListener('change', function() {
+            const sectionName = this.value;
+            window.location.href = "?section=" + sectionName;
+        });
+    </script>
+
+<div class="border border-gray-300 rounded bg-white mt-3.5">
+    <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule A.Y. 2025-2026</h1>
+
+    <div class="overflow-hidden p-5">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead>
+                <tr>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Day</th>
+                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                <?php
+                if (isset($sectionDetails['schedule'])) {
+                    foreach ($sectionDetails['schedule'] as $schedule) {
+                        echo "<tr>
+                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_code']}</td>
+                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_name']}</td>
+                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['time_in']} - {$schedule['time_out']}</td>
+                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['day']}</td>
+                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['teacher']}</td>
+                            </tr>";
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
 
         
 
