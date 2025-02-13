@@ -1,13 +1,25 @@
+<?php
+
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../../index.php');
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Analytics</title>
 
-      
+
     <link rel="stylesheet" href="../../assets/css/styles.css">
-     
+
     <script src="../../assets/js/script.js"></script>
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,29 +36,50 @@
 
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
 
-    <html data-theme="light"></html>
-   
+    <html data-theme="light">
+
+    </html>
+
 
 
 </head>
+
 <body class="flex min-h-screen">
 
     <?php include('./components/sidebar.php'); ?>
-    
+
 
     <div class="flex flex-col w-full">
 
-        
+
         <?php include('./components/navbar.php'); ?>
 
         <div class="p-6 bg-[#f2f5f8] h-full">
-                <h1 class="text-lg font-medium mb-1">Analytics</h1>
 
-                
+            <h1 class="text-lg font-medium ">📊 Reports</h1>
 
-                <div class="rounded-md p-4 bg-white shadow-md mt-7">
-                    <?php include('./charts/totalEnrollmentLineChart.php'); ?>
+            <div role="tablist" class="tabs tabs-lifted mt-3.5">
+                <input type="radio" name="my_tabs_2" role="tab" class="tab"  checked="checked" aria-label="🎓 Enrollment" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                    <?php include('./tables/enrollmentReportTable.php'); ?>
                 </div>
+
+
+                <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="👨‍🏫 Student" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">Tab content 3</div>
+
+                <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="✍️ Teacher" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">Tab content 3</div>
+
+            </div>
+
+
+            <h1 class="text-lg font-medium mt-7">📈 Analytics</h1>
+
+            <div class="rounded-xl p-4 bg-white border border-gray-200 mt-3.5">
+                <?php include('./charts/totalEnrollmentLineChart.php'); ?>
+            </div>
+
 
 
         </div>
@@ -59,4 +92,5 @@
 
 
 </body>
+
 </html>
