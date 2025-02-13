@@ -99,12 +99,12 @@ $result = $connection->query($sql);
 </head>
 <body>
 
-<div class="space-y-3.5">
+<div class="space-y-7">
     <form method="GET" action="">
-        <div class="flex items-center gap-6 p-6 bg-white rounded-md border border-gray-300">
+        <div class="flex items-center gap-6">
             <!-- School Year Filter -->
             <div class="flex items-center gap-2">
-                <label for="schoolYearFilter" class="text-gray-700 mr-2">Filter by School Year:</label>
+                <label for="schoolYearFilter" class="text-gray-500 mr-2">Filter by School Year:</label>
                 <select name="school_year" id="schoolYearFilter" class="select select-bordered select-sm">
                     <option value="">All</option>
                     <?php
@@ -122,7 +122,7 @@ $result = $connection->query($sql);
 
             <!-- Status Filter -->
             <div class="flex items-center gap-2">
-                <label for="statusFilter" class="text-gray-700 mr-2">Filter by Status:</label>
+                <label for="statusFilter" class="text-gray-500 mr-2">Filter by Status:</label>
                 <select name="status" id="statusFilter" class="select select-bordered select-sm">
                     <option value="">All</option>
                     <option value="Enrolled" <?php echo ($status_filter === 'Enrolled') ? 'selected' : ''; ?>>Enrolled</option>
@@ -136,9 +136,9 @@ $result = $connection->query($sql);
         </div>
     </form>
 
-    <div class="px-4 py-2">
+    <div>
         <table id="example" class="min-w-full divide-y divide-gray-200">
-            <thead class="border border-gray-300 text-sm">
+            <thead class="border border-gray-300 text-sm bg-gray-100">
                 <tr>
                     <th class="py-3 px-4 text-left">ID</th>
                     <th class="py-3 px-4 text-left">Student Type</th>
