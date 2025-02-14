@@ -146,7 +146,7 @@
             <div class="bg-gray-100 rounded-lg p-4 mb-6">
                 <p class="text-4xl font-bold text-center text-blue-600"><?php echo htmlspecialchars($otp); ?></p>
             </div>
-            <p class="text-gray-700 mb-6">This OTP is valid for <span class="font-semibold">10 minutes</span>. Please do not share this code with anyone.</p>
+            <p class="text-gray-700 mb-6">This OTP is valid for <span class="font-semibold">5 minutes</span>. Please do not share this code with anyone.</p>
             <p class="text-gray-700 mb-2">If you didn't request this code, please ignore this email.</p>
             <p class="text-gray-700">Thank you for using our service!</p>
         </div>
