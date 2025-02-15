@@ -1,3 +1,109 @@
+<?php
+include '../../config/db.php';
+
+if (isset($_GET['gradelevel'])) {
+    $gradeLevel = $_GET['gradelevel'];
+}
+
+// Fetch sections for the dropdown (this can be reused from view_sections.php)
+$sql = "SELECT section_name, grade_level FROM sections";
+$result = $connection->query($sql);
+$sections = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $sections[] = $row;
+    }
+}
+
+// Fetch teachers for the teacher dropdown
+$teacherSql = "SELECT teacher_id, CONCAT(First_Name, ' ', Last_Name) AS teacher_name FROM teachers";
+$teacherResult = $connection->query($teacherSql);
+$teachers = [];
+if ($teacherResult->num_rows > 0) {
+    while ($row = $teacherResult->fetch_assoc()) {
+        $teachers[] = $row;
+    }
+}
+
+// Fetch subjects for the subject dropdown
+$subjectSql = "SELECT subject_id, subject_name FROM subjects";
+$subjectResult = $connection->query($subjectSql);
+$subjects = [];
+if ($subjectResult->num_rows > 0) {
+    while ($row = $subjectResult->fetch_assoc()) {
+        $subjects[] = $row;
+    }
+}
+
+// Fetch details for a selected section (using sectionselect from the URL)
+$sectionDetails = null;
+if (isset($_GET['sectionselect'])) {
+    $section = $_GET['sectionselect'];  // This is where we fetch the section from the URL
+    
+    // Schedule query to fetch class schedule for the selected section
+    $scheduleSql = "
+        SELECT sub.subject_code, sub.subject_name, sc.time_in, sc.time_out, CONCAT(t.First_Name, ' ', t.Last_Name) AS teacher
+        FROM schedules sc
+        JOIN subjects sub ON sc.subject_id = sub.subject_id
+        JOIN teachers t ON sc.teacher_id = t.teacher_id
+        WHERE sc.section = '$section'
+        ";
+
+        $scheduleResult = $connection->query($scheduleSql);
+
+        if ($scheduleResult->num_rows > 0) {
+            $scheduleDetails = [];
+            while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+                $scheduleDetails[] = array(
+                    'subject_code' => $scheduleRow['subject_code'],
+                    'subject_name' => $scheduleRow['subject_name'],
+                    'time_in' => $scheduleRow['time_in'],
+                    'time_out' => $scheduleRow['time_out'],
+                    'teacher' => $scheduleRow['teacher']
+                );
+            }
+            $sectionDetails['schedule'] = $scheduleDetails;
+        }
+}
+
+if (isset($_POST['submitForm'])) {
+    // Get form values
+    $section = $_POST['section'];
+    $subject = $_POST['subject'];
+    $time_in = $_POST['start_time']; // Use time_in instead of start_time
+    $time_out = $_POST['end_time']; // Use time_out instead of end_time
+    $teacher = $_POST['teacher'];
+    $gradeLevel = $_GET['gradelevel'];  // Get grade level from URL
+
+    // Get the open school year
+    $schoolYearQuery = "SELECT school_year FROM school_year WHERE status = 'Open' LIMIT 1";
+    $schoolYearResult = $connection->query($schoolYearQuery);
+    if ($schoolYearResult->num_rows > 0) {
+        $schoolYearRow = $schoolYearResult->fetch_assoc();
+        $schoolYear = $schoolYearRow['school_year'];
+    } else {
+        // Handle the case where there is no open school year
+        echo "No open school year found.";
+        exit;
+    }
+
+    $insertSql = "
+        INSERT INTO schedules (section, subject_id, time_in, time_out, teacher_id, grade_level, school_year) 
+        VALUES ('$section', '$subject', '$time_in', '$time_out', '$teacher', '$gradeLevel', '$schoolYear')
+    ";
+
+    if ($connection->query($insertSql) === TRUE) {
+        // Redirect back to the same page with a success status
+        header("Location: add_schedule.php?sectionselect=$section&gradelevel=$gradeLevel&status=approved");
+        exit();
+    }
+}
+
+$connection->close();
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +127,9 @@
  
      <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
  
+     <link href="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.css" rel="stylesheet">
+
+     <script src="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.js"></script>
   
      <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
  
@@ -42,151 +151,109 @@
 
         <div class="p-6 bg-[#f2f5f8] h-full">
 
+
             <div class="breadcrumbs text-sm">
                 <ul>
                     <li><a href="index.php">Dashboard</a></li>
                     <li><a href="class_section.php">Class List</a></li>
-                    <li>Grade 5 (A.Y. 2025-2026)</li>
+                    <li><a href="view_sections.php">View Sections</a></li>
                     <li>Add Schedule</li>
                 </ul>
             </div>
 
 
             <div class="border border-gray-300 rounded bg-white mt-7">
-
                 <h1 class="font-semibold p-5 bg-blue-50 rounded-t text-blue-600">Add New Schedule</h1>
 
-                <form class="p-5 space-y-6">
-
+                <form class="p-5 space-y-6" method="POST">
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Section Name</label>
-                            <select name="gradelevel" id="gradelevel" required class="select select-bordered w-full bg-gray-50" >
+                            <select name="section" id="section" required class="select select-bordered w-full bg-gray-50">
                                 <option value="" disabled selected>Select Section</option>
-                                <option value="Grade-1">Ammolite</option>
-                                <option value="Grade-1">Anatase</option>
-                               
-        
+                                <?php
+                                foreach ($sections as $section) {
+                                    echo "<option value='" . $section['section_name'] . "'>" . $section['section_name'] . "</option>";
+                                }
+                                ?>
                             </select>
                         </div>
 
                         <div>
-                            <label class="text-gray-800  text-sm font-medium mb-2 block">Subject</label>
-                            <select name="gradelevel" id="gradelevel" required class="select select-bordered w-full bg-gray-50" >
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Subject</label>
+                            <select name="subject" id="subject" required class="select select-bordered w-full bg-gray-50">
                                 <option value="" disabled selected>Select Subject</option>
-                                <option value="Grade-1">Ammolite</option>
-                                <option value="Grade-1">Anatase</option>
-                               
-        
+                                <?php
+                                foreach ($subjects as $subject) {
+                                    echo "<option value='" . $subject['subject_id'] . "'>" . $subject['subject_name'] . "</option>";
+                                }
+                                ?>
                             </select>
                         </div>
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Set Start Time</label>
-                            <div class="relative flex items-center">
-                                <input name="" type="time" class="bg-gray-50 w-full text-gray-800 input input-bordered"/>
-                            </div>
-                                       
+                            <input name="start_time" type="time" class="bg-gray-50 w-full text-gray-800 input input-bordered" required />
                         </div>
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Set End Time</label>
-                            <div class="relative flex items-center">
-                            <input name="" type="time" class="bg-gray-50 w-full text-gray-800 input input-bordered"/>
-                            </div>
-                                       
+                            <input name="end_time" type="time" class="bg-gray-50 w-full text-gray-800 input input-bordered" required />
                         </div>
 
-                        <div>
-                            <label class="text-gray-800 text-sm font-medium mb-2 block">Assign Teacher</label>
-                            <select name="gradelevel" id="gradelevel" required class="select select-bordered w-full bg-gray-50" >
-                                <option value="" disabled selected>Assign Teacher</option>
-                                <option value="Grade-1">Ammolite</option>
-                                <option value="Grade-1">Anatase</option>
-                               
-        
+                        <div class="relative flex items-center w-full mt-7">
+                            <select name="teacher" id="teacher" required class="select select-bordered w-full">
+                                <option value="" disabled selected>Select Teacher</option>
+                                <?php
+                                // Loop through the teachers and populate the dropdown
+                                foreach ($teachers as $teacher) {
+                                    // Display each teacher's name as an option in the dropdown
+                                    echo "<option value='" . $teacher['teacher_id'] . "'>" . $teacher['teacher_name'] . "</option>";
+                                }
+                                ?>
                             </select>
                         </div>
-
                     </div>
-                    
-                    <div class=" flex items-center justify-end">
-                        <button type="submit" name="submitForm" class=" py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Add Subject</button>
-                    </div>
-                        
-        
-                        
+                          
+                    <input type="hidden" name="gradelevel" value="<?php echo htmlspecialchars($gradeLevel); ?>">
 
+                    <div class="flex items-center justify-end">
+                        <button type="submit" name="submitForm" class="py-3 px-16 text-sm rounded-md text-white font-medium tracking-wide bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 focus:ring-offset-blue-50 transition-colors group">Add Schedule</button>
+                    </div>
                 </form>
-
-
             </div>
 
                 
             <div class="border border-gray-300 rounded bg-white mt-3.5">
-
-                <h1 class="text-xl font-bold text-center p-5 bg-blue-50 rounded-t text-blue-600">Grade 5 - Ammolite | A.Y. 2025-2026</h1>
-
-                <div class="overflow-hidden p-5">
-                    <table class="min-w-full divide-y divide-gray-200">
-
-                        <thead>
-
-                            <tr>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Day</th>
-                                <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
-                            </tr>
-                            
-                            
-                        </thead>
-
-                        <tbody class="divide-y divide-gray-200">
-
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">123</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Mathematics</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">8:00 AM - 9:00 AM</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">MWF</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Ms. Marie Angela C. Garcia</td>
-                            </tr>
-
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">123</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Mathematics</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">8:00 AM - 9:00 AM</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">MWF</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Ms. Marie Angela C. Garcia</td>
-                            </tr>
-
-
-
-
-                        </tbody>
-
-                    </table>
-                    
-                    <div class="border-gray-200 border-b"></div>
-
-                    <div class=" flex items-center justify-center gap-2 mt-6">
-                        <button class="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-md">                       
-                            Save Schedule
-                        </button>
-
-                        <button class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-md">                          
-                            Reset
-                        </button>
-                    </div>
-                        
-
-                </div>
-
-                 
-            
+            <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule</h1>
+            <div class="overflow-hidden p-5">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <?php
+                        if (isset($sectionDetails['schedule'])) {
+                            foreach ($sectionDetails['schedule'] as $schedule) {
+                                echo "<tr>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_code']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_name']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['time_in']} - {$schedule['time_out']}</td>
+                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['teacher']}</td>
+                                    </tr>";
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
             </div>
 
+                        
 
 
 
@@ -197,6 +264,28 @@
 
 
     </div>
-    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check for `status` query parameter in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+
+            // Display notifications based on `status`
+            if (status === 'approved') {
+                const notyf = new Notyf({
+                    duration: 3000, // Duration of the notification (3 seconds)
+                    position: {
+                        x: 'right', // Align notifications to the right
+                        y: 'top'     // Show notifications at the top
+                    }
+                });
+                notyf.success('New schedule added successfully!');
+
+                // Remove the `status` parameter from the URL
+                urlParams.delete('status');
+                window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+            }
+        });
+    </script>
 </body>
 </html>

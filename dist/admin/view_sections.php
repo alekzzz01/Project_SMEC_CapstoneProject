@@ -1,6 +1,11 @@
 <?php 
 include '../../config/db.php';
 
+// Fetch the grade level from the URL
+if (isset($_GET['gradelevel'])) {
+    $gradeLevel = $_GET['gradelevel'];
+}
+
 // Fetch sections for the dropdown
 $sql = "SELECT section_name, grade_level FROM sections";
 $result = $connection->query($sql);
@@ -71,38 +76,33 @@ if (isset($_GET['section'])) {
 
     // Schedule query to fetch class schedule for the selected section
     $scheduleSql = "
-    SELECT sub.subject_code, sub.subject_name, sc.time_in, sc.time_out, sc.day, 
-           CONCAT(t.First_Name, ' ', t.Last_Name) AS teacher
-    FROM schedules sc
-    JOIN subjects sub ON sc.subject_id = sub.subject_id  -- joining the subjects table on subject_id
-    JOIN teachers t ON sc.teacher_id = t.teacher_id  -- referencing teacher_id in the schedules table
-    WHERE sc.section = (SELECT section_name FROM sections WHERE section_name = '$section')
-    ";
+        SELECT sub.subject_code, sub.subject_name, sc.time_in, sc.time_out, CONCAT(t.First_Name, ' ', t.Last_Name) AS teacher
+        FROM schedules sc
+        JOIN subjects sub ON sc.subject_id = sub.subject_id
+        JOIN teachers t ON sc.teacher_id = t.teacher_id
+        WHERE sc.section = '$section'
+        ";
 
+        $scheduleResult = $connection->query($scheduleSql);
 
-
-
-
-    $scheduleResult = $connection->query($scheduleSql);
-
-    if ($scheduleResult->num_rows > 0) {
-        $scheduleDetails = [];
-        while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-            $scheduleDetails[] = array(
-                'subject_code' => $scheduleRow['subject_code'],
-                'subject_name' => $scheduleRow['subject_name'],
-                'time_in' => $scheduleRow['time_in'],
-                'time_out' => $scheduleRow['time_out'],
-                'day' => $scheduleRow['day'],
-                'teacher' => $scheduleRow['teacher']
-            );
+        if ($scheduleResult->num_rows > 0) {
+            $scheduleDetails = [];
+            while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+                $scheduleDetails[] = array(
+                    'subject_code' => $scheduleRow['subject_code'],
+                    'subject_name' => $scheduleRow['subject_name'],
+                    'time_in' => $scheduleRow['time_in'],
+                    'time_out' => $scheduleRow['time_out'],
+                    'teacher' => $scheduleRow['teacher']
+                );
+            }
+            $sectionDetails['schedule'] = $scheduleDetails;
         }
-        $sectionDetails['schedule'] = $scheduleDetails;
-    }
 }
 
 $connection->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -155,32 +155,36 @@ $connection->close();
                 </ul>
             </div>
 
+        
+            <form id="sectionForm" action="add_schedule.php" method="GET" onsubmit="return validateSelection()">
+            <!-- Hidden inputs for gradelevel and section -->
+            <input type="hidden" name="gradelevel" id="gradelevel" value="<?php echo isset($_GET['gradelevel']) ? $_GET['gradelevel'] : ''; ?>">
+            <input type="hidden" name="section" id="section" value="<?php echo isset($_GET['section']) ? $_GET['section'] : ''; ?>">
 
-
-            <a  href="add_schedule.php" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-
-                    Add Schedule
-            </a>
+                </svg>
+                Add Schedule
+            </button>
 
 
         </div>
 
 
         <div class="relative flex items-center w-full mt-7">
-                            <select name="gradelevel" id="gradelevel" required class="select select-bordered w-full" >
-                                <option value="" disabled selected>Select Section</option>
-                                    <?php
-                                    foreach ($sections as $section) {
-                                        echo "<option value='" . $section['section_name'] . "'>" . $section['section_name'] . "</option>
-";
-                                    }
-                                    ?>
-                            </select>
+            <select name="sectionselect" id="sectionselect" required class="select select-bordered w-full">
+                <option value="" disabled <?php echo !isset($_GET['section']) ? 'selected' : ''; ?>>Select Section</option>
+                <?php
+                    foreach ($sections as $section) {
+                        // Check if this section is selected (based on the URL parameter)
+                        $selected = (isset($_GET['section']) && $_GET['section'] == $section['section_name']) ? 'selected' : '';
+                        echo "<option value='" . $section['section_name'] . "' $selected data-gradelevel='" . $section['grade_level'] . "'>" . $section['section_name'] . "</option>";
+                    }
+                ?>
+            </select>
         </div>
-
+        </form>                           
 
 
         <div class="border border-gray-300 rounded bg-white mt-3.5">
@@ -267,14 +271,14 @@ $connection->close();
 
     <script>
         // Handle the selection of section and fetch the details dynamically
-        document.getElementById('gradelevel').addEventListener('change', function() {
+        document.getElementById('sectionselect').addEventListener('change', function() {
             const sectionName = this.value;
             window.location.href = "?section=" + sectionName;
         });
     </script>
 
 <div class="border border-gray-300 rounded bg-white mt-3.5">
-    <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule A.Y. 2025-2026</h1>
+    <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule</h1>
 
     <div class="overflow-hidden p-5">
         <table class="min-w-full divide-y divide-gray-200">
@@ -283,7 +287,7 @@ $connection->close();
                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
-                    <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Day</th>
+
                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
                 </tr>
             </thead>
@@ -295,7 +299,7 @@ $connection->close();
                                 <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_code']}</td>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_name']}</td>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['time_in']} - {$schedule['time_out']}</td>
-                                <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['day']}</td>
+            
                                 <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['teacher']}</td>
                             </tr>";
                     }
@@ -324,3 +328,23 @@ $connection->close();
     
 </body>
 </html>
+
+<script>
+    // Function to handle the validation
+    function validateSelection() {
+        const sectionSelect = document.getElementById('sectionselect');
+        if (sectionSelect.value === "") {
+            alert('Please select a section');
+            return false;  // Prevent form submission if no section is selected
+        }
+        return true; // Allow form submission if a section is selected
+    }
+</script>
+<script> 
+document.getElementById('sectionselect').addEventListener('change', function() {
+    const sectionName = this.value;
+    const gradeLevel = this.selectedOptions[0].getAttribute('data-gradelevel');  // Get grade level
+    
+    window.location.href = "?section=" + sectionName + "&gradelevel=" + gradeLevel;  // Append both parameters to the URL
+});
+</script>

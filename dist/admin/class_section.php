@@ -144,7 +144,7 @@ if ($result->num_rows > 0) {
                 echo '<p class="text-base-content/70 text-sm font-medium mb-6">A.Y. ' . htmlspecialchars($row['school_year'], ENT_QUOTES, 'UTF-8') . '</p>';
                 echo '<div class="flex items-center justify-between">';
                 echo '<p class="px-3 py-1.5 rounded-full hover:bg-gray-50 border-2 border-gray-300 text-base-content/70 font-medium text-sm transition-colors inline-flex items-center gap-1.5"><span class="font-semibold text-lg">' . htmlspecialchars($row['total_sections'], ENT_QUOTES, 'UTF-8') . '</span> Total Sections</p>';
-                echo '<a href="view_sections.php" class="btn "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg></a>';
+                echo '<a href="view_sections.php?gradelevel=' . urlencode($row['grade_level']) . '" class="btn "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg></a>';
                 echo '</div>';
                 echo '</div>';
             }
