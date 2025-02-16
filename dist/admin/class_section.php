@@ -2,10 +2,38 @@
 session_start();
 include '../../config/db.php';
 
+// Fetch the open school year from the database
+$schoolYearQuery = "SELECT school_year FROM school_year WHERE status = 'open' LIMIT 1";
+$schoolYearResult = $connection->query($schoolYearQuery);
+$schoolYear = '';
+if ($schoolYearResult->num_rows > 0) {
+    $schoolYearRow = $schoolYearResult->fetch_assoc();
+    $schoolYear = $schoolYearRow['school_year']; // Fetch the open school year
+}
+
+// Fetch teachers for the adviser dropdown
+$teacherSql = "SELECT teacher_id, CONCAT(First_Name, ' ', Last_Name) AS teacher_name FROM teachers";
+$teacherResult = $connection->query($teacherSql);
+$teachers = [];
+if ($teacherResult->num_rows > 0) {
+    while ($row = $teacherResult->fetch_assoc()) {
+        $teachers[] = $row; // Add each teacher to the array
+    }
+}
+
+// Fetching available tracks (you can update this based on your own logic)
+$tracks = ["Elementary", "Highschool", "ABM", "GAS", "HUMSS"];
+
+// Get the sort order from the dropdown if it's set
+$sortOrder = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'ASC'; // Default to ascending if not set
+
+// Fetch sections for the dropdown (this can be reused from view_sections.php)
 $query = "SELECT s.grade_level, sy.school_year, COUNT(s.section_name) AS total_sections
           FROM sections s
           JOIN school_year sy ON s.school_year_id = sy.school_year_id
-          GROUP BY s.grade_level, sy.school_year";
+          GROUP BY s.grade_level, sy.school_year
+          ORDER BY s.grade_level $sortOrder";  // Sorting based on grade_level
+
 $result = $connection->query($query);
 
 // Store results in an array
@@ -15,6 +43,47 @@ if ($result->num_rows > 0) {
         $sections[] = $row; // Add each row to the array
     }
 }
+
+if (isset($_POST['createSection'])) {
+    // Get form values
+    $gradeLevel = $_POST['gradelevel']; // This will be "Grade-1", "Grade-2", etc.
+
+    // Convert "Grade-1" to "grade-1"
+    $formattedGradeLevel = strtolower(str_replace("Grade-", "grade-", $gradeLevel));
+
+    // Get the school year ID from the form
+    $schoolYearId = $_POST['school_year_id'];  // Use school_year_id from the form (not the school_year)
+
+    // Continue if school year ID is provided
+    if ($schoolYearId) {
+        // Get other form values
+        $sectionName = $_POST['section_name'];
+        $track = $_POST['track'];
+        $adviserId = $_POST['adviser_id'];  // This is the adviser_id now
+        $numStudents = $_POST['num_students'];
+
+        // Insert the data into the database (use school_year_id instead of school_year)
+        $insertSql = "
+            INSERT INTO sections (section_name, grade_level, track, adviser_id, num_students, school_year_id)
+            VALUES ('$sectionName', '$formattedGradeLevel', '$track', '$adviserId', '$numStudents', '$schoolYearId')
+        ";
+
+        if ($connection->query($insertSql) === TRUE) {
+            echo "New section added successfully!";
+        } else {
+            echo "Error: " . $insertSql . "<br>" . $connection->error;
+        }
+    } else {
+        echo "No open school year found.";
+    }
+
+    // Redirect or take further actions
+    header("Location: class_section.php");
+    exit();
+}
+
+
+$connection->close();
 ?>
 
 
@@ -76,21 +145,11 @@ if ($result->num_rows > 0) {
 
       
             <div class="flex items-center justify-between gap-1 lg:gap-3 flex-wrap">
-
-                <select name="role_type" class="select select-bordered select-sm">
-                              <option value="">Filter by Year</option> <!-- Option to clear the filter -->
-                              <option value="Admin">Admin</option>
-                              <option value="Teacher">Teacher</option>
-                              <option value="Student">Student</option>
-                </select>
-
                 
-                <select name="role_type" class="select select-bordered select-sm ">
-                              <option value="">Sort by Year</option> <!-- Option to clear the filter -->
-                              <option value="Admin">Admin</option>
-                              <option value="Teacher">Teacher</option>
-                              <option value="Student">Student</option>
-                </select>
+                    <select name="sort_order" id="sortOrder" class="select select-bordered select-sm">
+                        <option value="ASC" <?php echo isset($_GET['sort_order']) && $_GET['sort_order'] == 'ASC' ? 'selected' : ''; ?>>Sort by Year (Ascending)</option>
+                        <option value="DESC" <?php echo isset($_GET['sort_order']) && $_GET['sort_order'] == 'DESC' ? 'selected' : ''; ?>>Sort by Year (Descending)</option>
+                    </select>
 
 
                 <div class="border border-r h-6"></div>
@@ -135,23 +194,26 @@ if ($result->num_rows > 0) {
         </div>
 
         <div class="my-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <?php 
-        if (!empty($sections)) {
-            // Loop through the sections and display them
-            foreach ($sections as $row) {
-                echo '<div class="p-6 bg-white rounded-t-md shadow border-b-4 border-green-600">';
-                echo '<p class="font-bold text-lg mb-1">Grade: ' . htmlspecialchars($row['grade_level'], ENT_QUOTES, 'UTF-8') . '</p>';
-                echo '<p class="text-base-content/70 text-sm font-medium mb-6">A.Y. ' . htmlspecialchars($row['school_year'], ENT_QUOTES, 'UTF-8') . '</p>';
-                echo '<div class="flex items-center justify-between">';
-                echo '<p class="px-3 py-1.5 rounded-full hover:bg-gray-50 border-2 border-gray-300 text-base-content/70 font-medium text-sm transition-colors inline-flex items-center gap-1.5"><span class="font-semibold text-lg">' . htmlspecialchars($row['total_sections'], ENT_QUOTES, 'UTF-8') . '</span> Total Sections</p>';
-                echo '<a href="view_sections.php?gradelevel=' . urlencode($row['grade_level']) . '" class="btn "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg></a>';
-                echo '</div>';
-                echo '</div>';
-            }
-        } else {
-            echo "<p>No sections found</p>";
-        }
-        ?>
+                    <?php 
+                if (!empty($sections)) {
+                    // Loop through the sections and display them
+                    foreach ($sections as $row) {
+                        // Extract the numeric part of the grade_level (e.g., "Grade-11" becomes "11")
+                        $gradeLevel = explode('-', $row['grade_level'])[1]; // This will return the number part of Grade-11, Grade-12, etc.
+
+                        echo '<div class="p-6 bg-white rounded-t-md shadow border-b-4 border-green-600">';
+                        echo '<p class="font-bold text-lg mb-1">Grade: ' . htmlspecialchars($gradeLevel, ENT_QUOTES, 'UTF-8') . '</p>';  // Display only the number
+                        echo '<p class="text-base-content/70 text-sm font-medium mb-6">A.Y. ' . htmlspecialchars($row['school_year'], ENT_QUOTES, 'UTF-8') . '</p>';
+                        echo '<div class="flex items-center justify-between">';
+                        echo '<p class="px-3 py-1.5 rounded-full hover:bg-gray-50 border-2 border-gray-300 text-base-content/70 font-medium text-sm transition-colors inline-flex items-center gap-1.5"><span class="font-semibold text-lg">' . htmlspecialchars($row['total_sections'], ENT_QUOTES, 'UTF-8') . '</span> Total Sections</p>';
+                        echo '<a href="view_sections.php?gradelevel=' . urlencode($row['grade_level']) . '" class="btn "><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg></a>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p>No sections found</p>";
+                }
+            ?>
             </div>
 
 
@@ -176,27 +238,28 @@ if ($result->num_rows > 0) {
 
             <form action="" class="py-4 grid grid-cols-2 gap-6" method="POST">
 
-                    <div>
-                        <label class="text-gray-800 text-sm mb-2 block">Grade Level</label>
-                        <div class="relative flex items-center">
-                            <select name="gradelevel" id="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" onchange="toggleStudentNumberField()">
-                                <option value="" disabled selected>Choose Grade Level</option>
-                                <option value="Grade-1">Grade 1</option>
-                                <option value="Grade-2">Grade 2</option>
-                                <option value="Grade-3">Grade 3</option>
-                                <option value="Grade-4">Grade 4</option>
-                                <option value="Grade-5">Grade 5</option>
-                                <option value="Grade-6">Grade 6</option>
-                                <option value="Grade-7">Grade 7</option>
-                                <option value="Grade-8">Grade 8</option>
-                                <option value="Grade-9">Grade 9</option>
-                                <option value="Grade-10">Grade 10</option>
-                                <option value="Grade-11">Grade 11</option>
-                                <option value="Grade-12">Grade 12</option>
-        
-                            </select>
-                        </div>
+            <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Grade Level</label>
+                    <div class="relative flex items-center">
+                        <select name="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <option value="" disabled selected>Choose Grade Level</option>
+                            <option value="Nursery">Nursery</option>
+                            <option value="Kinder">Kinder</option>
+                            <option value="Grade-1">Grade 1</option>
+                            <option value="Grade-2">Grade 2</option>
+                            <option value="Grade-3">Grade 3</option>
+                            <option value="Grade-4">Grade 4</option>
+                            <option value="Grade-5">Grade 5</option>
+                            <option value="Grade-6">Grade 6</option>
+                            <option value="Grade-7">Grade 7</option>
+                            <option value="Grade-8">Grade 8</option>
+                            <option value="Grade-9">Grade 9</option>
+                            <option value="Grade-10">Grade 10</option>
+                            <option value="Grade-11">Grade 11</option>
+                            <option value="Grade-12">Grade 12</option>
+                        </select>
                     </div>
+                </div>
 
                     
         
@@ -209,66 +272,66 @@ if ($result->num_rows > 0) {
                     </div>
 
                     <div>
-                        <label class="text-gray-800 text-sm mb-2 block">Track/Strand</label>
-                        <div class="relative flex items-center">
-                            <select name="track" id="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" onchange="toggleStudentNumberField()">
-                                <option value="" disabled selected>Choose Track/Strand</option>
-                                <option value="elementary">Elementary</option>
-                                <option value="highschool">High-School</option>
-                                <option value="ABM">ABM Track</option>
-                                <option value="GAS">GAS Track</option>
-                               
-        
-                            </select>
-                        </div>
-                    </div>
+                <label class="text-gray-800 text-sm mb-2 block">Track/Strand</label>
+                <div class="relative flex items-center">
+                    <select name="track" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                        <option value="" disabled selected>Choose Track/Strand</option>
+                        <?php
+                        foreach ($tracks as $track) {
+                            echo "<option value='$track'>$track</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
 
 
-                    <div>
-                        <label class="text-gray-800 text-sm mb-2 block">Academic Year</label>
-                        <div class="relative flex items-center">
-                            <select name="track" id="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" onchange="toggleStudentNumberField()">
-                                    <option value="">Select school year</option>
-                                            <?php
-                                                // Fetch distinct school years with status 'open' for the filter dropdown
-                                            $schoolYearQuery = "SELECT DISTINCT school_year FROM school_year WHERE status = 'open' ORDER BY school_year ASC";
-                                            $schoolYearResult = $connection->query($schoolYearQuery);
-                                            if ($schoolYearResult->num_rows > 0) {
-                                                while ($row = $schoolYearResult->fetch_assoc()) {
-                                                    echo "<option value='{$row['school_year']}'>{$row['school_year']}</option>";
-                                                }
-                                            }
-                                        ?>
-        
-                            </select>
-                        </div>
-                    </div>
+            <div>
+                <label class="text-gray-800 text-sm mb-2 block">Academic Year</label>
+                <div class="relative flex items-center">
+                    <select name="school_year_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                        <option value="" disabled selected>Select School Year</option>
+                        <!-- Populate the open academic year -->
+                        <?php
+                        // Fetch the open school year
+                        $schoolYearQuery = "SELECT school_year_id, school_year FROM school_year WHERE status = 'open' LIMIT 1";
+                        $schoolYearResult = $connection->query($schoolYearQuery);
+
+                        if ($schoolYearResult->num_rows > 0) {
+                            $schoolYearRow = $schoolYearResult->fetch_assoc();
+                            // Display the open academic year and its id
+                            echo "<option value='" . $schoolYearRow['school_year_id'] . "'>" . $schoolYearRow['school_year'] . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+
 
 
                     
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Class Adviser</label>
-                        <div class="relative flex items-center">
-                            <select name="gradelevel" id="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" onchange="toggleStudentNumberField()">
-                                <option value="" disabled selected>Assign Adviser</option>
-                                <option value="Grade-1">Grade 1</option>
-                              
-                            </select>
-                        </div>
+                        <select name="adviser_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <option value="" disabled selected>Assign Adviser</option>
+                            <?php
+                            foreach ($teachers as $teacher) {
+                                echo "<option value='" . $teacher['teacher_id'] . "'>" . htmlspecialchars($teacher['teacher_name'], ENT_QUOTES, 'UTF-8') . "</option>";
+                            }
+                            ?>
+                        </select>
                     </div>
 
                     <div>
                         <label class="text-gray-800 text-sm mb-2 block">Number of Students</label>
                         <div class="relative flex items-center">
-                            <input name="section_name" type="number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Number of Students" />
+                            <input name="num_students" type="number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Number of Students" />
                         
                         </div>
                     </div>
 
                     <div class="modal-action col-span-2">
-                    
-                    <button type="submit" name="createUser" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Section</button>
-                
+                        <button type="submit" name="createSection" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Section</button>
                     </div>
      
 
@@ -279,7 +342,13 @@ if ($result->num_rows > 0) {
           
 </dialog>
 
-
+<script>
+        // Handle sorting when dropdown value changes
+        document.getElementById('sortOrder').addEventListener('change', function () {
+            const sortOrder = this.value;
+            window.location.search = `?sort_order=${sortOrder}`;
+        });
+    </script>
 
 
 </body>

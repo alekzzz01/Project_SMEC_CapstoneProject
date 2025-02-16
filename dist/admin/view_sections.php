@@ -4,10 +4,18 @@ include '../../config/db.php';
 // Fetch the grade level from the URL
 if (isset($_GET['gradelevel'])) {
     $gradeLevel = $_GET['gradelevel'];
+    echo "Grade Level: " . $gradeLevel;  // Debugging line
+} else {
+    echo "Grade level not set.";  // Debugging line
 }
 
-// Fetch sections for the dropdown
-$sql = "SELECT section_name, grade_level FROM sections";
+// Fetch sections for the dropdown and filter by grade level
+$gradeLevelFilter = "";
+if (isset($_GET['gradelevel'])) {
+    $gradeLevelFilter = "WHERE grade_level = '" . $_GET['gradelevel'] . "'";
+}
+
+$sql = "SELECT section_name, grade_level FROM sections $gradeLevelFilter";
 $result = $connection->query($sql);
 $sections = [];
 if ($result->num_rows > 0) {
@@ -104,6 +112,7 @@ $connection->close();
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,16 +182,16 @@ $connection->close();
 
 
         <div class="relative flex items-center w-full mt-7">
-            <select name="sectionselect" id="sectionselect" required class="select select-bordered w-full">
-                <option value="" disabled <?php echo !isset($_GET['section']) ? 'selected' : ''; ?>>Select Section</option>
-                <?php
-                    foreach ($sections as $section) {
-                        // Check if this section is selected (based on the URL parameter)
-                        $selected = (isset($_GET['section']) && $_GET['section'] == $section['section_name']) ? 'selected' : '';
-                        echo "<option value='" . $section['section_name'] . "' $selected data-gradelevel='" . $section['grade_level'] . "'>" . $section['section_name'] . "</option>";
-                    }
-                ?>
-            </select>
+        <select name="sectionselect" id="sectionselect" required class="select select-bordered w-full">
+            <option value="" disabled <?php echo !isset($_GET['section']) ? 'selected' : ''; ?>>Select Section</option>
+            <?php
+                foreach ($sections as $section) {
+                    // Check if this section is selected (based on the URL parameter)
+                    $selected = (isset($_GET['section']) && $_GET['section'] == $section['section_name']) ? 'selected' : '';
+                    echo "<option value='" . $section['section_name'] . "' $selected data-gradelevel='" . $section['grade_level'] . "'>" . $section['section_name'] . "</option>";
+                }
+            ?>
+        </select>
         </div>
         </form>                           
 
