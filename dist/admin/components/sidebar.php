@@ -14,7 +14,7 @@ $customization = $result->fetch_assoc();
             <a class="flex items-center gap-2" href="./">
                 <?php
                 if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
-                    echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                    echo '<img src="' . htmlspecialchars('./' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
                 } else {
                     echo '<img src="../../assets/images/defaultLogo.png" alt="Default Logo" class="w-10 h-10 object-cover bg-white rounded-full">';
                 }

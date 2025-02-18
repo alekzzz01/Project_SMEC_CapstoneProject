@@ -199,7 +199,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <h5 class="text-3xl lg:text-4xl font-bold text-center bg-red">Welcome back to
                         <?php
                         if (isset($customization['school_name']) && !empty($customization['school_name'])) {
-                            echo htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8');
+                            echo '<span class="text-3xl lg:text-4xl text-blue-800 font-bold text-center">' . htmlspecialchars($customization['school_name'], ENT_QUOTES, 'UTF-8') . '</span>';
                         } else {
                             echo '<span class="text-3xl lg:text-4xl text-blue-800 font-bold text-center">LUMIX - MIS</span>';
                         }

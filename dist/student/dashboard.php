@@ -9,6 +9,8 @@ if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
 
 include '../../config/db.php';
 
+$name = $_SESSION['otp_name'];
+
 $resultEvent = $connection->query("SELECT COUNT(*) AS total_events FROM events");
 $row = $resultEvent->fetch_assoc();
 $total_events = $row['total_events'];
@@ -65,7 +67,7 @@ $connection->close();
 
         <div class="space-y-7">
     
-        <h4 class="text-3xl font-bold text-blue-500">Hello, Student 👋</h4>
+        <h4 class="text-3xl font-bold text-blue-500">Hello, <?php echo $name ?>👋</h4>
 
         <div class="p-9 bg-white rounded-md space-y-6">
 
