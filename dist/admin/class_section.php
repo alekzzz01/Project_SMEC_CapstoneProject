@@ -44,37 +44,39 @@ if ($result->num_rows > 0) {
     }
 }
 
+// Initialize message variable
+$notificationMessage = '';
+
+// Insert new section if form is submitted
 if (isset($_POST['createSection'])) {
     // Get form values
-    $gradeLevel = $_POST['gradelevel']; // This will be "Grade-1", "Grade-2", etc.
-
-    // Convert "Grade-1" to "grade-1"
+    $gradeLevel = $_POST['gradelevel']; 
     $formattedGradeLevel = strtolower(str_replace("Grade-", "grade-", $gradeLevel));
 
     // Get the school year ID from the form
-    $schoolYearId = $_POST['school_year_id'];  // Use school_year_id from the form (not the school_year)
+    $schoolYearId = $_POST['school_year_id'];
 
-    // Continue if school year ID is provided
     if ($schoolYearId) {
         // Get other form values
         $sectionName = $_POST['section_name'];
         $track = $_POST['track'];
-        $adviserId = $_POST['adviser_id'];  // This is the adviser_id now
+        $adviserId = $_POST['adviser_id']; 
         $numStudents = $_POST['num_students'];
 
-        // Insert the data into the database (use school_year_id instead of school_year)
+        // Insert the data into the database
         $insertSql = "
             INSERT INTO sections (section_name, grade_level, track, adviser_id, num_students, school_year_id)
             VALUES ('$sectionName', '$formattedGradeLevel', '$track', '$adviserId', '$numStudents', '$schoolYearId')
         ";
 
         if ($connection->query($insertSql) === TRUE) {
-            echo "New section added successfully!";
+            // Success message for notification
+            $notificationMessage = 'New section added successfully!';
         } else {
-            echo "Error: " . $insertSql . "<br>" . $connection->error;
+            $notificationMessage = 'Error: ' . $insertSql . "<br>" . $connection->error;
         }
     } else {
-        echo "No open school year found.";
+        $notificationMessage = "No open school year found.";
     }
 
     // Redirect or take further actions
@@ -99,7 +101,13 @@ $connection->close();
      
     <script src="../../assets/js/script.js"></script>
 
- 
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.4.0/notyf.min.css">
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3.4.0/notyf.min.js"></script>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
  
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -199,8 +207,14 @@ $connection->close();
                     // Loop through the sections and display them
                     foreach ($sections as $row) {
                         // Extract the numeric part of the grade_level (e.g., "Grade-11" becomes "11")
-                        $gradeLevel = explode('-', $row['grade_level'])[1]; // This will return the number part of Grade-11, Grade-12, etc.
-
+                        $gradeLevelParts = explode('-', $row['grade_level']);
+                            if (count($gradeLevelParts) > 1) {
+                                // If there's a hyphen, get the part after it (e.g., "Grade-11" becomes "11")
+                                $gradeLevel = $gradeLevelParts[1];
+                            } else {
+                                // Otherwise, handle cases like "Nursery" or "Kinder"
+                                $gradeLevel = $row['grade_level']; // Or you can handle it differently if needed
+                            }
                         echo '<div class="p-6 bg-white rounded-t-md shadow border-b-4 border-green-600">';
                         echo '<p class="font-bold text-lg mb-1">Grade: ' . htmlspecialchars($gradeLevel, ENT_QUOTES, 'UTF-8') . '</p>';  // Display only the number
                         echo '<p class="text-base-content/70 text-sm font-medium mb-6">A.Y. ' . htmlspecialchars($row['school_year'], ENT_QUOTES, 'UTF-8') . '</p>';
@@ -348,7 +362,28 @@ $connection->close();
             const sortOrder = this.value;
             window.location.search = `?sort_order=${sortOrder}`;
         });
-    </script>
+
+    
+    $(document).ready(function () {
+        // Show Notyf success notification if section is added
+        <?php if (isset($_SESSION['notificationMessage']) && $_SESSION['notificationMessage']): ?>
+            const notyf = new Notyf({
+                position: {
+                    x: 'right',  // Horizontal position (right)
+                    y: 'top'     // Vertical position (top)
+                },
+                duration: 3000, // Duration of the notification
+                ripple: true    // Optional: adds a ripple effect when the notification appears
+            });
+            notyf.success("<?= $_SESSION['notificationMessage'] ?>");
+
+            // Clear the message after showing the notification
+            <?php unset($_SESSION['notificationMessage']); ?>
+        <?php endif; ?>
+    });
+</script>
+
+
 
 
 </body>

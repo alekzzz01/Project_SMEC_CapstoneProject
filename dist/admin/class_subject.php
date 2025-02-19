@@ -6,6 +6,7 @@ include '../../config/db.php';
 $tracks = ["Elementary", "Highschool", "ABM", "GAS", "HUMSS"];
 
 // Insert new subject if form is submitted
+$notificationMessage = ''; // Variable to store success/error message
 if (isset($_POST['submitForm'])) {
     // Get form values
     $subjectName = $_POST['subject_name'];
@@ -36,9 +37,9 @@ if (isset($_POST['submitForm'])) {
                   VALUES ('$newSubjectId', '$subjectName', '$subjectCode', '$description', NOW(), '$gradeLevel', '$track', '$totalHours')";
 
     if ($connection->query($insertSql) === TRUE) {
-        echo "New subject added successfully!";
+        $notificationMessage = 'New subject added successfully!';
     } else {
-        echo "Error: " . $insertSql . "<br>" . $connection->error;
+        $notificationMessage = 'Error: ' . $insertSql . "<br>" . $connection->error;
     }
 }
 
@@ -73,7 +74,9 @@ if ($result->num_rows > 0) {
      
      <script src="../../assets/js/script.js"></script>
  
-  
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.4.0/notyf.min.css">
+    
+     <script src="https://cdn.jsdelivr.net/npm/notyf@3.4.0/notyf.min.js"></script>
      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   
      <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
@@ -84,7 +87,7 @@ if ($result->num_rows > 0) {
      <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
  
      <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
- 
+    
   
      <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
  
@@ -265,19 +268,31 @@ if ($result->num_rows > 0) {
 
 
     </div>
+                 
+    <script>
+        $(document).ready(function () {
+        var table = $('#example').DataTable({
+            searching: true,  // Enables the search box
+            paging: true,     // Enables pagination
+            ordering: true,   // Enables column sorting
+            info: true,       // Displays table information
+        });
 
+        // Show Notyf success notification if subject is added
+        <?php if ($notificationMessage): ?>
+            const notyf = new Notyf({
+                position: {
+                    x: 'right',  // Horizontal position (right)
+                    y: 'top'     // Vertical position (top)
+                },
+                duration: 3000, // Set duration for how long the notification shows (in ms)
+                ripple: true    // Optional: adds a ripple effect when the notification appears
+            });
+            notyf.success("<?= $notificationMessage ?>");
+        <?php endif; ?>
+    });
+    </script>
     
 </body>
 </html>
 
-<script>
-    $(document).ready(function () {
-        var table = $('#example').DataTable ({
-            searching: true, // Enables the search box
-            paging: true,    // Enables pagination
-            ordering: true,  // Enables column sorting
-            info: true,      // Displays table information
-        });
-
-    });
-</script>
