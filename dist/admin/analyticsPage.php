@@ -15,16 +15,12 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics</title>
+    <title>Reports & Analytics</title>
 
 
     <link rel="stylesheet" href="../../assets/css/styles.css">
 
     <script src="../../assets/js/script.js"></script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
 
@@ -54,13 +50,29 @@ if (!isset($_SESSION['user_id'])) {
 
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-6 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#fafbfc] h-full">
 
-            <h1 class="text-lg font-medium ">📊 Reports</h1>
+            <h1 class="text-lg font-medium "></h1>
+
+            <div class="flex items-center justify-between">
+
+
+                <h1 class="text-lg font-medium ">📊 Reports</h1>
+
+                <div class="breadcrumbs text-sm">
+                    <ul>
+                        <li><a>Dashboard</a></li>
+                        <li><a>Reports & Analytics</a></li>
+                    </ul>
+                </div>
+
+
+            </div>
+
 
             <div role="tablist" class="tabs tabs-lifted mt-3.5">
-                <input type="radio" name="my_tabs_2" role="tab" class="tab"  checked="checked" aria-label="🎓 Enrollment" />
-                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
+                <input type="radio" name="my_tabs_2" role="tab" class="tab" checked="checked" aria-label="🎓 Enrollment" />
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <?php include('./tables/enrollmentReportTable.php'); ?>
                 </div>
 
@@ -94,3 +106,20 @@ if (!isset($_SESSION['user_id'])) {
 </body>
 
 </html>
+
+<script>
+
+$(document).ready(function() {
+  $('#toggleSidebar').on('click', function() {
+      $('#sidebar').toggleClass('-translate-x-full');
+  });
+
+   $('#closeSidebar').on('click', function() {
+      $('#sidebar').addClass('-translate-x-full');
+  });
+
+
+  
+});
+
+</script>

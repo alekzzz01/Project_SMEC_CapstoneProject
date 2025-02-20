@@ -123,9 +123,6 @@ if (isset($_POST['add_term'])) {
 
             </div>
 
-            <div>
-                    <h1 class="text-lg font-medium mb-1 mt-7">View All Term</h1>
-            </div>
 
 
 
@@ -183,4 +180,21 @@ if (isset($_POST['add_term'])) {
         });
 
     });
+</script>
+
+<script>
+
+$(document).ready(function() {
+  $('#toggleSidebar').on('click', function() {
+      $('#sidebar').toggleClass('-translate-x-full');
+  });
+
+   $('#closeSidebar').on('click', function() {
+      $('#sidebar').addClass('-translate-x-full');
+  });
+
+
+  
+});
+
 </script>

@@ -383,6 +383,23 @@ $connection->close();
     });
 </script>
 
+<script>
+
+$(document).ready(function() {
+  $('#toggleSidebar').on('click', function() {
+      $('#sidebar').toggleClass('-translate-x-full');
+  });
+
+   $('#closeSidebar').on('click', function() {
+      $('#sidebar').addClass('-translate-x-full');
+  });
+
+
+  
+});
+
+</script>
+
 
 
 
