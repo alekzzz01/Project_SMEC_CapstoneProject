@@ -68,28 +68,126 @@ $result = $connection->query($sql);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	<!--Regular Datatables CSS-->
+	<link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+	<!--Responsive Extension Datatables CSS-->
+	<link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css" rel="stylesheet">
 
-        <!-- DataTables CSS (Hover Styling) -->
-        <link href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" rel="stylesheet">
-        <link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css" rel="stylesheet">
 
-        <!-- jQuery -->
-        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
-        <!-- DataTables JS -->
-        <script src="https://cdn.datatables.net/2.2.1/js/dataTables.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
 
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.js"></script>
-        <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.js"></script>
+    <!-- Buttons -->
+    <link href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.js"></script>
+
+    <style>
+		/*Overrides for Tailwind CSS */
+
+		/*Form fields*/
+		.dataTables_wrapper select,
+		.dataTables_wrapper .dataTables_filter input {
+			color: #4a5568;
+			/*text-gray-700*/
+			padding-left: 1rem;
+			/*pl-4*/
+			padding-right: 1rem;
+			/*pl-4*/
+			padding-top: .5rem;
+			/*pl-2*/
+			padding-bottom: .5rem;
+			/*pl-2*/
+			line-height: 1.25;
+			/*leading-tight*/
+			border-width: 2px;
+			/*border-2*/
+			border-radius: .25rem;
+			border-color: #edf2f7;
+			/*border-gray-200*/
+			background-color: #edf2f7;
+			/*bg-gray-200*/
+		}
+
+		/*Row Hover*/
+		table.dataTable.hover tbody tr:hover,
+		table.dataTable.display tbody tr:hover {
+			background-color: #ebf4ff;
+			/*bg-indigo-100*/
+		}
+
+		/*Pagination Buttons*/
+		.dataTables_wrapper .dataTables_paginate .paginate_button {
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Pagination Buttons - Current selected */
+		.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+			color: #fff !important;
+			/*text-white*/
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+			/*shadow*/
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			background: #667eea !important;
+			/*bg-indigo-500*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Pagination Buttons - Hover */
+		.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+			color: #fff !important;
+			/*text-white*/
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+			/*shadow*/
+			font-weight: 700;
+			/*font-bold*/
+			border-radius: .25rem;
+			/*rounded*/
+			background: #667eea !important;
+			/*bg-indigo-500*/
+			border: 1px solid transparent;
+			/*border border-transparent*/
+		}
+
+		/*Add padding to bottom border */
+		table.dataTable.no-footer {
+			border-bottom: 1px solid #e2e8f0;
+			/*border-b-1 border-gray-300*/
+			margin-top: 0.75em;
+			margin-bottom: 0.75em;
+		}
+
+		/*Change colour of responsive icon*/
+		table.dataTable.dtr-inline.collapsed>tbody>tr>td:first-child:before,
+		table.dataTable.dtr-inline.collapsed>tbody>tr>th:first-child:before {
+			background-color: #667eea !important;
+			/*bg-indigo-500*/
+		}
+	</style>
+
 
 
 
@@ -97,15 +195,17 @@ $result = $connection->query($sql);
 
 
 </head>
+
 <body>
 
-<div class="space-y-7">
-    <form method="GET" action="">
-        <div class="flex items-center gap-6">
-            <!-- School Year Filter -->
-            <div class="flex items-center gap-2">
-                <label for="schoolYearFilter" class="text-gray-500 mr-2">Filter by School Year:</label>
+    <div>
+
+
+        <form method="GET" action="" class=" px-5 pt-5">
+            <div class="flex items-center gap-4">
+                <!-- School Year Filter -->
                 <select name="school_year" id="schoolYearFilter" class="select select-bordered select-sm">
+                    <option value="" selected disabled>Choose School Year</option>
                     <option value="">All</option>
                     <?php
                     $schoolYearQuery = "SELECT DISTINCT school_year FROM school_year ORDER BY school_year ASC";
@@ -118,46 +218,46 @@ $result = $connection->query($sql);
                     }
                     ?>
                 </select>
-            </div>
 
-            <!-- Status Filter -->
-            <div class="flex items-center gap-2">
-                <label for="statusFilter" class="text-gray-500 mr-2">Filter by Status:</label>
+                <!-- Status Filter -->
                 <select name="status" id="statusFilter" class="select select-bordered select-sm">
+                    <option value="" selected disabled>Choose Status</option>
                     <option value="">All</option>
                     <option value="Enrolled" <?php echo ($status_filter === 'Enrolled') ? 'selected' : ''; ?>>Enrolled</option>
                     <option value="Pending" <?php echo ($status_filter === 'Pending') ? 'selected' : ''; ?>>Pending</option>
                     <option value="Rejected" <?php echo ($status_filter === 'Rejected') ? 'selected' : ''; ?>>Rejected</option>
                     <option value="Correction" <?php echo ($status_filter === 'Correction') ? 'selected' : ''; ?>>Needs Correction</option>
                 </select>
+
+                <button type="submit" class="btn btn-sm btn-neutral">Filter</button>
             </div>
 
-            <button type="submit" class="btn btn-sm btn-neutral">Filter</button>
-        </div>
-    </form>
+        
 
-    <div>
-        <table id="example" class="min-w-full divide-y divide-gray-200">
-            <thead class="border border-gray-300 text-sm bg-gray-100">
-                <tr>
-                    <th class="py-3 px-4 text-left">ID</th>
-                    <th class="py-3 px-4 text-left">Student Type</th>
-                    <th class="py-3 px-4 text-left">Student Number</th>
-                    <th class="py-3 px-4 text-left">Student Name</th>
-                    <th class="py-3 px-4 text-left">School Year</th>
-                    <th class="py-3 px-4 text-left">Type</th>
-                    <th class="py-3 px-4 text-left">Strand</th>
-                    <th class="py-3 px-4 text-left">Grade Level</th>
-                    <th class="py-3 px-4 text-left">Section</th>
-                    <th class="py-3 px-4 text-left">Enrollment Status</th>
-                    <th class="py-3 px-4 text-left">Date Enrolled</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 border border-gray-300">
-                <?php
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>
+        </form>
+
+        <div class="mt-7 px-5">
+        <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                <thead class="border border-gray-300 text-sm bg-gray-100">
+                    <tr>
+                        <th class="py-3 px-4 text-left">ID</th>
+                        <th class="py-3 px-4 text-left">Student Type</th>
+                        <th class="py-3 px-4 text-left">Student Number</th>
+                        <th class="py-3 px-4 text-left">Student Name</th>
+                        <th class="py-3 px-4 text-left">School Year</th>
+                        <th class="py-3 px-4 text-left">Type</th>
+                        <th class="py-3 px-4 text-left">Strand</th>
+                        <th class="py-3 px-4 text-left">Grade Level</th>
+                        <th class="py-3 px-4 text-left">Section</th>
+                        <th class="py-3 px-4 text-left">Enrollment Status</th>
+                        <th class="py-3 px-4 text-left">Date Enrolled</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 border border-gray-300">
+                    <?php
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_id']}</td>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_type']}</td>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['student_number_label']}</td>
@@ -170,114 +270,114 @@ $result = $connection->query($sql);
                                 <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>{$row['enrollment_status']}</td>
                                 <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>" . date('M. d, Y', strtotime($row['date_enrolled'])) . "</td>
                             </tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='11' class='text-center py-4'>No records found</td></tr>";
                     }
-                } else {
-                    echo "<tr><td colspan='11' class='text-center py-4'>No records found</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                    ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>
 
 <script>
-$(document).ready(function () {
-    var table = $('#example').DataTable({
-        searching: true, // Enables the search box
-        paging: true,    // Enables pagination
-        ordering: true,  // Enables column sorting
-        info: true,      // Displays table information
-        layout: {
-        topStart: {
-            buttons: [
+    $(document).ready(function() {
+        var table = $('#example').DataTable({
+            responsive: true,
+            searching: true, // Enables the search box
+            paging: true, // Enables pagination
+            ordering: true, // Enables column sorting
+            info: true, // Displays table information
+            layout: {
+                bottomStart: {
+                    buttons: [
 
-                // Copy
-                {
-                    extend: 'copyHtml5',
-                    title: function () {
-                        var selectedSchoolYear = $('#schoolYearFilter').val();
-                        if (selectedSchoolYear) {
-                            return 'Sta. Martha Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                        // Copy
+                        {
+                            extend: 'copyHtml5',
+                            title: function() {
+                                var selectedSchoolYear = $('#schoolYearFilter').val();
+                                if (selectedSchoolYear) {
+                                    return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                                }
+                                return 'Sta. Marta Educational Inc. | Enrollment report';
+                            },
+                            messageBottom: function() {
+                                var schoolYear = $('#schoolYearFilter').val();
+                                var currentDate = new Date().toLocaleString();
+                                var userName = '<?php echo $user_name; ?>';
+
+                                return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                            }
+
+                        },
+
+                        // Excel
+                        {
+                            extend: 'excelHtml5',
+                            title: function() {
+                                var selectedSchoolYear = $('#schoolYearFilter').val();
+                                if (selectedSchoolYear) {
+                                    return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                                }
+                                return 'Sta. Marta Educational Inc. | Enrollment report';
+                            },
+                            messageBottom: function() {
+                                var schoolYear = $('#schoolYearFilter').val();
+                                var currentDate = new Date().toLocaleString();
+                                var userName = '<?php echo $user_name; ?>';
+
+                                return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                            }
+
+                        },
+
+                        // PDF
+                        {
+                            extend: 'pdf',
+                            title: function() {
+                                var selectedSchoolYear = $('#schoolYearFilter').val();
+                                if (selectedSchoolYear) {
+                                    return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                                }
+                                return 'Sta. Marta Educational Inc. | Enrollment report';
+                            },
+                            messageBottom: function() {
+                                var schoolYear = $('#schoolYearFilter').val();
+                                var currentDate = new Date().toLocaleString();
+                                var userName = '<?php echo $user_name; ?>';
+
+                                return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                            }
+                        },
+
+                        // Print
+                        {
+                            extend: 'print',
+                            title: function() {
+                                var selectedSchoolYear = $('#schoolYearFilter').val();
+                                if (selectedSchoolYear) {
+                                    return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                                }
+                                return 'Sta. Marta Educational Inc. | Enrollment report';
+                            },
+                            messageBottom: function() {
+                                var schoolYear = $('#schoolYearFilter').val();
+                                var currentDate = new Date().toLocaleString();
+                                var userName = '<?php echo $user_name; ?>';
+
+                                return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                            }
                         }
-                        return 'Sta. Martha Educational Inc. | Enrollment report'; 
-                    },
-                    messageBottom: function() {
-                    var schoolYear = $('#schoolYearFilter').val();
-                    var currentDate = new Date().toLocaleString();
-                    var userName = '<?php echo $user_name; ?>'; 
-
-                    return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                    ]
                 }
+            }
 
-                },
 
-                // Excel
-                {
-                    extend: 'excelHtml5',
-                    title: function () {
-                        var selectedSchoolYear = $('#schoolYearFilter').val();
-                        if (selectedSchoolYear) {
-                            return 'Sta. Martha Educational Inc. | Enrollment report of ' + selectedSchoolYear;
-                        }
-                        return 'Sta. Martha Educational Inc. | Enrollment report';  
-                    },
-                    messageBottom: function() {
-                    var schoolYear = $('#schoolYearFilter').val();
-                    var currentDate = new Date().toLocaleString();
-                    var userName = '<?php echo $user_name; ?>'; 
-
-                    return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
-                }
-
-                },
-
-                // PDF
-                {
-                    extend: 'pdf',
-                    title: function () {
-                        var selectedSchoolYear = $('#schoolYearFilter').val();
-                        if (selectedSchoolYear) {
-                            return 'Sta. Martha Educational Inc. | Enrollment report of ' + selectedSchoolYear;
-                        }
-                        return 'Sta. Martha Educational Inc. | Enrollment report'; 
-                    },
-                    messageBottom: function() {
-                    var schoolYear = $('#schoolYearFilter').val();
-                    var currentDate = new Date().toLocaleString();
-                    var userName = '<?php echo $user_name; ?>';
-
-                    return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
-                }
-                },
-
-                // Print
-                {
-                    extend: 'print',
-                    title: function () {
-                        var selectedSchoolYear = $('#schoolYearFilter').val();
-                        if (selectedSchoolYear) {
-                            return 'Sta. Martha Educational Inc. | Enrollment report of ' + selectedSchoolYear;
-                        }
-                        return 'Sta. Martha Educational Inc. | Enrollment report';
-                    },
-                    messageBottom: function() {
-                    var schoolYear = $('#schoolYearFilter').val();
-                    var currentDate = new Date().toLocaleString();
-                    var userName = '<?php echo $user_name; ?>';
-
-                    return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
-                }
-                }
-            ]
-        }
-    }
-
-     
+        });
     });
-});
 </script>
-
-

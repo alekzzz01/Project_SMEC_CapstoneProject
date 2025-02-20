@@ -42,10 +42,21 @@
 
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-6 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#fafbfc] h-full">
 
 
-            <h1 class="text-lg font-medium mb-1">Backup & Restore</h1>
+          
+
+            <div class="flex items-center justify-between">
+                <h1 class="text-lg font-medium mb-1">Backup & Restore</h1>
+
+                <div class="breadcrumbs text-sm">
+                    <ul>
+                        <li><a>Dashboard</a></li>
+                        <li><a>Backup & Restore</a></li>
+                    </ul>
+                </div>
+            </div>
 
 
             <div class="bg-white shadow rounded-md px-4 py-4 sm:px-6 mt-7 space-y-6">
@@ -170,3 +181,20 @@
 </body>
 
 </html>
+
+<script>
+
+$(document).ready(function() {
+  $('#toggleSidebar').on('click', function() {
+      $('#sidebar').toggleClass('-translate-x-full');
+  });
+
+   $('#closeSidebar').on('click', function() {
+      $('#sidebar').addClass('-translate-x-full');
+  });
+
+
+  
+});
+
+</script>

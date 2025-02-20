@@ -4,9 +4,9 @@ include '../../config/db.php';
 // Fetch the grade level from the URL
 if (isset($_GET['gradelevel'])) {
     $gradeLevel = $_GET['gradelevel'];
-    echo "Grade Level: " . $gradeLevel;  // Debugging line
+    // echo "Grade Level: " . $gradeLevel;  // Debugging line
 } else {
-    echo "Grade level not set.";  // Debugging line
+    // echo "Grade level not set.";  // Debugging line
 }
 
 // Fetch sections for the dropdown and filter by grade level

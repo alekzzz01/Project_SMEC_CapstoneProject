@@ -65,8 +65,15 @@ $connection->close();
         },
         title: {
             text: 'Enrollment Numbers by School Year',
-            align: 'left'
+            align: 'left',
+            style: {
+                fontSize: '18px',
+                fontWeight: 'bold',
+                fontFamily: 'DM Sans, sans-serif', // Apply DM Sans
+                color: '#333'
+            }
         },
+
         grid: {
             row: {
                 colors: ['#f3f3f3', 'transparent'],
@@ -76,7 +83,13 @@ $connection->close();
         xaxis: {
             categories: schoolYears, // School years
             title: {
-                text: 'School Year'
+                text: 'School Year',
+                style: {
+                fontSize: '14px',
+                fontWeight: 'medium',
+                fontFamily: 'DM Sans, sans-serif', // Apply DM Sans
+                color: '#333'
+            }
             }
         }
     };

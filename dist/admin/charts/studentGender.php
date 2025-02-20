@@ -27,27 +27,27 @@ $maleCounts = [];
 $femaleCounts = [];
 
 if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $grade = $row['grade_level'];
-        $gender = $row['gender'];
-        $count = $row['enrollment_status'];
+  while ($row = $result->fetch_assoc()) {
+    $grade = $row['grade_level'];
+    $gender = $row['gender'];
+    $count = $row['enrollment_status'];
 
-        if (!in_array($grade, $grades)) {
-            $grades[] = $grade;
-        }
-
-        if ($gender === 'Male') {
-            $maleCounts[$grade] = $count;
-        } elseif ($gender === 'Female') {
-            $femaleCounts[$grade] = $count;
-        }
+    if (!in_array($grade, $grades)) {
+      $grades[] = $grade;
     }
+
+    if ($gender === 'Male') {
+      $maleCounts[$grade] = $count;
+    } elseif ($gender === 'Female') {
+      $femaleCounts[$grade] = $count;
+    }
+  }
 }
 
 
 foreach ($grades as $grade) {
-    $maleCounts[$grade] = $maleCounts[$grade] ?? 0;
-    $femaleCounts[$grade] = $femaleCounts[$grade] ?? 0;
+  $maleCounts[$grade] = $maleCounts[$grade] ?? 0;
+  $femaleCounts[$grade] = $femaleCounts[$grade] ?? 0;
 }
 
 // Pass data to JavaScript
@@ -62,46 +62,52 @@ $femaleCountsJSON = json_encode(array_values($femaleCounts));
 <div id="barchart"></div>
 
 <script>
-
-   var gradeLevels = <?php echo $gradesJSON; ?>;
-   var maleCounts = <?php echo $maleCountsJSON; ?>;
-   var femaleCounts = <?php echo $femaleCountsJSON; ?>;
-
+  var gradeLevels = <?php echo $gradesJSON; ?>;
+  var maleCounts = <?php echo $maleCountsJSON; ?>;
+  var femaleCounts = <?php echo $femaleCountsJSON; ?>;
 
 
-   var options = {
-          series: [{
-          name: 'Male',
-          data: maleCounts
-        }, {
-          name: 'Female',
-          data: femaleCounts
-        }],
-          chart: {
-          type: 'bar',
-          height: 350
+
+  var options = {
+      series: [{
+        name: 'Male',
+        data: maleCounts
+      }, {
+        name: 'Female',
+        data: femaleCounts
+      }],
+      chart: {
+        type: 'bar',
+        height: 350
+      },
+      colors: ['#3b82f6', '#38bdf8'], // Tailwind CSS 'blue-500' and 'yellow-400' hex values
+      plotOptions: {
+        bar: {
+          horizontal: false,
+          columnWidth: '55%',
+          endingShape: 'rounded'
         },
-        colors: ['#3b82f6', '#38bdf8'], // Tailwind CSS 'blue-500' and 'yellow-400' hex values
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '55%',
-            endingShape: 'rounded'
-          },
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent']
-        },
-        xaxis: {
-          categories: gradeLevels,
-          title: {
-                    text: 'Grade Levels - Current Year'
-                }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      stroke: {
+        show: true,
+        width: 2,
+        colors: ['transparent']
+      },
+      xaxis: {
+        categories: gradeLevels,
+        title: {
+          text: 'Gender per Grade Level',
+          style: {
+            fontSize: '14px',
+            fontWeight: 'medium',
+            fontFamily: 'DM Sans, sans-serif', 
+            color: '#333'
+          }
+        }
+
         },
         yaxis: {
           title: {
@@ -113,13 +119,13 @@ $femaleCountsJSON = json_encode(array_values($femaleCounts));
         },
         tooltip: {
           y: {
-            formatter: function (val) {
+            formatter: function(val) {
               return val + " students";
             }
           }
         }
-        };
+      };
 
-        var chart = new ApexCharts(document.querySelector("#barchart"), options);
-        chart.render();
+      var chart = new ApexCharts(document.querySelector("#barchart"), options);
+      chart.render();
 </script>

@@ -75,7 +75,7 @@ $total_admins = $employeeRow['total_admins'];
         
         <!-- Content -->
 
-        <div class="p-6 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#fafbfc] h-full">
             <h1 class="text-lg font-medium">Dashboard</h1>
             <div class="mt-7 grid grid-cols-1 lg:grid-cols-4 gap-6">
 

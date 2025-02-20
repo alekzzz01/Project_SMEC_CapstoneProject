@@ -211,15 +211,11 @@ if ($result->num_rows > 0) {
 
             </div>
 
-            <div>
-                    <h1 class="text-lg font-medium mb-1 mt-7">View All Subjects</h1>
-            </div>
 
               <!-- Filter Form for Track -->
               <div class="border border-gray-300 rounded bg-white mt-3.5 p-6">
                 <div>
-                    <label class="text-gray-800 text-sm font-medium mb-2 block">Filter Track</label>
-                    <form action="" method="GET">
+                    <form action="" method="GET" class="flex items-center space-x-4">
                         <select name="track" id="track" required class="select select-bordered w-full bg-gray-50">
                             <option value="" disabled selected>Select Track</option>
                             <?php
@@ -228,7 +224,7 @@ if ($result->num_rows > 0) {
                                 }
                             ?>
                         </select>
-                        <button type="submit" class="btn btn-primary mt-2">Filter</button>
+                        <button type="submit" class="btn btn-sm btn-neutral">Filter</button>
                     </form>
                 </div>
             </div>
@@ -296,3 +292,19 @@ if ($result->num_rows > 0) {
 </body>
 </html>
 
+<script>
+
+$(document).ready(function() {
+  $('#toggleSidebar').on('click', function() {
+      $('#sidebar').toggleClass('-translate-x-full');
+  });
+
+   $('#closeSidebar').on('click', function() {
+      $('#sidebar').addClass('-translate-x-full');
+  });
+
+
+  
+});
+
+</script>
