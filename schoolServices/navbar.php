@@ -14,7 +14,7 @@
           
             <li><a href="../aboutus.php">ABOUT US</a></li>
             <li><a href="../programs.php">PROGRAMS</a></li>
-            <li><a href="">NEWS & EVENTS</a></li>
+            <li><a href="../newsAndevents.php">NEWS & EVENTS</a></li>
             <li><a href="./">ADMISSIONS</a></li>
             <li><a href="../portal/">PORTALS</a></li>
             <li><a href="../auth/login.php">LOGIN</a></li>
@@ -43,7 +43,7 @@
                                 
                     <li><a href="../aboutus.php">ABOUT US</a></li>
                     <li><a href="../programs.php">PROGRAMS</a></li>
-                    <li><a href="">NEWS & EVENTS</a></li>
+                    <li><a href="../newsAndevents.php">NEWS & EVENTS</a></li>
                     <li><a href="./">ADMISSIONS</a></li>
                     <li><a href="../portal/">PORTALS</a></li>
                     <li><a href="../auth/login.php">LOGIN</a></li>

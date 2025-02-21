@@ -70,12 +70,12 @@ include '../config/db.php';
                     </ul>
                 </div>
 
-                <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
-                        <img src="" alt="" class="w-full h-[200px]">
+                        <img src="../assets/images/portal/enrollment.png" alt="" class="w-full h-[240px] object-cover">
                         <p class=" text-xl mb-6 mt-3 font-semibold">Online Enrollment</p>
     
-                         <a href="../schoolServices/enrollment/" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
+                         <a href="../schoolServices/enrollment/" class=" text-sm bg-blue-700 hover:bg-blue-800 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
                                 <span>View Portal</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
@@ -85,11 +85,11 @@ include '../config/db.php';
                     </div>
 
                     <div>
-                        <img src="" alt="" class="w-full h-[200px]">
+                        <img src="../assets/images/portal/admission.png" alt="" class="w-full h-[240px]">
                         <p class=" text-xl mb-6 mt-3 font-semibold">Online Admission</p>
     
 
-                         <a href="../schoolServices/admission/" class=" text-sm bg-blue-500 hover:bg-blue-700 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
+                         <a href="../schoolServices/admission/" class=" text-sm bg-blue-700 hover:bg-blue-800 transition-colors py-2 px-4  text-white rounded-md inline-flex items-center gap-2">
 
                   
                                 <span>View Portal</span>
@@ -101,7 +101,7 @@ include '../config/db.php';
                     </div>
 
                     <div>
-                        <img src="" alt="" class="w-full h-[200px]">
+                        <img src="" alt="" class="w-full h-[240px]">
                         <p class=" text-xl mb-6 mt-3 font-semibold">Portal Account Registration</p>
     
 

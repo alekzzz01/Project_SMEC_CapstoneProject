@@ -118,7 +118,8 @@ include '../config/db.php';
 
     
 
-  
+    <?php include '../footer.php' ?>
+      
 
     
 </body>
