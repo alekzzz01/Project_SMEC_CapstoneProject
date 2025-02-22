@@ -49,7 +49,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     
                         <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                            <div class="overflow-hidden  aspect-video cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                     <div>
@@ -66,7 +66,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/468720692_1114624990669330_8113704273698150300_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHrq3Mqq-OIOILzMBPbOtO7GBx9IZsGqh4YHH0hmwaqHv6tO88UX9lZeZ0ZQTZ8_yqZLWbN8k4Ji3jsZjj_ga78&_nc_ohc=OqBvhy0YpckQ7kNvgEiz-39&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=Ap-H1ccrSFwTU8k4-xvz6V7&oh=00_AYAkaHAjbxqNCHG0lUl-iE0tpQWtpSLcfhz_GKWnGwwf4Q&oe=675CC31F"
+                                    src="./assets/images/programs/programs_nursery.jpg"
                                 />
                             </div>
 
@@ -74,7 +74,7 @@
                         </div>
 
                         <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                            <div class="overflow-hidden  aspect-video cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                     <div>
@@ -91,7 +91,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-1.fna.fbcdn.net/v/t39.30808-6/468666050_1114142917384204_8106935391583286270_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeGxUzAMmKKfsoIMdTcKlBQSix69u034W8SLHr27TfhbxDysMJXEQiEky8NV3kbajPXgOq-589Fwvr6nT2j_DJwP&_nc_ohc=HTaXcR0nqScQ7kNvgEgb-xV&_nc_zt=23&_nc_ht=scontent.fmnl30-1.fna&_nc_gid=AeQSfdCWdnbdP85BMRq24Cm&oh=00_AYAWATLVoudipNV1-2um4WDgBGhhxRsHQkhdE2yjilIYTw&oe=675CC1C5"
+                                    src="./assets/images/programs/programs_kinder.jpg"
                                 />
                             </div>
 
@@ -99,7 +99,7 @@
                         </div>
 
                 
-                        <div>
+                        <!-- <div>
                             <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
@@ -122,7 +122,7 @@
                             </div>
 
                             <p class=" text-xl font-medium m-3">Prepatory</p>
-                        </div>
+                        </div> -->
 
                     </div>
 
@@ -137,7 +137,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                            <div class="overflow-hidden  aspect-video cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                     <div>
@@ -154,7 +154,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                    src="./assets/images/programs/programs_elem.jpg"
                                 />
                             </div>
 
@@ -192,7 +192,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                    src="./assets/images/programs/programs_highschool.jpg"
                                 />
                             </div>
 
@@ -213,7 +213,7 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                         <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                            <div class="overflow-hidden  aspect-video  cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                     <div>
@@ -230,7 +230,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                    src="./assets/images/programs/programs_seniorhigh.jpg"
                                 />
                             </div>
 
@@ -238,7 +238,7 @@
                         </div>
 
                         <div>
-                            <div class="overflow-hidden  aspect-video bg-red-400 cursor-pointer rounded-md relative group">
+                            <div class="overflow-hidden  aspect-video cursor-pointer rounded-md relative group">
                                 <div
                                     class="rounded-xl z-50 opacity-0 group-hover:opacity-100 transition duration-300 ease-in-out cursor-pointer absolute from-black/80 to-transparent bg-gradient-to-t inset-x-0 -bottom-2 pt-30 text-white flex items-end">
                                     <div>
@@ -255,7 +255,7 @@
                                 <img
                                     alt=""
                                     class="object-cover w-full aspect-square group-hover:scale-110 transition duration-300 ease-in-out"
-                                    src="https://scontent.fmnl30-3.fna.fbcdn.net/v/t39.30808-6/465978058_1098849675580195_5494507915347447194_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFSMys3zjp12wUnFmLvM9QC_3RF2c6HUTr_dEXZzodROoktjbFs6zlDlKGQWrCzG4kQM4jUNdPRb4cSKAUEtYUv&_nc_ohc=85VCA8jq4gUQ7kNvgGrKc3c&_nc_zt=23&_nc_ht=scontent.fmnl30-3.fna&_nc_gid=A_i9Ii3vwknjNmeBAMNXsg0&oh=00_AYDRd0J94yqnKt_CfJQM3e6jFcKmQHIRbhSm6gJAj61oCQ&oe=675CDF83"
+                                    src="./assets/images/programs/programs_seniorhigh.jpg"
                                 />
                             </div>
 

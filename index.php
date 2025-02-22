@@ -257,7 +257,7 @@
     </div>
 
     <section class="py-24 px-4">
-        <div class="flex flex-col justify-center items-center gap-12 mx-auto max-w-7xl">
+        <div class="flex flex-col justify-center items-center gap-12 mx-auto max-w-7xl ">
                     <div class="text-center">
                         <h2 class="text-3xl lg:text-4xl font-bold mb-4">Have a question? Reach out to us!</h2>
                         <p class="text-gray-400">Telefax: 8642-2591 • Email: smec_dolmarpasig@yahoo.com • smecdolmarpasig@gmail.com</p>
@@ -268,7 +268,7 @@
                             <div>
                                 <p class="text-sm font-semibold mb-2 ml-1">Name</p>
                                 <div class="relative flex items-center">
-                                <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Your Name" />
+                                <input name="email" type="text" required class="bg-[#f2f5f8] w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Your Name" />
                                 </div>
                                 
                             </div>
@@ -276,7 +276,7 @@
                             <div>
                                 <p class="text-sm font-semibold mb-2 ml-1">Email</p>
                                 <div class="relative flex items-center">
-                                <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Email" />
+                                <input name="email" type="text" required class="bg-[#f2f5f8] w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Email" />
                                 </div>
                                
                             </div>
@@ -284,7 +284,7 @@
                             <div>
                                 <p class="text-sm font-semibold mb-2 ml-1">Message</p>
                                 <div class="relative flex items-center">
-                                <textarea name="" class="w-full h-32 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" id="" placeholder="Message"></textarea>
+                                <textarea name="" class="bg-[#f2f5f8] w-full h-32 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" id="" placeholder="Message"></textarea>
                                
                                 </div>
                             </div>
