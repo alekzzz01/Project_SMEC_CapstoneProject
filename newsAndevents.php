@@ -92,7 +92,7 @@
 
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-                    <a href="./news/viewNews.php" class="space-y-4">
+                    <a href="./view/viewNews.php" class="space-y-4">
                         <img src="./assets/images/events/sample_event.jpg" alt="" class="w-full h-60 rounded-2xl object-cover">
 
                         <p class=" text-gray-600 text-sm">Department · <span>12 minutes ago</span></p>
