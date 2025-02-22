@@ -4,7 +4,7 @@ $response = null; // Variable to store the response status
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../../vendor/autoload.php'; 
+require '../../vendor/autoload.php';
 include '../../config/db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
                 $mail->Username = 'sweetmiyagi@gmail.com';
-                $mail->Password = 'vbzj pxng toyc xmht'; 
+                $mail->Password = 'vbzj pxng toyc xmht';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 
@@ -172,7 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Redirect with JavaScript
     echo "<script>window.location.href = '" . $_SERVER['PHP_SELF'] . "?status=$response&action=$action';</script>";
     exit;
-
 }
 
 
@@ -187,10 +186,11 @@ ob_end_flush(); // End output buffering
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <!-- DataTables CSS -->
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
     <!-- jQuery -->
@@ -205,148 +205,131 @@ ob_end_flush(); // End output buffering
     <!-- Notyf JS -->
     <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script>
 
-    
+
 </head>
+
 <body>
 
-  
 
-
-    <?php
-    $query = "SELECT * FROM admission_form WHERE is_confirmed = 0";
-    $result = $connection->query($query);
-
-    if ($result->num_rows > 0): ?>
 
 
     <div class="flex flex-col">
-      
-            <div class="overflow-hidden">
-                    <table id="example" class="min-w-full divide-y divide-gray-200">
-                                <thead class="border border-gray-300  text-sm">
-                            <tr>
-                                <th>Application ID</th>
-                                <th>Applicant Name</th>
-                                <th>Grade Level Applied</th>
-                                <th>Submission Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                             
-                            
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($row = $result->fetch_assoc()): ?>
-                                <tr>
-                                    <td><?php echo $row['id']; ?></td>
-                                    <td class='px-6 py-4 whitespace-nowrap text-sm text-gray-800'>
-                                        <!-- : If you want to avoid extra spaces when one of the fields is missing, you could use this approach: -->
-                                        <?php 
-                                            echo htmlspecialchars(trim($row['first_name'] . ' ' . $row['middle_initial'] . ' ' . $row['last_name']));
-                                        ?>
-                                    </td>
-                                    <td><?php echo $row['year_level']; ?></td>
-                                    <td><?php echo $row['created_at']; ?></td>
-                                    <td><?php echo $row['contact_number']; ?></td>
+        <div class="overflow-hidden">
+            <table id="example" class="min-w-full divide-y divide-gray-200">
+                <thead class="border border-gray-300 text-sm">
+                    <tr>
+                        <th>Application ID</th>
+                        <th>Applicant Name</th>
+                        <th>Grade Level Applied</th>
+                        <th>Submission Date</th>
+                        <th>Contact Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-                            
+                <tbody>
+                    <?php
 
-                                    <td>
-                                    
-                                        <form method="POST" >
-                                            <input type="hidden" name="student_id" value="<?php echo $row['id']; ?>">
-                                        
-                                            <button type='submit' name='approve' class='text-green-500 text-sm hover:underline'>[Approve]</button>
-                                            <button type='submit' name='reject' class='text-red-500 text-sm hover:underline'>[Reject]</button>
-                                            <button type='button' class='text-amber-500 text-sm hover:underline'>[Send Email]</button>
-                                        
-                        
-                                        
-                                        </form>
+                    $query = "SELECT * FROM admission_form WHERE is_confirmed = 0";
+                    $result = $connection->query($query);
 
-                                    
-                                    
-                                    </td>
-                 
-                                
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . $row['id'] . "</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . $row['first_name'] . " " . $row['middle_initial'] . " " . $row['last_name'] . "</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . $row['year_level'] . "</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . date('M. d, Y', strtotime($row['created_at'])) . "</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . $row['contact_number'] . "</td>";
+                            echo "<td class='px-6 py-4 whitespace-nowrap text-gray-800'>";
+                            echo "<form method='POST'>";
+                            echo "<input type='hidden' name='student_id' value='" . $row['id'] . "'>";
+                            echo "<button type='submit' name='approve' class='text-green-500 text-sm hover:underline'>[Approve]</button>";
+                            echo "<button type='submit' name='reject' class='text-red-500 text-sm hover:underline'>[Reject]</button>";
+                            echo "<button type='button' class='text-amber-500 text-sm hover:underline'>[Send Email]</button>";
+                            echo "</form>";
+                            echo "</td>";
+                            echo "</tr>";
+                        }
+                    }
+                    $connection->close();
 
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
 
-                    </div>
-            
+
+                    ?>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <dialog id="send_email" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box p-0">
+
+            <h3 class="font-medium bg-amber-300 p-4">Email Applicant</h3>
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+
+            <form action="" class="p-4" method="POST">
+
+                <div class="space-y-5">
+
+                    <label class="block font-regular text-gray-400">To: <span class=" text-black"> email of student </span></label>
+                    <label class="block font-regular text-gray-400">From: <span class=" text-black"> SMEC_2025@gmail.com </span></label>
+
+                    <div class="divider"></div>
+
+                    <label class="input input-bordered flex items-center gap-2">
+
+                        <input type="text" class="grow" placeholder="Subject" />
+                    </label>
+
+                    <textarea class="textarea textarea-bordered w-full" placeholder="Body"></textarea>
+
+
+
+                </div>
+
+
+
+                <div class="modal-action col-span-2">
+
+                    <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-green-500 hover:bg-green-700 text-white border border-green-500 hover:border-green-700">Send Email</button>
+                    <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-red-500 hover:bg-red-700 text-white border border-red-500 hover:border-red-700">Draft</button>
+
+                </div>
+
+
+            </form>
+
         </div>
 
 
-
-
-
-        <?php else: ?>
-            <p>No unapproved admission requests found.</p>
-        <?php endif; ?>
-    
-
-
-        <dialog id="send_email" class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box p-0">
-
-                <h3 class="font-medium bg-amber-300 p-4">Email Applicant</h3>
-
-                <form method="dialog">
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                </form>
-
-                <form action="" class="p-4" method="POST">
-
-                        <div class="space-y-5">
-                        
-                            <label  class="block font-regular text-gray-400">To: <span class=" text-black"> email of student </span></label>
-                            <label class="block font-regular text-gray-400">From: <span class=" text-black"> SMEC_2025@gmail.com </span></label>
-
-                            <div class="divider"></div>
-
-                            <label class="input input-bordered flex items-center gap-2">
-                        
-                            <input type="text" class="grow" placeholder="Subject" />
-                            </label>
-
-                            <textarea class="textarea textarea-bordered w-full" placeholder="Body"></textarea>
-
-                            
-                            
-                        </div>
-
-                    
-                    
-                        <div class="modal-action col-span-2">
-                        
-                        <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-green-500 hover:bg-green-700 text-white border border-green-500 hover:border-green-700">Send Email</button>
-                        <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-red-500 hover:bg-red-700 text-white border border-red-500 hover:border-red-700">Draft</button>
-
-                        </div>
-        
-
-                </form>
-
-            </div>
-           
-          
-        </dialog>
+    </dialog>
 
 </body>
+
 </html>
 
 <script>
-$(document).ready(function () {
-    $('#example').DataTable({
-        searching: true, // Enables the search box
-        paging: true,    // Enables pagination
-        ordering: true,  // Enables column sorting
-        info: true       // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
+    $(document).ready(function() {
+        $('#example').DataTable({
+            searching: true, // Enables the search box
+            paging: true, // Enables pagination
+            ordering: true, // Enables column sorting
+            info: true // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
+        });
     });
-});
 </script>
 
 <script>
@@ -355,7 +338,7 @@ $(document).ready(function () {
         duration: 3000, // Duration of the notification (3 seconds)
         position: {
             x: 'right', // Align notifications to the right
-            y: 'top'    // Show notifications at the top
+            y: 'top' // Show notifications at the top
         }
     });
 
@@ -379,7 +362,7 @@ $(document).ready(function () {
 
 <script>
     // Remove the 'status' query parameter after the page loads
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const url = new URL(window.location.href);
         if (url.searchParams.has('status')) {
             url.searchParams.delete('status'); // Remove the 'status' parameter

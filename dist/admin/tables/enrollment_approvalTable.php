@@ -3,11 +3,12 @@ ob_start(); // Start output buffering
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../../vendor/autoload.php'; 
+require '../../vendor/autoload.php';
 include '../../config/db.php';
 
 // Function to send email
-function sendEmail($email, $name, $status) {
+function sendEmail($email, $name, $status)
+{
     $mail = new PHPMailer(true);
     try {
         // SMTP configuration
@@ -142,10 +143,11 @@ ob_end_flush(); // Flush the buffered output
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- DataTables CSS (Hover Styling) -->
     <link href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css" rel="stylesheet">
 
@@ -157,39 +159,40 @@ ob_end_flush(); // Flush the buffered output
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js"></script>
-    
+
 </head>
+
 <body>
 
-<div class="space-y-3.5 mt-7">
+    <div class="space-y-3.5 mt-7">
 
-    <div class="p-6 bg-white rounded-md border border-gray-200">
-    
-                <div class="overflow-hidden">
-                            <table id="example" class="min-w-full divide-y divide-gray-200">
-                                <thead class=" text-sm">
-                                    <tr>
-                                         <th>Enrollment ID No.</th>
-                                        <th>Student Type</th>
-                                        <th>Student Number</th>
-                                        <th>Student Name</th>
-                                        <th>Grade Level</th>
-                                        <th>Type</th>                 
-                                        <th>Status</th>
-                                        <th>Date Enrolled</th>
-                                        <th>Details</th>
-                                        <th>Actions</th>
-                                  
-                                      
-                                    
-                                    </tr>
-                                </thead>
+        <div class="p-6 bg-white rounded-md border border-gray-200">
 
-                                <tbody class="">
-    <?php
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>
+            <div class="overflow-hidden">
+                <table id="example" class="min-w-full divide-y divide-gray-200">
+                    <thead class=" text-sm">
+                        <tr>
+                            <th>Enrollment ID No.</th>
+                            <th>Student Type</th>
+                            <th>Student Number</th>
+                            <th>Student Name</th>
+                            <th>Grade Level</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Date Enrolled</th>
+                            <th>Details</th>
+                            <th>Actions</th>
+
+
+
+                        </tr>
+                    </thead>
+
+                    <tbody class="">
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
                     <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['enrollment_id']) . "</td>
                     <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['student_type']) . "</td>
                     <td class='px-6 py-4 whitespace-nowrap text-gray-800'>" . htmlspecialchars($row['student_number_label']) . "</td>
@@ -210,131 +213,131 @@ ob_end_flush(); // Flush the buffered output
                         </form>
                     </td>
                 </tr>";
-        }
-        echo "</table>";
-    }
-    // Close the connection
-    $connection->close();
-    ?>
-</tbody>
-                            
-                            </table>
+                            }
+                            echo "</table>";
+                        }
+                        // Close the connection
+                        $connection->close();
+                        ?>
+                    </tbody>
 
-                    </div>
-                
-    </div>
-
-</div>
-
-
-
-
-        <dialog id="send_email" class="modal modal-bottom sm:modal-middle">
-            <div class="modal-box p-0">
-
-                <h3 class="font-medium bg-amber-300 p-4">Email Applicant</h3>
-
-                <form method="dialog">
-                    <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                </form>
-
-                <form action="" class="p-4" method="POST">
-
-                        <div class="space-y-5">
-                        
-                            <label  class="block font-regular text-gray-400">To: <span class=" text-black"> email of student </span></label>
-                            <label class="block font-regular text-gray-400">From: <span class=" text-black"> SMEC_2025@gmail.com </span></label>
-
-                            <div class="divider"></div>
-
-                            <label class="input input-bordered flex items-center gap-2">
-                        
-                            <input type="text" class="grow" placeholder="Subject" />
-                            </label>
-
-                            <textarea class="textarea textarea-bordered w-full" placeholder="Body"></textarea>
-
-                            
-                            
-                        </div>
-
-                    
-                    
-                        <div class="modal-action col-span-2">
-                        
-                        <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-green-500 hover:bg-green-700 text-white border border-green-500 hover:border-green-700">Send Email</button>
-                        <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-red-500 hover:bg-red-700 text-white border border-red-500 hover:border-red-700">Draft</button>
-
-                        </div>
-        
-
-                </form>
+                </table>
 
             </div>
-           
-          
-        </dialog>
+
+        </div>
+
+    </div>
+
+
+
+
+    <dialog id="send_email" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box p-0">
+
+            <h3 class="font-medium bg-amber-300 p-4">Email Applicant</h3>
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+
+            <form action="" class="p-4" method="POST">
+
+                <div class="space-y-5">
+
+                    <label class="block font-regular text-gray-400">To: <span class=" text-black"> email of student </span></label>
+                    <label class="block font-regular text-gray-400">From: <span class=" text-black"> SMEC_2025@gmail.com </span></label>
+
+                    <div class="divider"></div>
+
+                    <label class="input input-bordered flex items-center gap-2">
+
+                        <input type="text" class="grow" placeholder="Subject" />
+                    </label>
+
+                    <textarea class="textarea textarea-bordered w-full" placeholder="Body"></textarea>
+
+
+
+                </div>
+
+
+
+                <div class="modal-action col-span-2">
+
+                    <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-green-500 hover:bg-green-700 text-white border border-green-500 hover:border-green-700">Send Email</button>
+                    <button type="submit" name="createUser" class="py-1.5 px-3 rounded-md text-sm transition-colors bg-red-500 hover:bg-red-700 text-white border border-red-500 hover:border-red-700">Draft</button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+
+    </dialog>
 
 </body>
+
 </html>
 
 <script>
-$(document).ready(function () {
-    var table = $('#example').DataTable({
-        searching: true, // Enables the search box
-        paging: true,    // Enables pagination
-        ordering: true,  // Enables column sorting
-        info: true       // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
+    $(document).ready(function() {
+        var table = $('#example').DataTable({
+            searching: true, // Enables the search box
+            paging: true, // Enables pagination
+            ordering: true, // Enables column sorting
+            info: true // Displays table information (e.g., "Showing 1 to 10 of 50 entries")
+        });
+
+
+
+
     });
-
-
-
-
-});
-
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    // Check for `status` query parameter in the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const status = urlParams.get('status');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for `status` query parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
 
-    // Display notifications based on `status`
-    if (status === 'approved') {
-        const notyf = new Notyf({
-            duration: 3000, // Duration of the notification (3 seconds)
-            position: {
-                x: 'right', // Align notifications to the center
-                y: 'top'     // Show notifications at the top
-            }
-        });
-        notyf.success('Enrollment has been approved successfully!');
-    } else if (status === 'rejected') {
-        const notyf = new Notyf({
-            duration: 3000, // Duration of the notification (3 seconds)
-            position: {
-                x: 'right', // Align notifications to the center
-                y: 'top'     // Show notifications at the top
-            }
-        });
-        notyf.error('Enrollment has been rejected.');
-    } else if (status === 'error') {
-        const notyf = new Notyf({
-            duration: 3000, // Duration of the notification (3 seconds)
-            position: {
-                x: 'right', // Align notifications to the center
-                y: 'top'     // Show notifications at the top
-            }
-        });
-        notyf.error('An error occurred. Please try again.');
-    }
+        // Display notifications based on `status`
+        if (status === 'approved') {
+            const notyf = new Notyf({
+                duration: 3000, // Duration of the notification (3 seconds)
+                position: {
+                    x: 'right', // Align notifications to the center
+                    y: 'top' // Show notifications at the top
+                }
+            });
+            notyf.success('Enrollment has been approved successfully!');
+        } else if (status === 'rejected') {
+            const notyf = new Notyf({
+                duration: 3000, // Duration of the notification (3 seconds)
+                position: {
+                    x: 'right', // Align notifications to the center
+                    y: 'top' // Show notifications at the top
+                }
+            });
+            notyf.error('Enrollment has been rejected.');
+        } else if (status === 'error') {
+            const notyf = new Notyf({
+                duration: 3000, // Duration of the notification (3 seconds)
+                position: {
+                    x: 'right', // Align notifications to the center
+                    y: 'top' // Show notifications at the top
+                }
+            });
+            notyf.error('An error occurred. Please try again.');
+        }
 
-    // Remove the 'status' query parameter after the page loads
-    const url = new URL(window.location.href);
-    if (url.searchParams.has('status')) {
-        url.searchParams.delete('status'); // Remove the 'status' parameter
-        window.history.replaceState({}, document.title, url.pathname); // Update the URL without reloading
-    }
-});
+        // Remove the 'status' query parameter after the page loads
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('status')) {
+            url.searchParams.delete('status'); // Remove the 'status' parameter
+            window.history.replaceState({}, document.title, url.pathname); // Update the URL without reloading
+        }
+    });
 </script>
