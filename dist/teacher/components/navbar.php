@@ -24,7 +24,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    class="inline-block h-5 w-5 stroke-current">
+                    class="inline-block h-5 w-5 stroke-current text-white">
                     <path
                     stroke-linecap="round"
                     stroke-linejoin="round"
@@ -34,7 +34,7 @@
                 </div>
                 <ul
                     tabindex="0"
-                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow text-white ">
+                    class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     <li><a href="class.php">Class</a></li>
                     <li><a href="schedules.php">Schedules</a></li>
                 </ul>
@@ -60,8 +60,7 @@
                     Profile
                     <span class="badge">New</span>
                 </a>
-                </li>
-                <li><a>Calendar</a></li>
+                </li>           
                 <li><a href="./../../auth/logout.php">Logout</a></li>
             </ul>
             </div>

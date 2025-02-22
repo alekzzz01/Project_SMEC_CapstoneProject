@@ -86,7 +86,7 @@
             <!-- Basic Information -->
             <section class="border-gray-100 border rounded" id="basicinfo">
 
-                <div class=" px-7 py-6 bg-green-50">
+                <div class=" px-7 py-6 bg-teal-50">
                     <p class="text-lg font-medium">Basic Information</p>
              
                     
@@ -107,7 +107,7 @@
                                 <!-- Icon -->
                                 <div class="absolute bottom-2 right-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" 
-                                        class="bg-green-500 rounded w-4 h-4 p-1">
+                                        class="bg-teal-500 rounded w-4 h-4 p-1">
                                         <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
                                     </svg>
                                 </div>
@@ -137,7 +137,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Name</label>
                                         <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly/>
+                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
                                     
                                         </div>
                                     </div>
@@ -145,7 +145,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">LRN</label>
                                         <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly/>
+                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
                                     
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Email Address</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" />
+                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
                                     
                                         </div>
                                     </div>
@@ -161,7 +161,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Gender</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly />
+                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
                                     
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Date of Birth</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly />
+                                        <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
                                     
                                         </div>
                                     </div>
@@ -177,7 +177,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Address</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly />
+                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
                                     
                                         </div>
                                     </div>
@@ -191,7 +191,7 @@
 
 
                         <div class=" flex items-center justify-end">
-                            <button class=" py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-green-50 transition-colors group">Update</button>
+                            <button class=" py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2 focus:ring-offset-teal-50 transition-colors group">Update</button>
                         </div>
 
                     </form>
@@ -209,7 +209,7 @@
 
             <!-- Notifications -->
             <section class="border-gray-100 border rounded" id="notifications">
-                <div class=" px-7 py-6 bg-green-50">
+                <div class=" px-7 py-6 bg-teal-50">
                     <p class="text-lg font-medium">Notifications</p>
                 </div>
 
@@ -286,7 +286,7 @@
 
             <!-- Password and Security -->
             <section class="border-gray-100 border rounded" id="password">
-                <div class=" px-7 py-6 bg-green-50">
+                <div class=" px-7 py-6 bg-teal-50">
                     <p class="text-lg font-medium">Password & Security</p>
                 </div>
 
@@ -300,7 +300,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Enter Current Password</label>
                                         <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly/>
+                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
                                     
                                         </div>
                                     </div>
@@ -308,7 +308,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Enter new Password</label>
                                         <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" readonly/>
+                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
                                     
                                         </div>
                                     </div>
@@ -316,7 +316,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Confirm new Password</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-green-600" />
+                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
                                     
                                         </div>
                                     </div>
@@ -326,7 +326,7 @@
 
 
                         <div class=" flex items-center justify-end">
-                            <button class=" py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-700 focus:ring-offset-2 focus:ring-offset-green-50 transition-colors group">Update</button>
+                            <button class=" py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2 focus:ring-offset-green-50 transition-colors group">Update</button>
                         </div>
 
                     </form>
