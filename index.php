@@ -205,7 +205,7 @@
     </div>
 
 
-    <section class="py-24 px-4 bg-[#f7f7f7]">
+    <section class="py-24 px-4 bg-[#fafbfc]">
 
         <div class="mx-auto max-w-7xl">
 
