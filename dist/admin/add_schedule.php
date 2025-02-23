@@ -2,7 +2,7 @@
 include '../../config/db.php';
 
 if (isset($_GET['gradelevel'])) {
-    $gradeLevel = $_GET['gradelevel'];
+    $gradeLevel = isset($_POST['gradelevel']) ? $_POST['gradelevel'] : (isset($_GET['gradelevel']) ? $_GET['gradelevel'] : '');
 }
 
 // Fetch sections for the dropdown (this can be reused from view_sections.php)
@@ -87,15 +87,47 @@ if (isset($_POST['submitForm'])) {
         exit;
     }
 
+    $gradeLevel = strtolower($_GET['gradelevel']); // Convert to lowercase
+
+    if ($gradeLevel === "kinder") {
+        $schedulePrefix = "KSched";
+    } elseif ($gradeLevel === "preparatory") {
+        $schedulePrefix = "PSched";
+    } elseif ($gradeLevel === "nursery") {
+        $schedulePrefix = "NSched";
+    } elseif (is_numeric($gradeLevel) && $gradeLevel >= 1 && $gradeLevel <= 12) {
+        $schedulePrefix = "G" . $gradeLevel . "Sched";
+    } else {
+        echo "Invalid grade level.";
+        exit;
+    }
+
+    // Get the last schedule code with the same prefix
+    $scheduleCodeQuery = "SELECT schedule_code FROM schedules WHERE schedule_code LIKE '$schedulePrefix%' ORDER BY schedule_code DESC LIMIT 1";
+    $scheduleCodeResult = $connection->query($scheduleCodeQuery);
+    
+    if ($scheduleCodeResult->num_rows > 0) {
+        $row = $scheduleCodeResult->fetch_assoc();
+        preg_match('/\d+$/', $row['schedule_code'], $matches);
+        $nextNumber = $matches ? intval($matches[0]) + 1 : 1;
+    } else {
+        $nextNumber = 1;
+    }
+
+    // Generate new schedule code
+    $newScheduleCode = $schedulePrefix . $nextNumber;
+
+    // Insert the new schedule
     $insertSql = "
-        INSERT INTO schedules (section, subject_id, time_in, time_out, teacher_id, grade_level, school_year) 
-        VALUES ('$section', '$subject', '$time_in', '$time_out', '$teacher', '$gradeLevel', '$schoolYear')
+        INSERT INTO schedules (schedule_code, section, subject_id, time_in, time_out, teacher_id, grade_level, school_year) 
+        VALUES ('$newScheduleCode', '$section', '$subject', '$time_in', '$time_out', '$teacher', '$gradeLevel', '$schoolYear')
     ";
 
     if ($connection->query($insertSql) === TRUE) {
-        // Redirect back to the same page with a success status
         header("Location: add_schedule.php?sectionselect=$section&gradelevel=$gradeLevel&status=approved");
         exit();
+    } else {
+        echo "Error: " . $connection->error;
     }
 }
 

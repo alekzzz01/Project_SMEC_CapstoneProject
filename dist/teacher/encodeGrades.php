@@ -188,9 +188,10 @@
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Student No.</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Name</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Course</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">1st Quarter 50%</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">2nd Quarter 50%</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Final Percent</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">1st Quarter Grade</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">2nd Quarter Grade</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">3rd Quarter Grade</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">4th Quarter Grade</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Final Grade</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Remark</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Date</th>
@@ -210,7 +211,10 @@
                                 <input type="number" class="input input-sm w-16 input-bordered" min="0" max="100">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <input type="number" class="input input-sm w-16 input-bordered" readonly>
+                                <input type="number" class="input input-sm w-16 input-bordered" min="0" max="100">
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <input type="number" class="input input-sm w-16 input-bordered" min="0" max="100">
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <input type="text" class="input input-sm w-16 input-bordered" readonly>
@@ -224,7 +228,34 @@
             </div>
 
 
-
+            <table id="example" class="min-w-full divide-y divide-gray-200">
+                <thead class="border border-gray-300 text-sm">
+                    <tr>
+                        <th class="py-3 px-4 text-left">No.</th>
+                        <th class="py-3 px-4 text-left">Student No.</th>
+                        <th class="py-3 px-4 text-left">Name</th>
+                        <th class="py-3 px-4 text-left">Course</th>
+                        <th class="py-3 px-4 text-left">1st Quarter Grade</th> <!-- New column -->
+                        <th class="py-3 px-4 text-left">2nd Quarter Grade</th> <!-- New column -->
+                        <th class="py-3 px-4 text-left">3rd Quarter Grade</th> <!-- New column -->
+                        <th class="py-3 px-4 text-left">4th Quarter Grade</th> <!-- New column -->
+                        <th class="py-3 px-4 text-left">Final Grade</th> <!-- New column -->
+                        <th class="py-3 px-4 text-left">Remarks</th> <!-- New column -->
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 border border-gray-300">
+                    <?php foreach ($subjects as $subject): ?>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['subject_id']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['subject_name']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['subject_code']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['description']) ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['grade_level']) ?></td> <!-- Display grade level -->
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800"><?= htmlspecialchars($subject['track']) ?></td> <!-- Display track -->
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
 
 
 
