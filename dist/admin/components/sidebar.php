@@ -128,8 +128,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         </summary>
                         <ul>
                             <li><a class="<?php echo ($current_page == 'class_term.php') ? 'bg-[#eef0f2]' : ''; ?>"  href="class_term.php">Term</a></li>
-                            <li><a class="<?php echo ($current_page == 'lass_section.php') ? 'bg-[#eef0f2]' : ''; ?>"  href="class_section.php">Section</a></li>
-                            <li><a class="<?php echo ($current_page == 'class_subject.php"') ? 'bg-[#eef0f2]' : ''; ?>"  href="class_subject.php">Subject</a></li>
+                            <li><a class="<?php echo ($current_page == 'class_section.php') ? 'bg-[#eef0f2]' : ''; ?>"  href="class_section.php">Section</a></li>
+                            <li><a class="<?php echo ($current_page == 'class_subject.php') ? 'bg-[#eef0f2]' : ''; ?>"  href="class_subject.php">Subject</a></li>
 
 
                         </ul>
