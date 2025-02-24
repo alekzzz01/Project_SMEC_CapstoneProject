@@ -63,16 +63,13 @@ include '../config/db.php';
 
 
                         <li class="me-2">
-                            <a href="forms.php" class="inline-block p-3 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-300">Junior High School</a>
+                            <a href="jhsRequirements.php" class="inline-block p-3 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-300">Junior High School</a>
                         </li>
 
                         <li class="me-2">
-                            <a href="forms.php" class="inline-block p-3 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-300">Senior High School</a>
+                            <a href="shsRequirements.php" class="inline-block p-3 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-300">Senior High School</a>
                         </li>
 
-                        <li class="me-2">
-                            <a href="forms.php" class="inline-block p-3 border-b-2 border-transparent rounded-t-lg hover:text-blue-600 hover:border-blue-300 dark:hover:text-blue-300">Senior High School Programs</a>
-                        </li>
                     
                     </ul>
                 </div>

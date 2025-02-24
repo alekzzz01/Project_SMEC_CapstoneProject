@@ -101,7 +101,7 @@ include '../config/db.php';
                     </div>
 
                     <div>
-                        <img src="" alt="" class="w-full h-[240px]">
+                        <img src="../assets/images/portal/portal_registration.jfif" alt="" class="w-full h-[240px]">
                         <p class=" text-xl mb-6 mt-3 font-semibold">Portal Account Registration</p>
     
 
