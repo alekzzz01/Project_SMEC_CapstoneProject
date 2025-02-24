@@ -1,3 +1,41 @@
+<?php
+session_start();
+include '../../config/db.php'; // Include your database connection file
+
+// Assuming user_id is stored in session after login
+$teacher_id = $_SESSION['user_id'];
+
+// Fetch the teacher_id associated with the logged-in user_id
+$query = "SELECT teacher_id FROM teachers WHERE user_id = ?";
+$stmt = $connection->prepare($query);
+$stmt->bind_param("i", $teacher_id); // Using user_id here
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+
+if (!$row) {
+    die("⚠️ Error: No teacher found for user_id = " . $teacher_id);
+}
+
+$teacher_id = $row['teacher_id']; 
+
+// Fetch sections where the logged-in teacher is the adviser
+$query = "SELECT sec.section_id, sec.school_year_id, sec.grade_level, sec.section_name, 
+       sec.track, sec.adviser_id, sec.num_students, 
+       sub.subject_name  
+FROM sections sec 
+LEFT JOIN schedules sch ON sec.section_name = sch.section  -- Match section_name
+LEFT JOIN subjects sub ON sch.subject_id = sub.subject_id
+WHERE sec.adviser_id = ?";
+
+
+
+$stmt = $connection->prepare($query);
+$stmt->bind_param("i", $teacher_id);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -102,17 +140,18 @@
                 </thead>
 
                 <tbody class="divide-y divide-gray-200">
-
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">UI/UX</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">30</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Design</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Section 1</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                            <a href="encodeGrades.php" class="text-teal-700 hover:underline">Enter Grades</a>
-                        </td>
-                    </tr>
-
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                    
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['section_name']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['num_students']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['subject_name']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['section_name']); ?></td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                <a href="encodeGrades.php?section=<?= htmlspecialchars($row['section_name']); ?>" class="text-teal-700 hover:underline">Enter Grades</a>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
                 </tbody>
 
             </table>
@@ -129,3 +168,8 @@
 </body>
 
 </html>
+
+<?php
+$stmt->close();
+$connection->close();
+?>
