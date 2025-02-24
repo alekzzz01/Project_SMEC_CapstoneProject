@@ -25,8 +25,9 @@ if ($teacherResult->num_rows > 0) {
     }
 }
 
-// Fetch subjects for the subject dropdown
-$subjectSql = "SELECT subject_id, subject_name FROM subjects";
+
+// Fetch subjects for subject dropdown depends on the grade level from the URL
+$subjectSql = "SELECT subject_id, subject_name FROM subjects WHERE grade_level = '$gradeLevel'";
 $subjectResult = $connection->query($subjectSql);
 $subjects = [];
 if ($subjectResult->num_rows > 0) {
@@ -39,7 +40,7 @@ if ($subjectResult->num_rows > 0) {
 $sectionDetails = null;
 if (isset($_GET['sectionselect'])) {
     $section = $_GET['sectionselect'];  // This is where we fetch the section from the URL
-    
+
     // Schedule query to fetch class schedule for the selected section
     $scheduleSql = "
         SELECT sub.subject_code, sub.subject_name, sc.time_in, sc.time_out, CONCAT(t.First_Name, ' ', t.Last_Name) AS teacher
@@ -49,26 +50,27 @@ if (isset($_GET['sectionselect'])) {
         WHERE sc.section = '$section'
         ";
 
-        $scheduleResult = $connection->query($scheduleSql);
+    $scheduleResult = $connection->query($scheduleSql);
 
-        if ($scheduleResult->num_rows > 0) {
-            $scheduleDetails = [];
-            while ($scheduleRow = $scheduleResult->fetch_assoc()) {
-                $scheduleDetails[] = array(
-                    'subject_code' => $scheduleRow['subject_code'],
-                    'subject_name' => $scheduleRow['subject_name'],
-                    'time_in' => $scheduleRow['time_in'],
-                    'time_out' => $scheduleRow['time_out'],
-                    'teacher' => $scheduleRow['teacher']
-                );
-            }
-            $sectionDetails['schedule'] = $scheduleDetails;
+    if ($scheduleResult->num_rows > 0) {
+        $scheduleDetails = [];
+        while ($scheduleRow = $scheduleResult->fetch_assoc()) {
+            $scheduleDetails[] = array(
+                'subject_code' => $scheduleRow['subject_code'],
+                'subject_name' => $scheduleRow['subject_name'],
+                'time_in' => $scheduleRow['time_in'],
+                'time_out' => $scheduleRow['time_out'],
+                'teacher' => $scheduleRow['teacher']
+            );
         }
+        $sectionDetails['schedule'] = $scheduleDetails;
+    }
 }
 
 if (isset($_POST['submitForm'])) {
     // Get form values
-    $section = $_POST['section'];
+
+    $section = $_GET['section'];
     $subject = $_POST['subject'];
     $time_in = $_POST['start_time']; // Use time_in instead of start_time
     $time_out = $_POST['end_time']; // Use time_out instead of end_time
@@ -105,7 +107,7 @@ if (isset($_POST['submitForm'])) {
     // Get the last schedule code with the same prefix
     $scheduleCodeQuery = "SELECT schedule_code FROM schedules WHERE schedule_code LIKE '$schedulePrefix%' ORDER BY schedule_code DESC LIMIT 1";
     $scheduleCodeResult = $connection->query($scheduleCodeQuery);
-    
+
     if ($scheduleCodeResult->num_rows > 0) {
         $row = $scheduleCodeResult->fetch_assoc();
         preg_match('/\d+$/', $row['schedule_code'], $matches);
@@ -124,7 +126,7 @@ if (isset($_POST['submitForm'])) {
     ";
 
     if ($connection->query($insertSql) === TRUE) {
-        header("Location: add_schedule.php?sectionselect=$section&gradelevel=$gradeLevel&status=approved");
+        header("Location: add_schedule.php?sectionselect=" . urlencode($section) . "&gradelevel=" . urlencode($gradeLevel) . "&status=approved");
         exit();
     } else {
         echo "Error: " . $connection->error;
@@ -138,39 +140,46 @@ $connection->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Schedule</title>
 
     <link rel="stylesheet" href="../../assets/css/styles.css">
-     
-     <script src="../../assets/js/script.js"></script>
- 
-  
-     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
-  
-     <script src="https://cdn.tailwindcss.com"></script>
- 
-     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
- 
-     <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
- 
-     <link href="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.css" rel="stylesheet">
 
-     <script src="https://cdn.jsdelivr.net/npm/notyf@3.1.0/notyf.min.js"></script>
-  
-     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
- 
-      
-     <html data-theme="light"></html>
+    <script src="../../assets/js/script.js"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
+
+    <!-- Notyf CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf/notyf.min.css">
+
+    <!-- Notyf JS -->
+    <script src="https://cdn.jsdelivr.net/npm/notyf/notyf.min.js"></script>
+
+
+    <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
+
+
+    <html data-theme="light">
+
+    </html>
 
 
 
 </head>
+
 <body class="flex min-h-screen">
 
 
@@ -179,7 +188,7 @@ $connection->close();
 
     <div class="flex flex-col w-full">
 
-    <?php include('./components/navbar.php'); ?>
+        <?php include('./components/navbar.php'); ?>
 
         <div class="p-6 bg-[#f2f5f8] h-full">
 
@@ -188,7 +197,7 @@ $connection->close();
                 <ul>
                     <li><a href="index.php">Dashboard</a></li>
                     <li><a href="class_section.php">Class List</a></li>
-                    <li><a href="view_sections.php">View Sections</a></li>
+                    <li>View Sections</li>
                     <li>Add Schedule</li>
                 </ul>
             </div>
@@ -199,17 +208,6 @@ $connection->close();
 
                 <form class="p-5 space-y-6" method="POST">
                     <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-                        <div>
-                            <label class="text-gray-800 text-sm font-medium mb-2 block">Section Name</label>
-                            <select name="section" id="section" required class="select select-bordered w-full bg-gray-50">
-                                <option value="" disabled selected>Select Section</option>
-                                <?php
-                                foreach ($sections as $section) {
-                                    echo "<option value='" . $section['section_name'] . "'>" . $section['section_name'] . "</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
 
                         <div>
                             <label class="text-gray-800 text-sm font-medium mb-2 block">Subject</label>
@@ -233,8 +231,9 @@ $connection->close();
                             <input name="end_time" type="time" class="bg-gray-50 w-full text-gray-800 input input-bordered" required />
                         </div>
 
-                        <div class="relative flex items-center w-full mt-7">
-                            <select name="teacher" id="teacher" required class="select select-bordered w-full">
+                        <div>
+                        <label class="text-gray-800 text-sm font-medium mb-2 block">Select Teacher</label>
+                            <select name="teacher" id="teacher" required class="bg-gray-50  select select-bordered w-full">
                                 <option value="" disabled selected>Select Teacher</option>
                                 <?php
                                 // Loop through the teachers and populate the dropdown
@@ -246,7 +245,7 @@ $connection->close();
                             </select>
                         </div>
                     </div>
-                          
+
                     <input type="hidden" name="gradelevel" value="<?php echo htmlspecialchars($gradeLevel); ?>">
 
                     <div class="flex items-center justify-end">
@@ -255,86 +254,53 @@ $connection->close();
                 </form>
             </div>
 
-                
-            <div class="border border-gray-300 rounded bg-white mt-3.5">
-            <h1 class="text-xl font-semibold text-center p-5 bg-blue-50 rounded-t text-blue-600">Class Schedule</h1>
-            <div class="overflow-hidden p-5">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Code</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Subject</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Time</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Teacher</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-200">
-                        <?php
-                        if (isset($sectionDetails['schedule'])) {
-                            foreach ($sectionDetails['schedule'] as $schedule) {
-                                echo "<tr>
-                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_code']}</td>
-                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['subject_name']}</td>
-                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['time_in']} - {$schedule['time_out']}</td>
-                                        <td class='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800'>{$schedule['teacher']}</td>
-                                    </tr>";
-                            }
-                        }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-
-                        
 
 
 
 
         </div>
 
-
-
-
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Check for `status` query parameter in the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const status = urlParams.get('status');
 
-            // Display notifications based on `status`
-            if (status === 'approved') {
-                const notyf = new Notyf({
-                    duration: 3000, // Duration of the notification (3 seconds)
-                    position: {
-                        x: 'right', // Align notifications to the right
-                        y: 'top'     // Show notifications at the top
-                    }
-                });
-                notyf.success('New schedule added successfully!');
-
-                // Remove the `status` parameter from the URL
-                urlParams.delete('status');
-                window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
-            }
-        });
-    </script>
 </body>
+
 </html>
 
 <script>
+    $(document).ready(function() {
+        $('#toggleSidebar').on('click', function() {
+            $('#sidebar').toggleClass('-translate-x-full');
+        });
 
-$(document).ready(function() {
-  $('#toggleSidebar').on('click', function() {
-      $('#sidebar').toggleClass('-translate-x-full');
-  });
-
-   $('#closeSidebar').on('click', function() {
-      $('#sidebar').addClass('-translate-x-full');
-  });
+        $('#closeSidebar').on('click', function() {
+            $('#sidebar').addClass('-translate-x-full');
+        });
 
 
-  
-});
 
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for `status` query parameter in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+
+        // Display notifications based on `status`
+        if (status === 'approved') {
+            const notyf = new Notyf({
+                duration: 3000, // Duration of the notification (3 seconds)
+                position: {
+                    x: 'right', // Align notifications to the right
+                    y: 'top' // Show notifications at the top
+                }
+            });
+            notyf.success('New schedule added successfully!');
+
+            // Remove the `status` parameter from the URL
+            urlParams.delete('status');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`);
+        }
+    });
 </script>
