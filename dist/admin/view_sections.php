@@ -164,7 +164,7 @@ $connection->close();
                     <ul>
                         <li><a href="index.php">Dashboard</a></li>
                         <li><a href="class_section.php">Class List</a></li>
-                        <li>Class List for Sections</li>
+                        <li>View Sections</li>
                     </ul>
                 </div>
 
@@ -181,9 +181,9 @@ $connection->close();
                         Add Schedule
                     </button>
 
+                </form>
 
             </div>
-
 
             <div class="relative flex items-center w-full mt-7">
                 <select name="sectionselect" id="sectionselect" required class="select select-bordered w-full">
@@ -197,7 +197,7 @@ $connection->close();
                     ?>
                 </select>
             </div>
-            </form>
+
 
 
             <div class="border border-gray-300 rounded bg-white mt-3.5">
@@ -351,13 +351,13 @@ $connection->close();
     });
 </script>
 
-<script>
+<!-- <script>
     // Handle the selection of section and fetch the details dynamically
     document.getElementById('sectionselect').addEventListener('change', function() {
         const sectionName = this.value;
         window.location.href = "?section=" + sectionName;
     });
-</script>
+</script> -->
 
 
 <script>
