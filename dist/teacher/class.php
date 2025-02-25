@@ -148,7 +148,7 @@ $result = $stmt->get_result();
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['subject_name']); ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($row['section_name']); ?></td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
-                                <a href="encodeGrades.php?section=<?= htmlspecialchars($row['section_name']); ?>" class="text-teal-700 hover:underline">Enter Grades</a>
+                            <a href="encodeGrades.php?section=<?= htmlspecialchars($row['section_name']); ?>&section_id=<?= htmlspecialchars($row['section_id']); ?>&teacher_id=<?= htmlspecialchars($teacher_id); ?>" class="text-teal-700 hover:underline">Enter Grades</a>
                             </td>
                         </tr>
                     <?php endwhile; ?>
