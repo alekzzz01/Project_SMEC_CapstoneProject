@@ -1,6 +1,6 @@
 <?php 
 
-
+session_start();
 include '../../config/db.php';
 
 // Query to output the open school year
