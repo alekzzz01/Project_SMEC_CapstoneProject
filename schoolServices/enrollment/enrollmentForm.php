@@ -68,6 +68,22 @@ if (isset($_POST['submitForm'])) {
             $track = NULL; // If track is empty, set it as NULL
         }
 
+
+        // Sending Notifications 
+
+        $notification = "INSERT INTO notifications (title, message, type, target_role, created_at) VALUES ('New Enrollment', 'A new enrollment request has been submitted by $first_name $last_name.', 'enrollment', 'admin', NOW())";
+        $notificationStmt = $connection->prepare($notification);
+        $notificationStmt->execute();
+
+        // insert notifications to user_notifications for admin only
+        $notification_id = $connection->insert_id;
+        $userNotifications = "INSERT INTO user_notifications (user_id, notification_id, status, sent_at) SELECT user_id, ?, 'sent', NOW() FROM users WHERE role = 'admin'";
+        $userNotificationsStmt = $connection->prepare($userNotifications);
+        $userNotificationsStmt->bind_param("i", $notification_id);
+        $userNotificationsStmt->execute();
+        
+
+     
         // Bind parameters
         $stmt->bind_param(
             "ississssbbb", 
@@ -107,6 +123,13 @@ if (isset($_POST['submitForm'])) {
         header('Location: ' . $_SERVER['PHP_SELF'] . '?status=error');
         exit();
     }
+
+
+
+
+
+
+
 }
 ?>
 

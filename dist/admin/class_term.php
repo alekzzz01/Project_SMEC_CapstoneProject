@@ -1,5 +1,5 @@
 <?php
-// Database connection
+session_start();
 include '../../config/db.php';
 
 // Fetch school years
@@ -12,15 +12,71 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Handle status change
-if (isset($_POST['approve']) || isset($_POST['reject'])) {
+
+
+if (isset($_POST['approve'])) {
     $school_year_id = $_POST['school_year_id'];
-    $new_status = isset($_POST['approve']) ? 'Open' : 'Close';
+
+    // Start a transaction
+    $connection->begin_transaction();
+
+    try {
+        // Fetch school year
+        $sql = "SELECT school_year FROM school_year WHERE school_year_id = ?";
+        $stmt = $connection->prepare($sql);
+        $stmt->bind_param("i", $school_year_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $school_year = $row['school_year'];
+
+        // Close any previously opened school year
+        $sql_close = "UPDATE school_year SET status = 'Close' WHERE status = 'Open'";
+        $connection->query($sql_close);
+
+        // Insert notification message
+        $sql1 = "INSERT INTO notifications (title, message, type, target_role) 
+                 VALUES ('School Year Opening', 'The new school year $school_year has officially started! Welcome back!', 'event', 'all')";
+        $connection->query($sql1);
+        $notification_id = $connection->insert_id;
+
+        // Send notification to all users
+        $sql2 = "INSERT INTO user_notifications (user_id, notification_id, status, sent_at) 
+                 SELECT user_id, ?, 'sent', NOW() FROM users";
+        $stmt = $connection->prepare($sql2);
+        $stmt->bind_param("i", $notification_id);
+        $stmt->execute();
+
+        // Open the selected school year
+        $sql_update = "UPDATE school_year SET status = 'Open' WHERE school_year_id = ?";
+        $stmt = $connection->prepare($sql_update);
+        $stmt->bind_param("i", $school_year_id);
+        $stmt->execute();
+
+        // Commit the transaction
+        $connection->commit();
+
+        // Redirect to the class term page
+        header("Location: class_term.php");
+        exit();
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $connection->rollback();
+        echo "Error: " . $e->getMessage();
+    }
+}
+
+if (isset($_POST['reject'])) {
+    $school_year_id = $_POST['school_year_id'];
+    $new_status = 'Close';
     $update_query = "UPDATE school_year SET status = '$new_status' WHERE school_year_id = '$school_year_id'";
     $connection->query($update_query);
     header("Location: class_term.php");
     exit();
 }
+
+
+
 
 // Handle adding new term
 if (isset($_POST['add_term'])) {
@@ -121,15 +177,15 @@ if (isset($_POST['add_term'])) {
             </div>
 
 
-            <div class="border border-gray-300 rounded bg-white mt-3.5 p-6">
+            <div class="border border-gray-300  bg-white mt-3.5  overflow-x-auto">
 
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                    <thead class="bg-gray-50 ">
                         <tr>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">School Year ID</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">School Year</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Action</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School Year ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">School Year</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                         </tr>
 
                     </thead>
@@ -137,14 +193,20 @@ if (isset($_POST['add_term'])) {
                     <tbody class="divide-y divide-gray-200">
                         <?php foreach ($schoolYears as $year): ?>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($year['school_year_id']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500"><?= htmlspecialchars($year['school_year_id']) ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($year['school_year']) ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($year['status']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+
+                                    <p class="<?= $year['status'] === 'Open' ? 'px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-green-100 text-green-800"' : 'px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-red-100 text-red-800' ?>"><?= htmlspecialchars($year['status']) ?></p>
+
+
+                                </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                                     <form method="POST">
                                         <input type="hidden" name="school_year_id" value="<?= htmlspecialchars($year['school_year_id']) ?>">
-                                        <button type="submit" name="approve" class="text-green-600 text-sm hover:underline">[Open]</button>
-                                        <button type="submit" name="reject" class="text-red-500 text-sm hover:underline">[Close]</button>
+                                        <button type="submit" name="approve" class="text-green-600 text-sm hover:underline hover:text-green-900">Open</button>
+                                        <button type="submit" name="reject" class="ml-2 text-red-500 text-sm hover:underline hover:text-red-900">Close</button>
                                     </form>
                                 </td>
                             </tr>
@@ -153,7 +215,9 @@ if (isset($_POST['add_term'])) {
 
                 </table>
 
+
             </div>
+
 
 
         </div>
