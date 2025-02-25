@@ -38,6 +38,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
     if (isset($_POST['enrollment_id'])) {
         $enrollmentId = $_POST['enrollment_id'];
 
+        // Sending Notifications 
+        $notification = "INSERT INTO notifications (title, message, type, target_role, created_at) VALUES ('Application Status Update', 'Your enrollment application has been Accepted.', 'enrollment', 'student', NOW())";
+        $notificationStmt = $connection->prepare($notification);
+        $notificationStmt->execute();
+
+        // Inserting into user_notifications table | Student Account
+        $user_Notification = "INSERT INTO user_notifications (user_id, notification_id, status, sent_at) 
+        SELECT s.user_id, LAST_INSERT_ID(), 'sent', NOW() 
+        FROM students s 
+        WHERE s.student_id = (SELECT student_id FROM student_enrollment WHERE enrollment_id = ?);
+        ";
+        $user_NotificationStmt = $connection->prepare($user_Notification);
+        $user_NotificationStmt->bind_param("i", $enrollmentId);
+        $user_NotificationStmt->execute();
+
+
         // Fetch student's email and name
         $query = "SELECT s.email, CONCAT(s.first_name, ' ', s.last_name) AS name FROM students s
                   INNER JOIN student_enrollment e ON s.student_id = e.student_id
@@ -74,6 +90,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
     if (isset($_POST['enrollment_id'])) {
         $enrollmentId = $_POST['enrollment_id'];
+
+        // Sending Notifications 
+        $notification = "INSERT INTO notifications (title, message, type, target_role, created_at) VALUES ('Application Status Update', 'Your enrollment application has been Rejected.', 'enrollment', 'student', NOW())";
+        $notificationStmt = $connection->prepare($notification);
+        $notificationStmt->execute();
+
+        // Inserting into user_notifications table | Student Account user ID
+        $user_Notification = "INSERT INTO user_notifications (user_id, notification_id, status, sent_at) 
+         SELECT s.user_id, LAST_INSERT_ID(), 'sent', NOW() 
+         FROM students s 
+         WHERE s.student_id = (SELECT student_id FROM student_enrollment WHERE enrollment_id = ?);
+         ";
+        $user_NotificationStmt = $connection->prepare($user_Notification);
+        $user_NotificationStmt->bind_param("i", $enrollmentId);
+        $user_NotificationStmt->execute();
+
 
         // Fetch student's email and name
         $query = "SELECT s.email, CONCAT(s.first_name, ' ', s.last_name) AS name FROM students s
