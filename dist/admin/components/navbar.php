@@ -120,7 +120,7 @@ mysqli_close($connection);
                 tabindex="0"
                 class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-5 w-52 p-2 shadow">
                 <li>
-                    <a class="justify-between">
+                    <a href="profile.php" class="justify-between">
                         Profile
                         <span class="badge">New</span>
                     </a>
