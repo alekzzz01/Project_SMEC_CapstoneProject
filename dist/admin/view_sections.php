@@ -1,5 +1,6 @@
 <?php
 include '../../config/db.php';
+session_start();
 
 // Fetch the grade level from the URL
 if (isset($_GET['gradelevel'])) {
