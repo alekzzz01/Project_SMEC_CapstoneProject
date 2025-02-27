@@ -88,39 +88,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
 }
 
 
-// if (isset($_POST['createAnnouncement'])) {
+// Add announcement
 
-//     $announcementTitle = $_POST['announcementTitle'];
-//     $announcementDescription = $_POST['announcementDescription'];
-//     $announcementImage = $_POST['announcementImage'];
-
-//     $sql = "INSERT INTO announcements (announcement_title, announcement_description, announcement_image) VALUES ('$announcementTitle', '$announcementDescription', '$announcementImage')";
-
-//     if ($conn->query($sql) === TRUE) {
-//         echo "New record created successfully";
-//     } else {
-//         echo "Error: " . $sql . "<br>" . $conn->error;
-//     }
-
-// }
-
-// if (isset($_POST['addService'])) {
-
-//     $serviceName = $_POST['serviceName'];
-//     $serviceDescription = $_POST['serviceDescription'];
-//     $serviceImage = $_POST['serviceImage'];
-
-//     $sql = "INSERT INTO services (service_name, service_description, service_image) VALUES ('$serviceName', '$serviceDescription', '$serviceImage')";
-
-//     if ($conn->query($sql) === TRUE) {
-//         echo "New record created successfully";
-//     } else {
-//         echo "Error: " . $sql . "<br>" . $conn->error;
-//     }
-
-// }
+if (isset($_POST['createAnnouncement'])) {
+    $announcement = $_POST['title'];
+    $announcementMessage = $_POST['announcementMessage'];
 
 
+    $stmt = $connection->prepare("INSERT INTO notifications (title, message, type, target_role, created_at) VALUES (?, ?, 'system', 'all', NOW())");
+    $stmt->bind_param("ss", $announcement, $announcementMessage);
+    $stmt->execute();
+    $notification_id = $connection->insert_id;
+
+    // send notification to all users
+    $sql2 = "INSERT INTO user_notifications (user_id, notification_id, status, sent_at) 
+             SELECT user_id, ?, 'sent', NOW() FROM users";
+    $stmt = $connection->prepare($sql2);
+    $stmt->bind_param("i", $notification_id);
+    $stmt->execute();
+
+    if ($stmt->execute()) {
+        $_SESSION['message'] = "Announcement created successfully!";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    } else {
+        $_SESSION['error'] = "Failed to create announcement. Please try again.";
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit();
+    }
+
+
+}
 
 
 
@@ -203,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
                         <li><a>Campus Activities</a></li>
                     </ul>
                 </div>
-      
+
 
             </div>
 
@@ -214,16 +212,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
                     name="my_tabs_2"
                     role="tab"
                     class="tab"
-                    aria-label="Event"
-                    checked="checked" />
+                    checked="checked" 
+                    aria-label="Event" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <?php include './tables/eventTable.php' ?>
                 </div>
 
 
                 <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Announcement" />
-                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-6">
-                    Tab content 1
+                <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
+                    <?php include './tables/announcementsTable.php' ?>
                 </div>
 
 
@@ -257,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
                 <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             </form>
 
-            <form action="" class="py-4 flex flex-col gap-3" method="POST" enctype="multipart/form-data">
+            <form action="" class="py-4 flex flex-col gap-3" method="POST" enctype="multipart/form-data" id="eventForm">
 
 
                 <div>
@@ -346,6 +344,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
     </dialog>
 
 
+    <!-- Add Announcements -->
+
+    <dialog id="announce_Modal" class="modal modal-bottom sm:modal-middle">
+        <div class="modal-box">
+            <h3 class="text-lg font-bold">Add New Announcement</h3>
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            </form>
+
+            <form action="" class="py-4 flex flex-col gap-3" method="POST" enctype="multipart/form-data" id="announcementForm">
+
+
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Announcement</label>
+                    <div class="relative flex items-center">
+                        <input name="title" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Event Name" />
+
+                    </div>
+                </div>
+
+
+
+
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Description</label>
+                    <div id="announcementEditor"></div>
+                    <input type="hidden" name="announcementMessage" />
+                </div>
+
+                <div class="modal-action">
+
+                    <button type="submit" name="createAnnouncement" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Add Event</button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </dialog>
+
+
+
+
+
 
 
 </body>
@@ -375,7 +418,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
         });
 
         // On form submission, append the editor content to a hidden input
-        var form = document.querySelector("form");
+        var form = document.querySelector("#eventForm");
         form.addEventListener("submit", function() {
             var descriptionInput = document.querySelector("input[name='eventDescription']");
             descriptionInput.value = quill.root.innerHTML; // Store editor content
@@ -384,6 +427,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
 </script>
 
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var quill = new Quill('#announcementEditor', {
+            theme: 'snow', // Options: 'snow' or 'bubble'
+            placeholder: 'Write your description here...',
+            modules: {
+                toolbar: [
+                    [{
+                        header: [1, 2, false]
+                    }],
+                    ['bold', 'italic', 'underline'],
+                    ['link', 'image', 'code-block'],
+                    [{
+                        list: 'ordered'
+                    }, {
+                        list: 'bullet'
+                    }],
+                ],
+            },
+        });
+
+        // On form submission, append the editor content to a hidden input
+        var form = document.querySelector("#announcementForm");
+        form.addEventListener("submit", function() {
+            var descriptionInput = document.querySelector("input[name='announcementMessage']");
+            descriptionInput.value = quill.root.innerHTML; // Store editor content
+        });
+    });
+</script>
 
 <script>
     function archiveEvent(eventId) {
@@ -408,18 +480,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['archiveEvent'])) {
 </script>
 
 <script>
+    $(document).ready(function() {
+        $('#toggleSidebar').on('click', function() {
+            $('#sidebar').toggleClass('-translate-x-full');
+        });
 
-$(document).ready(function() {
-  $('#toggleSidebar').on('click', function() {
-      $('#sidebar').toggleClass('-translate-x-full');
-  });
-
-   $('#closeSidebar').on('click', function() {
-      $('#sidebar').addClass('-translate-x-full');
-  });
+        $('#closeSidebar').on('click', function() {
+            $('#sidebar').addClass('-translate-x-full');
+        });
 
 
-  
-});
 
+    });
 </script>
