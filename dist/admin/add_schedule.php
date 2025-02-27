@@ -1,5 +1,6 @@
 <?php
 include '../../config/db.php';
+session_start();
 
 if (isset($_GET['gradelevel'])) {
     $gradeLevel = isset($_POST['gradelevel']) ? $_POST['gradelevel'] : (isset($_GET['gradelevel']) ? $_GET['gradelevel'] : '');

@@ -69,16 +69,50 @@ if (isset($_POST['verifyOtp'])) {
         // exit();
 
 
-
         // Verify OTP entered by user with the OTP in the database
         if (hash_hmac('sha256', $otp, $secret_key) === $user['otp']) {
 
             // OTP is valid, mark as verified
             $_SESSION['otp_verified'] = true; // Mark OTP as verified
             $_SESSION['user_id'] = $user['user_id'];
-
             // Clear OTP session variable after successful validation
             unset($_SESSION['otp_email']);
+
+
+            // Get current device info
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
+            $ip_address = $_SERVER['REMOTE_ADDR'];
+            $device_hash = hash('sha256', $user_agent . $ip_address); // Unique device identifier
+
+            // Check if this device is already registered
+            $sql = "SELECT * FROM user_devices WHERE user_id = ? AND device_hash = ?";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param("is", $user['user_id'], $device_hash);
+            $stmt->execute();
+            $device_result = $stmt->get_result();
+
+            
+            if ($device_result->num_rows === 0) {
+                // New device detected - Insert it into the database
+                $sql = "INSERT INTO user_devices (user_id, device_hash, user_agent, ip_address) VALUES (?, ?, ?, ?)";
+                $stmt = $connection->prepare($sql);
+                $stmt->bind_param("isss", $user['user_id'], $device_hash, $user_agent, $ip_address);
+                $stmt->execute();
+
+                // Log the event in audit logs
+                $log_sql = "INSERT INTO audit_logs (user_id, action, resource_type, created_at) VALUES (?, 'New Device Login', 'Session', NOW())";
+                $log_stmt = $connection->prepare($log_sql);
+                $log_stmt->bind_param("i", $user['user_id']);
+                $log_stmt->execute();
+
+                // Send alert (Optional: Email notification to user)
+            }
+
+            // Log the login event in audit logs
+            $sql = "INSERT INTO audit_logs (user_id, action, resource_type, created_at) VALUES (?, 'User Logged In', 'Session', NOW())";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param('i', $user['user_id']);
+            $stmt->execute();
 
             $sql = "UPDATE users SET otp = NULL, otp_expiry = NULL WHERE email = ?";
             $stmt = $connection->prepare($sql);

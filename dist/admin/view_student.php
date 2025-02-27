@@ -1,5 +1,6 @@
 <?php 
 include '../../config/db.php';
+session_start();
 
 // Check if `student_id` and the action to download are set
 if (isset($_GET['student_id']) && isset($_GET['action']) && $_GET['action'] == 'download') {
