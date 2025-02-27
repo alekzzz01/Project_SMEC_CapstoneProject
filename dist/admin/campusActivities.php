@@ -212,13 +212,14 @@ if (isset($_POST['createAnnouncement'])) {
                     name="my_tabs_2"
                     role="tab"
                     class="tab"
+                    checked="checked" 
                     aria-label="Event" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <?php include './tables/eventTable.php' ?>
                 </div>
 
 
-                <input checked="checked" type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Announcement" />
+                <input type="radio" name="my_tabs_2" role="tab" class="tab" aria-label="Announcement" />
                 <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box">
                     <?php include './tables/announcementsTable.php' ?>
                 </div>
