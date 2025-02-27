@@ -69,7 +69,6 @@ if (isset($_POST['verifyOtp'])) {
         // exit();
 
 
-
         // Verify OTP entered by user with the OTP in the database
         if (hash_hmac('sha256', $otp, $secret_key) === $user['otp']) {
 
@@ -79,6 +78,12 @@ if (isset($_POST['verifyOtp'])) {
 
             // Clear OTP session variable after successful validation
             unset($_SESSION['otp_email']);
+
+            // Insert Audit Logs 
+            $sql = "INSERT INTO audit_logs (user_id, action, resource_type, created_at) VALUES (?, 'User Logged In', 'Session', NOW())";
+            $stmt = $connection->prepare($sql);
+            $stmt->bind_param('i', $user['user_id']);
+            $stmt->execute();
 
             $sql = "UPDATE users SET otp = NULL, otp_expiry = NULL WHERE email = ?";
             $stmt = $connection->prepare($sql);
