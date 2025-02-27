@@ -1,36 +1,30 @@
 <?php
-include '../../config/db.php';
 
-// Initialize variables from the GET request
-$event_type_filter = isset($_GET['event_type']) ? $_GET['event_type'] : '';
+// Include the database connection file
+include '../../config/db.php';
 $search_query = isset($_GET['search_query']) ? trim($_GET['search_query']) : '';
 
-// Base SQL query
-$sql = "SELECT * FROM events WHERE is_archived = 0";  // Add condition to exclude archived events
+$sql = "SELECT * FROM notifications WHERE type = 'system'";  // Base query
 
 // Conditions for filtering and search
 $conditions = [];
 $params = [];
 $param_types = "";
 
-// Add event type condition if selected
-if ($event_type_filter) {
-    $conditions[] = "event_type = ?";
-    $params[] = $event_type_filter;
-    $param_types .= "s";
-}
-
 // Add search query condition if provided
 if ($search_query) {
-    $conditions[] = "event_name LIKE ?";
+    $conditions[] = "title LIKE ?";
     $params[] = "%" . $search_query . "%";
     $param_types .= "s";
 }
 
-// Combine conditions into the SQL query
+// Append conditions correctly
 if (!empty($conditions)) {
-    $sql .= " AND " . implode(" AND ", $conditions); // Use AND to combine conditions
+    $sql .= " AND " . implode(" AND ", $conditions);
 }
+
+// Correctly add ORDER BY after conditions
+$sql .= " ORDER BY created_at DESC";
 
 $stmt = $connection->prepare($sql);
 
@@ -39,14 +33,23 @@ if (!empty($params)) {
     $stmt->bind_param($param_types, ...$params);
 }
 
+// Execute the query
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Fetch events
-$events = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
+$announcements = $result->num_rows > 0 ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
 // Close the connection
 $connection->close();
+
+
+// output announcement
+
+// echo "<pre>";
+// print_r($announcements);
+
+
+
 ?>
 
 
@@ -95,16 +98,7 @@ $connection->close();
 
                 </label>
 
-                <!-- Event Type Filter -->
-                <select name="event_type" class="select select-bordered select-sm w-full" onchange="this.form.submit()">
-                    <option value="" selected disabled>Choose Event Type</option>
-                    <option value="Public" <?php if ($event_type_filter == 'Public') echo 'selected'; ?>>Public</option>
-                    <option value="Private" <?php if ($event_type_filter == 'Private') echo 'selected'; ?>>Private</option>
-
-
-                </select>
-
-
+            
 
             </div>
 
@@ -114,14 +108,12 @@ $connection->close();
 
         <div class="flex items-center justify-end gap-3">
 
-            <button onclick="events_Modal.showModal()" class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+            <button onclick="announce_Modal.showModal()" class="   flex items-center justify-center text-white bg-amber-600 hover:bg-amber-800 focus:ring-4 focus:ring-amber-300 font-medium rounded-md text-sm px-4 py-2 dark:bg-amber-600 dark:hover:bg-amber-700 focus:outline-none dark:focus:ring-amber-800">
                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                 </svg>
-
-                Events
+                Announcements
             </button>
-
 
 
         </div>
@@ -136,61 +128,43 @@ $connection->close();
 
         <div class="overflow-hidden">
 
-            <?php if ($search_query || $event_type_filter): ?>
+            <?php if ($search_query): ?>
                 <table id="example" class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
 
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Event Name</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Event Venue</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">TItle</th>
+                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Message</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Type</th>
-                            <!-- <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Description</th> -->
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Created At</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Banner</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         <?php
-                        // Check if there are any events
-                        if (!empty($events)) {
+                        // Check if there are any announcements
+                        if (!empty($announcements)) {
                             // Loop through each event
-                            foreach ($events as $row) {
+                            foreach ($announcements as $row) {
                                 echo '<tr>';
 
-                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">' . htmlspecialchars($row['event_name']) . '</td>';
+                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">' . htmlspecialchars($row['title']) . '</td>';
 
-                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['venue']) . '</td>';
-                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['event_type']) . '</td>';
-                                // echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['description']) . '</td>';
-                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['created_at']) . '</td>';
-                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">';
-                                if (!empty($row['banner'])) {
-                                    echo '<button class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none" onclick="document.getElementById(\'imageDialog' . $row['event_id'] . '\').showModal()">View Image</button>';
-                                } else {
-                                    echo 'No banner';
-                                }
-                                echo '</td>';
+                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['message']) . '</td>';
+                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['target_role']) . '</td>';
+                                echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars(date('F j, Y, g:i a', strtotime($row['created_at']))) . '</td>';
+
                                 echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="campusEditEvent.php?event_id=' . $row['event_id'] . '" 
-                                type="button" 
-                                class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                                Edit
-                                </a>
-                            
-                                <button onclick="archiveEvent(' . $row['event_id'] . ')" 
-                                        type="button" 
-                                        class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-gray-600 hover:text-gray-800 focus:outline-none focus:text-gray-800 disabled:opacity-50 disabled:pointer-events-none">
-                                        Archive
-                                </button>
-                      </td>';
+                          
+                        
+                            </td>';
 
 
 
                                 echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">No events found.</td></tr>';
+                            echo '<tr><td colspan="9" class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 text-center">No announcement found.</td></tr>';
                         }
                         ?>
                     </tbody>
