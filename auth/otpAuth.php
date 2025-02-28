@@ -123,7 +123,21 @@ if (isset($_POST['verifyOtp'])) {
             if ($user['role'] == 'admin') {
                 header('Location: loading.php?target=../dist/admin/index.php');  // Admin dashboard
             } elseif ($user['role'] == 'teacher') {
-                header('Location: loading.php?target=../dist/teacher/index.php');  // Teacher dashboard
+                // Get the teacher_id corresponding to this user_id
+                $teacher_query = "SELECT teacher_id FROM teachers WHERE user_id = ?";
+                $stmt = $connection->prepare($teacher_query);
+                $stmt->bind_param('i', $user['user_id']);
+                $stmt->execute();
+                $teacher_result = $stmt->get_result();
+                
+                if ($teacher_result->num_rows > 0) {
+                    $teacher = $teacher_result->fetch_assoc();
+                    // Pass the teacher_id (not user_id) as a parameter in the URL
+                    header('Location: loading.php?target=../dist/teacher/index.php&teacher_id=' . $teacher['teacher_id']);
+                } else {
+                    // Fallback if teacher record not found
+                    header('Location: loading.php?target=../dist/teacher/index.php');
+                }
             } elseif ($user['role'] == 'student') {
                 header('Location: loading.php?target=../dist/student/dashboard.php');  // Student dashboard
             } else {

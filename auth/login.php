@@ -24,10 +24,13 @@ if (isset($_SESSION['user_id'])) {
     // If already logged in, redirect to the appropriate page based on role
     if ($_SESSION['role'] == 'admin') {
         header('Location: ../dist/admin/index.php'); // Admin redirect
+    } else if ($_SESSION['role'] == 'teacher') {
+        // Redirect to teacher dashboard with teacher_id parameter
+        header('Location: ../dist/teacher/index.php?teacher_id=' . $_SESSION['teacher_id']);
     } else {
 
         header('Location: ../dist/student/dashboard.php'); // Student redirect
-    }
+    } 
     exit(); // Ensure no further code is executed
 }
 
@@ -68,7 +71,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = $user['name'];
 
         // Verify password
-        if (password_verify($password, $user['password'])) {
+        // After successful password verification and before redirecting:
+    if (password_verify($password, $user['password'])) {
+    // Existing OTP generation code...
+    
+    // If the user is a teacher, get their teacher_id
+    if ($user['role'] == 'teacher') {
+        // Query to get teacher_id based on user_id
+        $teacher_query = "SELECT teacher_id FROM teachers WHERE user_id = ?";
+        $teacher_stmt = $connection->prepare($teacher_query);
+        $teacher_stmt->bind_param('i', $user['user_id']);
+        $teacher_stmt->execute();
+        $teacher_result = $teacher_stmt->get_result();
+        
+        if ($teacher_result->num_rows > 0) {
+            $teacher_data = $teacher_result->fetch_assoc();
+            $_SESSION['teacher_id'] = $teacher_data['teacher_id']; // Store in session
+        }
+    }
+    
             // Generate OTP
             $otp = rand(1000, 9999); // 4-digit OTP
 

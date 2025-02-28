@@ -1,3 +1,58 @@
+<?php
+session_start();
+include '../../config/db.php';
+
+// Get student_id from URL
+$student_id = isset($_GET['student_id']) ? $_GET['student_id'] : '';
+
+// Get student information
+$student_info = [];
+$student_query = "SELECT s.*, se.section, sec.section_name, sec.grade_level, 
+                        t.First_Name as teacher_fname, t.Last_Name as teacher_lname,
+                        sy.school_year
+                 FROM students s
+                 JOIN student_enrollment se ON s.student_id = se.student_id
+                 JOIN sections sec ON se.section = sec.section_id
+                 JOIN teachers t ON sec.adviser_id = t.teacher_id
+                 JOIN school_year sy ON se.school_year_id = sy.school_year_id
+                 WHERE s.student_id = ?";
+
+$stmt = $connection->prepare($student_query);
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $student_info = $result->fetch_assoc();
+}
+$stmt->close();
+
+$grades = [];
+$grades_query = "SELECT g.*, s.subject_name 
+                FROM student_grades g
+                JOIN subjects s ON g.subject_id = s.subject_id
+                WHERE g.student_id = ?";
+
+$stmt = $connection->prepare($grades_query);
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$grades_result = $stmt->get_result();
+
+if ($grades_result->num_rows > 0) {
+    while ($row = $grades_result->fetch_assoc()) {
+        $grades[] = $row;
+    }
+}
+$stmt->close();
+
+// If no student found, redirect back or show error
+if (empty($student_info)) {
+    // You can redirect or show error message
+    // header("Location: advisory_Class.php");
+    // exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -57,17 +112,30 @@
 
             
                 <div class="rounded bg-teal-100 p-4 mb-7 space-y-2 shadow">
-                    <h2 class="text-teal-900 font-semibold text-xl">GRADE 9 - LAPIZ </h2>
-                    <h1 class="font-extrabold text-4xl text-teal-900">YUL GIBSON C. GARCIA</h1>
-                    <p class="text-teal-800 text-sm italic">Adviser: Ms. Victoria O. Panganiban</p>
-                </div>
+    <?php if (!empty($student_info)): ?>
+        <h2 class="text-teal-900 font-semibold text-xl">GRADE: <?php echo htmlspecialchars($student_info['grade_level']); ?> - <?php echo htmlspecialchars($student_info['section_name']); ?></h2>
+        <h1 class="font-extrabold text-4xl text-teal-900">
+            <?php echo htmlspecialchars($student_info['first_name'] . ' ' . 
+                   ($student_info['middle_initial'] ? $student_info['middle_initial'] . '. ' : '') . 
+                   $student_info['last_name']); ?>
+        </h1>
+        <p class="text-teal-800 text-sm italic">
+            Adviser: <?php echo htmlspecialchars($student_info['teacher_fname'] . ' ' . $student_info['teacher_lname']); ?>
+        </p>
+    <?php else: ?>
+        <h2 class="text-teal-900 font-semibold text-xl">Student Information</h2>
+        <h1 class="font-extrabold text-4xl text-teal-900">Not Found</h1>
+    <?php endif; ?>
+</div>
 
 
                 <div role="tablist" class="tabs tabs-bordered bg-white p-4 border border-gray-200 rounded mb-7 w-full">
 
                     <!-- Student Grades -->
+                    <!-- Student Grades -->
                     <input type="radio" name="my_tabs_1" role="tab" class="tab" aria-label="Grade" checked="checked" />
                     <div role="tabpanel" class="tab-content pt-6">
+                        <?php if (!empty($grades)): ?>
                         <table>
                             <thead>
                                 <tr>
@@ -81,40 +149,23 @@
                             </thead>
 
                             <tbody>
-                                <tr>
-                                    <td class="border px-4 py-2 bg-teal-100">Math</td>
-                                    <td class="border px-4 py-2 bg-teal-100">90</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
-                                    <td class="border px-4 py-2 bg-teal-100">80</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
+                                <?php $row_num = 0; foreach ($grades as $grade): $row_num++; ?>
+                                <tr class="<?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>">
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['subject_name']); ?></td>
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['grade1']); ?></td>
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['grade2']); ?></td>
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['grade3']); ?></td>
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['grade4']); ?></td>
+                                    <td class="border px-4 py-2 <?php echo $row_num % 2 == 1 ? 'bg-teal-100' : ''; ?>"><?php echo htmlspecialchars($grade['final_grade']); ?></td>
                                 </tr>
-
-                                <tr>
-                                    <td class="border px-4 py-2">Science</td>
-                                    <td class="border px-4 py-2">85</td>
-                                    <td class="border px-4 py-2">80</td>
-                                    <td class="border px-4 py-2">85</td>
-                                    <td class="border px-4 py-2">80</td>
-                                    <td class="border px-4 py-2">82.5</td>
-
-                                </tr>
-
-                                <tr>
-                                    <td class="border px-4 py-2 bg-teal-100">English</td>
-                                    <td class="border px-4 py-2 bg-teal-100">90</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
-                                    <td class="border px-4 py-2 bg-teal-100">80</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
-                                    <td class="border px-4 py-2 bg-teal-100">85</td>
-                                </tr>
-
-
-
+                                <?php endforeach; ?>
                             </tbody>
-
                         </table>
-
+                        <?php else: ?>
+                        <div class="alert alert-info">
+                            <span>No grades available for this student.</span>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
                     <!-- Behavior Log -->
@@ -284,38 +335,50 @@
 
             <!-- 2nd Column -->
             <div class="p-6 bg-white rounded-md border border-gray-200 space-y-3.5 col-span-1">
+    <?php if (!empty($student_info)): ?>
+        <!-- Student Photo - You can replace with actual photo path if available -->
+       <!-- <img src="../../assets/img/student_photos/<?php echo $student_info['student_id']; ?>.jpg"  -->
+        <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="" class="h-[330px] w-full object-cover rounded" />
 
-                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="" class="h-[330px] w-full object-cover rounded" />
+        <div>
+            <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Name</p>
+            <div class="relative flex items-center">
+                <input name="full-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md bg-teal-50" readonly 
+                       value="<?php echo htmlspecialchars($student_info['first_name'] . ' ' . 
+                                    ($student_info['middle_initial'] ? $student_info['middle_initial'] . '. ' : '') . 
+                                    $student_info['last_name']); ?>" />
+            </div>
+        </div>
 
+        <div>
+            <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Student Number</p>
+            <div class="relative flex items-center">
+                <input name="student-number" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md bg-teal-50" readonly 
+                       value="<?php echo htmlspecialchars($student_info['student_number']); ?>" />
+            </div>
+        </div>
 
-                <div>
-                    <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Name</p>
-                    <div class="relative flex items-center">
-                        <input name="grade-level" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-teal-50" readonly value="YUL GIBSON C. GARCIA" />
+        <div>
+            <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Grade Level</p>
+            <div class="relative flex items-center">
+                <input name="grade-level" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md bg-teal-50" readonly 
+                       value="Grade: <?php echo htmlspecialchars($student_info['grade_level']); ?> - <?php echo htmlspecialchars($student_info['section_name']); ?>" />
+            </div>
+        </div>
 
-                    </div>
-
-                </div>
-
-
-                <div>
-                    <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Grade Level</p>
-                    <div class="relative flex items-center">
-                        <input name="grade-level" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-teal-50" readonly />
-
-                    </div>
-
-                </div>
-
-                <div>
-                    <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Academic Year</p>
-                    <div class="relative flex items-center">
-                        <input name="first_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md  bg-teal-50" readonly />
-
-                    </div>
-
-                </div>
-
+        <div>
+            <p class="text-sm font-light mb-1 ml-1 text-base-content/70">Academic Year</p>
+            <div class="relative flex items-center">
+                <input name="academic-year" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md bg-teal-50" readonly 
+                       value="<?php echo htmlspecialchars($student_info['school_year']); ?>" />
+            </div>
+        </div>
+        <?php else: ?>
+        <div class="alert alert-warning">
+            <span>Student information not found.</span>
+        </div>
+    <?php endif; ?>
+</div>
 
 
 
