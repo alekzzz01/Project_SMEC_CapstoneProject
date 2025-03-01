@@ -6,16 +6,6 @@ if (isset($_GET['gradelevel'])) {
     $gradeLevel = isset($_POST['gradelevel']) ? $_POST['gradelevel'] : (isset($_GET['gradelevel']) ? $_GET['gradelevel'] : '');
 }
 
-// Fetch sections for the dropdown (this can be reused from view_sections.php)
-$sql = "SELECT section_name, grade_level FROM sections";
-$result = $connection->query($sql);
-$sections = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $sections[] = $row;
-    }
-}
-
 // Fetch teachers for the teacher dropdown
 $teacherSql = "SELECT teacher_id, CONCAT(First_Name, ' ', Last_Name) AS teacher_name FROM teachers";
 $teacherResult = $connection->query($teacherSql);
@@ -39,8 +29,8 @@ if ($subjectResult->num_rows > 0) {
 
 // Fetch details for a selected section (using sectionselect from the URL)
 $sectionDetails = null;
-if (isset($_GET['sectionselect'])) {
-    $section = $_GET['sectionselect'];  // This is where we fetch the section from the URL
+if (isset($_GET['sectionID'])) {
+    $section = $_GET['sectionID'];  // This is where we fetch the section from the URL
 
     // Schedule query to fetch class schedule for the selected section
     $scheduleSql = "
@@ -48,7 +38,7 @@ if (isset($_GET['sectionselect'])) {
         FROM schedules sc
         JOIN subjects sub ON sc.subject_id = sub.subject_id
         JOIN teachers t ON sc.teacher_id = t.teacher_id
-        WHERE sc.section = '$section'
+        WHERE sc.section_id = '$section'
         ";
 
     $scheduleResult = $connection->query($scheduleSql);
@@ -71,7 +61,7 @@ if (isset($_GET['sectionselect'])) {
 if (isset($_POST['submitForm'])) {
     // Get form values
 
-    $section = $_GET['section'];
+    $section = $_GET['sectionID'];
     $subject = $_POST['subject'];
     $time_in = $_POST['start_time']; // Use time_in instead of start_time
     $time_out = $_POST['end_time']; // Use time_out instead of end_time
@@ -122,12 +112,12 @@ if (isset($_POST['submitForm'])) {
 
     // Insert the new schedule
     $insertSql = "
-        INSERT INTO schedules (schedule_code, section, subject_id, time_in, time_out, teacher_id, grade_level, school_year) 
-        VALUES ('$newScheduleCode', '$section', '$subject', '$time_in', '$time_out', '$teacher', '$gradeLevel', '$schoolYear')
+        INSERT INTO schedules (schedule_code, section_id, subject_id, time_in, time_out, teacher_id) 
+        VALUES ('$newScheduleCode', '$section', '$subject', '$time_in', '$time_out', '$teacher')
     ";
 
     if ($connection->query($insertSql) === TRUE) {
-        header("Location: add_schedule.php?sectionselect=" . urlencode($section) . "&gradelevel=" . urlencode($gradeLevel) . "&status=approved");
+        header("Location: add_schedule.php?sectionID=" . urlencode($section) . "&gradelevel=" . urlencode($gradeLevel) . "&status=approved");
         exit();
     } else {
         echo "Error: " . $connection->error;
@@ -233,7 +223,7 @@ $connection->close();
                         </div>
 
                         <div>
-                        <label class="text-gray-800 text-sm font-medium mb-2 block">Select Teacher</label>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Select Teacher</label>
                             <select name="teacher" id="teacher" required class="bg-gray-50  select select-bordered w-full">
                                 <option value="" disabled selected>Select Teacher</option>
                                 <?php

@@ -151,7 +151,7 @@ if (isset($_POST['updateInfo'])) {
         <?php include('./components/navbar.php'); ?>
 
 
-        <div class="max-w-7xl mx-auto p-6">
+        <div class="p-6">
 
 
 

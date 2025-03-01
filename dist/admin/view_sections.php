@@ -10,13 +10,23 @@ if (isset($_GET['gradelevel'])) {
     // echo "Grade level not set.";  // Debugging line
 }
 
+
+
+// Fetch the section id from the URL
+// if (isset($_GET['sectionID'])) {
+//     $sectionID = $_GET['sectionID'];
+//     echo "Section ID: " . $sectionID;  // Debugging line
+// } else {
+//     echo "Section ID not set.";  // Debugging line
+// }
+
 // Fetch sections for the dropdown and filter by grade level
 $gradeLevelFilter = "";
 if (isset($_GET['gradelevel'])) {
     $gradeLevelFilter = "WHERE grade_level = '" . $_GET['gradelevel'] . "'";
 }
 
-$sql = "SELECT section_name, grade_level FROM sections $gradeLevelFilter";
+$sql = "SELECT * FROM sections $gradeLevelFilter";
 $result = $connection->query($sql);
 $sections = [];
 if ($result->num_rows > 0) {
@@ -25,20 +35,21 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Fetch details for a selected section
+// // Fetch details for a selected section
 $sectionDetails = null;
-if (isset($_GET['section'])) {
-    $section = $_GET['section'];
+if (isset($_GET['sectionID'])) {
+    // $section = $_GET['section'];
+    $section = $_GET['sectionID'];
 
     // Query to fetch the section details, adviser, and students
     $sql = "
-        SELECT s.section_name, s.grade_level, CONCAT(t.First_Name, ' ', t.Last_Name) AS adviser, 
+        SELECT s.section_id, s.section_name, s.grade_level, CONCAT(t.First_Name, ' ', t.Last_Name) AS adviser, 
             se.student_id, st.first_name, st.last_name, st.gender
         FROM sections s
         JOIN teachers t ON s.adviser_id = t.teacher_id
         LEFT JOIN student_enrollment se ON se.section = s.section_id
         LEFT JOIN students st ON se.student_id = st.student_id
-        WHERE s.section_name = '$section'
+        WHERE s.section_id = '$section'
         ";
 
     $result = $connection->query($sql);
@@ -52,6 +63,7 @@ if (isset($_GET['section'])) {
 
         // Get section and adviser details from the first row
         $row = $result->fetch_assoc();
+        $sectionDetails['section_id'] = $row['section_id'];
         $sectionDetails['section_name'] = $row['section_name'];
         $sectionDetails['grade_level'] = $row['grade_level'];
         $sectionDetails['adviser'] = $row['adviser'];
@@ -89,7 +101,7 @@ if (isset($_GET['section'])) {
         FROM schedules sc
         JOIN subjects sub ON sc.subject_id = sub.subject_id
         JOIN teachers t ON sc.teacher_id = t.teacher_id
-        WHERE sc.section = '$section'
+        WHERE sc.section_id = '{$sectionDetails['section_id']}'
         ";
 
     $scheduleResult = $connection->query($scheduleSql);
@@ -171,9 +183,11 @@ $connection->close();
 
 
                 <form id="sectionForm" action="add_schedule.php" method="GET" onsubmit="return validateSelection()">
-                    <!-- Hidden inputs for gradelevel and section -->
+
+                
+                    <input type="hidden" name="sectionID" id="sectionID" value="<?php echo isset($_GET['sectionID']) ? $_GET['sectionID'] : ''; ?>">
                     <input type="hidden" name="gradelevel" id="gradelevel" value="<?php echo isset($_GET['gradelevel']) ? $_GET['gradelevel'] : ''; ?>">
-                    <input type="hidden" name="section" id="section" value="<?php echo isset($_GET['section']) ? $_GET['section'] : ''; ?>">
+
 
                     <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-md">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
@@ -186,14 +200,16 @@ $connection->close();
 
             </div>
 
+
+
             <div class="relative flex items-center w-full mt-7">
                 <select name="sectionselect" id="sectionselect" required class="select select-bordered w-full">
-                    <option value="" disabled <?php echo !isset($_GET['section']) ? 'selected' : ''; ?>>Select Section</option>
+                    <option value="" disabled <?php echo !isset($_GET['sectionID']) ? 'selected' : ''; ?>>Select Section</option>
                     <?php
                     foreach ($sections as $section) {
-                        // Check if this section is selected (based on the URL parameter)
-                        $selected = (isset($_GET['section']) && $_GET['section'] == $section['section_name']) ? 'selected' : '';
-                        echo "<option value='" . $section['section_name'] . "' $selected data-gradelevel='" . $section['grade_level'] . "'>" . $section['section_name'] . "</option>";
+                        // Check if this section is selected based on the URL parameter
+                        $selected = (isset($_GET['sectionID']) && $_GET['sectionID'] == $section['section_id']) ? 'selected' : '';
+                        echo "<option value='" . $section['section_id'] . "' $selected data-gradelevel='" . $section['grade_level'] . "'>" . $section['section_name'] . "</option>";
                     }
                     ?>
                 </select>
@@ -345,20 +361,13 @@ $connection->close();
 </script>
 <script>
     document.getElementById('sectionselect').addEventListener('change', function() {
-        const sectionName = this.value;
+
+        const sectionID = this.value;
         const gradeLevel = this.selectedOptions[0].getAttribute('data-gradelevel'); // Get grade level
 
-        window.location.href = "?section=" + sectionName + "&gradelevel=" + gradeLevel; // Append both parameters to the URL
+        window.location.href = "?sectionID=" + sectionID + "&gradelevel=" + gradeLevel; // Append both parameters to the URL
     });
 </script>
-
-<!-- <script>
-    // Handle the selection of section and fetch the details dynamically
-    document.getElementById('sectionselect').addEventListener('change', function() {
-        const sectionName = this.value;
-        window.location.href = "?section=" + sectionName;
-    });
-</script> -->
 
 
 <script>
