@@ -12,7 +12,6 @@
             <!-- Initial Items Menu -->
             <ul class="menu menu-horizontal px-1 font-medium hidden lg:flex">
             <li><a href="studentGrades.php">Grades</a></li>
-            <li><a href="studentSubjects.php">Subjects</a></li>
             <li><a href="studentSchedules.php">Schedules</a></li>
             <li><a href="studentNotification.php">Notifications</a></li>
             </ul>
@@ -37,7 +36,6 @@
                     tabindex="0"
                     class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                     <li><a href="studentGrades.php">Grades</a></li>
-                    <li><a href="studentSubjects.php">Subjects</a></li>
                     <li><a href="studentSchedules.php">Schedules</a></li>
                     <li><a href="studentNotification.php">Notifications</a></li>
                 </ul>
