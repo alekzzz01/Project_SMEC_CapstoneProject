@@ -1,15 +1,18 @@
 <?php
 session_start();
 
-// // Get the target page from the URL
-if (!isset($_GET['target'])) {
-    header("Location: login.php"); // Default page if no target is specified
-    exit();
+$target = isset($_GET['target']) ? $_GET['target'] : 'login.php';
+$teacher_id = isset($_GET['teacher_id']) ? $_GET['teacher_id'] : '';
+
+// If teacher_id exists, append it to the target URL
+if (!empty($teacher_id)) {
+    // Check if target already has parameters
+    if (strpos($target, '?') !== false) {
+        $target .= '&teacher_id=' . $teacher_id;
+    } else {
+        $target .= '?teacher_id=' . $teacher_id;
+    }
 }
-
-$target = $_GET['target']; // Get the target page from URL
-
-
 ?>
 
 <!DOCTYPE html>
