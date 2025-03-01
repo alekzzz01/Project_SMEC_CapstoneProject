@@ -20,7 +20,7 @@ $stmt->close();
 
 // Initialize filters with default values
 $school_year_filter = isset($_GET['school_year']) ? trim($_GET['school_year']) : '';
-$status_filter = isset($_GET['status']) ? trim($_GET['status']) : '';
+$type_filter = isset($_GET['type']) ? trim($_GET['type']) : '';
 
 // Base SQL query
 $sql = "
@@ -44,21 +44,24 @@ $sql = "
     LEFT JOIN school_year sy ON e.school_year_id = sy.school_year_id
     LEFT JOIN students s ON e.student_id = s.student_id
     LEFT JOIN sections sec ON e.section = sec.section_id
-    WHERE sy.status = 'Open'
+    WHERE sy.status = 'Open' and e.status = 'Enrolled'
 ";
 
 // Add filters to the query
 $conditions = [];
+
+if (!empty($type_filter)) {
+    $conditions[] = "e.type = '" . $connection->real_escape_string($type_filter) . "'";
+}
+
 if (!empty($school_year_filter)) {
     $conditions[] = "sy.school_year = '" . $connection->real_escape_string($school_year_filter) . "'";
 }
-if (!empty($status_filter)) {
-    $conditions[] = "e.status = '" . $connection->real_escape_string($status_filter) . "'";
-}
 
 if (!empty($conditions)) {
-    $sql .= ' AND ' . implode(' AND ', $conditions);
+    $sql .= " AND " . implode(" AND ", $conditions);
 }
+
 
 $sql .= " ORDER BY e.date_enrolled DESC";
 
@@ -203,8 +206,8 @@ $result = $connection->query($sql);
     <div>
 
 
-        <form method="GET" action="" class=" px-7 pt-7">
-            <div class="flex items-end justify-end gap-4">
+        <form method="GET" action="" class="pt-7">
+            <div class="flex items-end gap-4">
 
                 <div class="flex flex-col gap-1">
                     <label for="" class="text-sm">School Year</label>
@@ -226,33 +229,37 @@ $result = $connection->query($sql);
                     </select>
                 </div>
 
+
+                <!-- Type Filter -->
+
                 <div class="flex flex-col gap-1">
-                    <label for="" class="text-sm">Status</label>
-                    <select name="status" id="statusFilter" class="select select-bordered select-sm">
-                        <option value="" selected disabled>Choose Status</option>
+                    <label for="" class="text-sm">Type</label>
+                    <select name="type" id="statusFilter" class="select select-bordered select-sm">
+                        <option value="" selected disabled>Choose Type</option>
                         <option value="">All</option>
-                        <option value="Enrolled" <?php echo ($status_filter === 'Enrolled') ? 'selected' : ''; ?>>Enrolled</option>
-                        <option value="Pending" <?php echo ($status_filter === 'Pending') ? 'selected' : ''; ?>>Pending</option>
-                        <option value="Rejected" <?php echo ($status_filter === 'Rejected') ? 'selected' : ''; ?>>Rejected</option>
-                        <option value="Correction" <?php echo ($status_filter === 'Correction') ? 'selected' : ''; ?>>Needs Correction</option>
+                        <option value="Preschool" <?php echo ($type_filter === 'Preschool') ? 'selected' : ''; ?>>Preschool</option>
+                        <option value="Elementary" <?php echo ($type_filter === 'Elementary') ? 'selected' : ''; ?>>Elementary</option>
+                        <option value="JHS" <?php echo ($type_filter === 'JHS') ? 'selected' : ''; ?>>Junior High School</option>
+                        <option value="SHS" <?php echo ($type_filter === 'SHS') ? 'selected' : ''; ?>>Senior High School</option>
                     </select>
 
                 </div>
-                <!-- Status Filter -->
 
 
-            
-                <button type="submit" class="btn btn-sm btn-neutral">Filter</button>
-               
 
-               
+
+
+                <button type="submit" class="btn btn-sm bg-blue-500 text-white">Filter</button>
+
+
+
             </div>
 
 
 
         </form>
 
-        <div class="mt-7 px-5">
+        <div class="mt-7 p-7 bg-white rounded-2xl shadow">
             <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                 <thead class="border border-gray-300 text-sm bg-gray-100">
                     <tr>
@@ -370,23 +377,23 @@ $result = $connection->query($sql);
                         // },
 
                         // Print
-                    //     {
-                    //         extend: 'print',
-                    //         title: function() {
-                    //             var selectedSchoolYear = $('#schoolYearFilter').val();
-                    //             if (selectedSchoolYear) {
-                    //                 return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
-                    //             }
-                    //             return 'Sta. Marta Educational Inc. | Enrollment report';
-                    //         },
-                    //         messageBottom: function() {
-                    //             var schoolYear = $('#schoolYearFilter').val();
-                    //             var currentDate = new Date().toLocaleString();
-                    //             var userName = '<?php echo $user_name; ?>';
+                        //     {
+                        //         extend: 'print',
+                        //         title: function() {
+                        //             var selectedSchoolYear = $('#schoolYearFilter').val();
+                        //             if (selectedSchoolYear) {
+                        //                 return 'Sta. Marta Educational Inc. | Enrollment report of ' + selectedSchoolYear;
+                        //             }
+                        //             return 'Sta. Marta Educational Inc. | Enrollment report';
+                        //         },
+                        //         messageBottom: function() {
+                        //             var schoolYear = $('#schoolYearFilter').val();
+                        //             var currentDate = new Date().toLocaleString();
+                        //             var userName = '<?php echo $user_name; ?>';
 
-                    //             return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
-                    //         }
-                    //     }
+                        //             return 'Generated by: ' + userName + ' | School Year: ' + schoolYear + ' | Date: ' + currentDate;
+                        //         }
+                        //     }
                     ]
                 }
             }

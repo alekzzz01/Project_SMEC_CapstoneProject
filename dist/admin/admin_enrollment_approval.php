@@ -68,7 +68,7 @@ if ($result->num_rows > 0) {
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-6 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#fafbfc] h-full">
 
                 <div class="flex justify-between items-center">
 

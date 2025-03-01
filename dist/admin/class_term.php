@@ -178,7 +178,7 @@ if (isset($_POST['add_term'])) {
 
 
             <div class="border border-gray-300  bg-white mt-3.5  overflow-x-auto">
-                <h1 class="font-semibold p-5 bg-blue-50 rounded-t text-blue-600">List of Subjects</h1>
+                <h1 class="font-semibold p-5 bg-blue-50 rounded-t text-blue-600">List of Academic Year</h1>
                 
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 ">
