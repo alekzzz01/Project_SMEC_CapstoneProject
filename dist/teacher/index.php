@@ -6,7 +6,6 @@
     // Use the teacher_id from either the session or GET parameter
     $teacher_id = isset($_SESSION['teacher_id']) ? $_SESSION['teacher_id'] : 
                   (isset($_GET['teacher_id']) ? htmlspecialchars($_GET['teacher_id']) : '');
-    echo "Teacher ID: " . htmlspecialchars($teacher_id) . "<br>";
     ?>
 
     <!DOCTYPE html>
