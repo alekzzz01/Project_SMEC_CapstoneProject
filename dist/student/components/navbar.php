@@ -62,7 +62,6 @@
                     <span class="badge">New</span>
                 </a>
                 </li>
-                <li><a>Calendar</a></li>
                 <li><a href="./../../auth/logout.php">Logout</a></li>
             </ul>
             </div>
