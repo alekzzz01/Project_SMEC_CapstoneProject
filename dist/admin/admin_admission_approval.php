@@ -49,7 +49,7 @@ session_start();
         
         <?php include('./components/navbar.php'); ?>
 
-        <div class="p-6 bg-[#f2f5f8] h-full">
+        <div class="p-6 bg-[#fafbfc] h-full">
 
             
                 <h1 class="text-lg font-medium mb-1">Admission Approval</h1>

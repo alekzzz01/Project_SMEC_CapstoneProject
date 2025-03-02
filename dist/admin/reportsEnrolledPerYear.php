@@ -15,7 +15,7 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports & Analytics</title>
+    <title>Reports</title>
 
 
     <link rel="stylesheet" href="../../assets/css/styles.css">
@@ -34,7 +34,9 @@ if (!isset($_SESSION['user_id'])) {
 
     <html data-theme="light">
 
-    </html>
+
+    
+
 
 
 
@@ -57,22 +59,22 @@ if (!isset($_SESSION['user_id'])) {
             <div class="flex items-center justify-between">
 
 
-                <h1 class="text-lg font-medium ">📈 Analytics</h1>
+                <h1 class="text-lg font-medium ">📊 Student Enrollment by School Year</h1>
+
 
                 <div class="breadcrumbs text-sm">
                     <ul>
-                        <li><a>Dashboard</a></li>
-                        <li><a>Analytics</a></li>
+                        <li><a href="./">Dashboard</a></li>
+                        <li><a>Reports</a></li>
+                        <li><a>Enrolled per Year</a></li>
                     </ul>
                 </div>
 
 
             </div>
 
+            <?php include('./tables/enrollmentReportYear.php'); ?>
 
-            <div class="rounded-xl p-4 bg-white border border-gray-200 mt-3.5">
-                <?php include('./charts/totalEnrollmentLineChart.php'); ?>
-            </div>
 
 
 
@@ -90,18 +92,16 @@ if (!isset($_SESSION['user_id'])) {
 </html>
 
 <script>
+    $(document).ready(function() {
+        $('#toggleSidebar').on('click', function() {
+            $('#sidebar').toggleClass('-translate-x-full');
+        });
 
-$(document).ready(function() {
-  $('#toggleSidebar').on('click', function() {
-      $('#sidebar').toggleClass('-translate-x-full');
-  });
-
-   $('#closeSidebar').on('click', function() {
-      $('#sidebar').addClass('-translate-x-full');
-  });
+        $('#closeSidebar').on('click', function() {
+            $('#sidebar').addClass('-translate-x-full');
+        });
 
 
-  
-});
 
+    });
 </script>
