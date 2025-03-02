@@ -56,7 +56,7 @@
                 tabindex="0"
                 class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-5 w-52 p-4 shadow">
                 <li>
-                <a class="justify-between" href="profile.php">
+                <a href="profile.php?teacher_id=<?php echo htmlspecialchars($teacher_id); ?>">
                     Profile
                     <span class="badge">New</span>
                 </a>
