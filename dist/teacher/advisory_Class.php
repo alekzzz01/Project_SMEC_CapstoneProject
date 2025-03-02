@@ -78,7 +78,12 @@ $stmt->close();
 
     <div class="max-w-7xl mx-auto py-14 px-4 lg:px-12 h-full ">
 
-
+    <div class="breadcrumbs text-sm mb-3.5">
+        <ul>
+            <li><a href="./?teacher_id=<?php echo htmlspecialchars($teacher_id); ?>">Home</a></li>
+            <li>Advisory Class</li>
+        </ul>
+    </div>
 
     <?php if (!empty($section_info)): ?>
             <div class="rounded bg-teal-100 p-4 mb-7 space-y-2 shadow">
@@ -131,7 +136,7 @@ $stmt->close();
                                 echo "<td>" . htmlspecialchars($student['gender']) . "</td>";
                                 echo "<td>" . htmlspecialchars($student['contact_number']) . "</td>";
                                 echo "<td>
-                                     <a href='view_Student.php?student_id=" . htmlspecialchars($student['student_id']) . "' class='text-blue-500 hover:text-blue-700'>View</a>
+                                     <a href='view_Student.php?student_id=" . htmlspecialchars($student['student_id']) . "&teacher_id=" . htmlspecialchars($teacher_id) . "' class='text-blue-500 hover:text-blue-700'>View</a>
                                       </td>";
                                 echo "</tr>";
                             }

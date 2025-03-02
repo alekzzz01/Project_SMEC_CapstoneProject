@@ -5,6 +5,9 @@ include '../../config/db.php';
 // Get student_id from URL
 $student_id = isset($_GET['student_id']) ? $_GET['student_id'] : '';
 
+// Get teacher_id from URL
+$teacher_id = isset($_GET['teacher_id']) ? $_GET['teacher_id'] : '';
+
 // Get student information
 $student_info = [];
 $student_query = "SELECT s.*, se.section, sec.section_name, sec.grade_level, 
@@ -100,13 +103,12 @@ if (empty($student_info)) {
 
             <div class="col-span-2">
 
-                <div class="breadcrumbs text-sm mb-3.5">
-                    <ul>
-
-                        <li><a href="advisory_Class.php">Advisory Class</a></li>
-                        <li>View Student</li>
-                    </ul>
-                </div>
+            <div class="breadcrumbs text-sm mb-3.5">
+                <ul>
+                    <li><a href="advisory_Class.php?teacher_id=<?php echo htmlspecialchars($teacher_id); ?>">Advisory Class</a></li>
+                    <li>View Student</li>
+                </ul>
+            </div>
 
                 <h1 class="text-lg font-medium mb-3.5">Report on Learning Progress and Achievement</h1>
 
@@ -116,8 +118,8 @@ if (empty($student_info)) {
         <h2 class="text-teal-900 font-semibold text-xl">GRADE: <?php echo htmlspecialchars($student_info['grade_level']); ?> - <?php echo htmlspecialchars($student_info['section_name']); ?></h2>
         <h1 class="font-extrabold text-4xl text-teal-900">
             <?php echo htmlspecialchars($student_info['first_name'] . ' ' . 
-                   ($student_info['middle_initial'] ? $student_info['middle_initial'] . '. ' : '') . 
-                   $student_info['last_name']); ?>
+                ($student_info['middle_initial'] ? $student_info['middle_initial'] . ' ' : '') . 
+                $student_info['last_name']); ?>
         </h1>
         <p class="text-teal-800 text-sm italic">
             Adviser: <?php echo htmlspecialchars($student_info['teacher_fname'] . ' ' . $student_info['teacher_lname']); ?>
