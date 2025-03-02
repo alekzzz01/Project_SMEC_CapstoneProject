@@ -179,7 +179,7 @@ $html = "
     <table class='student-info'>
         <tr>
             <td><strong>Name:</strong> $name</td>
-            <td><strong>Academic Year:</strong> $academic_year</td>
+            <td><strong>Academic Year:</strong> $academic_year</td> 
         </tr>
         <tr>
             <td><strong>Grade Level:</strong> $gradeLevel</td>

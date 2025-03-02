@@ -1,3 +1,69 @@
+<?php
+session_start();
+
+// Get teacher_id from session or URL parameter
+if (isset($_GET['teacher_id'])) {
+    $_SESSION['teacher_id'] = $_GET['teacher_id'];
+}
+
+$teacher_id = isset($_SESSION['teacher_id']) ? $_SESSION['teacher_id'] : 
+              (isset($_GET['teacher_id']) ? htmlspecialchars($_GET['teacher_id']) : '');
+
+// If no teacher_id, redirect to login
+if (empty($teacher_id)) {
+    header("Location: ../login.php");
+    exit;
+}
+
+// Database connection
+include '../../config/db.php'; // Adjust path as needed
+
+// Fetch teacher information
+// Fetch teacher information with email from users table
+$sql = "SELECT t.teacher_id, t.user_id, t.First_Name, t.Last_Name, t.Date_of_Birth, t.gender, t.Contact_Number, 
+               u.email, t.region, t.province, t.city, t.barangay, t.zip_code
+        FROM teachers t
+        JOIN users u ON t.user_id = u.user_id
+        WHERE t.teacher_id = ?";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("i", $teacher_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $teacher_info = $result->fetch_assoc();
+} else {
+    // Handle case when teacher not found
+    header("Location: ../login.php");
+    exit;
+}
+
+// Handle form submission for basic info update
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
+    $email = $_POST['email'];
+    
+    // Basic validation
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Invalid email format";
+    } else {
+        // Update the email in database
+        $update_sql = "UPDATE teachers SET email = ? WHERE teacher_id = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param("si", $email, $teacher_id);
+        
+        if ($update_stmt->execute()) {
+            $success_message = "Profile updated successfully";
+            // Refresh teacher info
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $teacher_info = $result->fetch_assoc();
+        } else {
+            $error_message = "Error updating profile: " . $conn->error;
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -124,63 +190,60 @@
 
                         </div>
 
-                        <span class="inline-flex items-center text-sm rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 ">Teacher Grade level 1</span>
+                    
 
                     </div>
 
 
             
-                   <form action="" class="space-y-6">
+                   <form method="POST" action="" class="space-y-6">
 
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 w-full">
                             
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Name</label>
-                                        <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
-                                    
-                                        </div>
-                                    </div>
+                        <div>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Name</label>
+                            <div class="relative flex items-center">
+                            <input name="name" type="text" value="<?php echo htmlspecialchars($teacher_info['First_Name'] . ' ' . $teacher_info['Last_Name']); ?>" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
+                            </div>
+                        </div>
 
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">LRN</label>
-                                        <div class="relative flex items-center">
-                                        <input name="name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly/>
-                                    
-                                        </div>
-                                    </div>
+                        <div>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Email Address</label>
+                            <div class="relative flex items-center">
+                            <input name="email" type="text" value="<?php echo htmlspecialchars($teacher_info['email']); ?>" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
+                            </div>
+                        </div>
 
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Email Address</label>
-                                        <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
-                                    
-                                        </div>
-                                    </div>
+                        <div>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Gender</label>
+                            <div class="relative flex items-center">
+                            <input name="gender" type="text" value="<?php echo htmlspecialchars($teacher_info['gender']); ?>" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
+                            </div>
+                        </div>
 
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Gender</label>
-                                        <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
-                                    
-                                        </div>
-                                    </div>
+                        <div>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Date of Birth</label>
+                            <div class="relative flex items-center">
+                            <input name="dob" type="date" value="<?php echo isset($teacher_info['Date_of_Birth']) ? htmlspecialchars($teacher_info['Date_of_Birth']) : ''; ?>" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
+                            </div>
+                        </div>
 
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Date of Birth</label>
-                                        <div class="relative flex items-center">
-                                        <input name="email" type="date" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
-                                    
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label class="text-gray-800 text-sm font-medium mb-2 block">Address</label>
-                                        <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
-                                    
-                                        </div>
-                                    </div>
+                        <div>
+                            <label class="text-gray-800 text-sm font-medium mb-2 block">Address</label>
+                            <div class="relative flex items-center">
+                            <input name="address" type="text" 
+                                value="<?php 
+                                        $address_parts = [];
+                                        if (!empty($teacher_info['region'])) $address_parts[] = $teacher_info['region'];
+                                        if (!empty($teacher_info['province'])) $address_parts[] = $teacher_info['province'];
+                                        if (!empty($teacher_info['city'])) $address_parts[] = $teacher_info['city'];
+                                        if (!empty($teacher_info['barangay'])) $address_parts[] = $teacher_info['barangay'];
+                                        if (!empty($teacher_info['zip_code'])) $address_parts[] = $teacher_info['zip_code'];
+                                        echo htmlspecialchars(implode(', ', $address_parts));
+                                ?>" 
+                                class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" readonly />
+                            </div>
+                        </div>
 
 
                                     
@@ -190,8 +253,8 @@
 
 
 
-                        <div class=" flex items-center justify-end">
-                            <button class=" py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2 focus:ring-offset-teal-50 transition-colors group">Update</button>
+                        <div class="flex items-center justify-end">
+                            <button type="submit" name="update_info" class="py-3 px-14 text-sm rounded-md text-white font-medium tracking-wide bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2 focus:ring-offset-teal-50 transition-colors group">Update</button>
                         </div>
 
                     </form>
@@ -316,7 +379,7 @@
                                     <div>
                                         <label class="text-gray-800 text-sm font-medium mb-2 block">Confirm new Password</label>
                                         <div class="relative flex items-center">
-                                        <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
+                                        <input name="email" type="text" value="<?php echo isset($teacher_info['email']) ? htmlspecialchars($teacher_info['email']) : ''; ?>" class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-teal-600" />
                                     
                                         </div>
                                     </div>
