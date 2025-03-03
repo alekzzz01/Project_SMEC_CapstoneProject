@@ -267,13 +267,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_grades'])) {
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <button type="button" class="flex items-center justify-center text-teal-700 hover:text-white border border-teal-700 hover:bg-teal-800 focus:ring-4 focus:ring-teal-300 font-medium rounded-md text-sm px-4 py-2 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-3.5 w-3.5 mr-2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
-                            </svg>
-                            Export
-                        </button>
-
                         <?php
                         // Check if there are any students who haven't been graded for the current quarter
                         $quarter_field = 'grade' . $selected_quarter;
@@ -365,6 +358,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_grades'])) {
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">4th Quarter</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Final Grade</th>
                             <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Remark</th>
+                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -426,13 +420,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_grades'])) {
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium <?php echo $student_record['remark'] == 'Pass' ? 'text-green-600' : ($student_record['remark'] == 'Fail' ? 'text-red-600' : 'text-gray-500'); ?>">
                                     <?php echo $student_record['remark']; ?>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                    <a href="./functions/generateGradesReport.php?section=<?= urlencode($section) ?>&teacher_id=<?= urlencode($teacher_id) ?>&section_id=<?= urlencode($section_id) ?>&student_id=<?= urlencode($student_id) ?>" class="text-blue-600 hover:text-blue-800 font-medium">
+                                        View
+                                    </a>
+                                </td>
                             </tr>
                         <?php
                             }
                         } else {
                         ?>
                             <tr>
-                                <td colspan="10" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No students found for this section.</td>
+                                <td colspan="11" class="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">No students found for this section.</td>
                             </tr>
                         <?php
                         }
