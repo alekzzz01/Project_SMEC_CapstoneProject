@@ -1,9 +1,13 @@
 <?php
 session_start();
 
+require_once '../../auth/session.php';
+
+
+// Check if user is logged in and otp is verified
 if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
     // Redirect to OTP page if OTP hasn't been verified yet
-    header('Location: otpAuth.php');
+    header('Location: ../../auth/otpAuth.php');
     exit();
 }
 

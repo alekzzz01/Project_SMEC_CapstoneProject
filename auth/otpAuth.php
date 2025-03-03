@@ -21,7 +21,6 @@ if (!isset($_SESSION['otp_email'])) {
 }
 
 
-
 if (isset($_POST['verifyOtp'])) {
     // Get OTP as an array
     $otpArray = $_POST['otp']; // This will be an array like ['0' => '1', '1' => '2', ...]
@@ -105,7 +104,35 @@ if (isset($_POST['verifyOtp'])) {
                 $log_stmt->bind_param("i", $user['user_id']);
                 $log_stmt->execute();
 
-                // Send alert (Optional: Email notification to user)
+                 // Send alert (Optional: Email notification to user)
+                $email = $_SESSION['otp_email']; // Get the email from session
+                $name = $_SESSION['otp_name']; // Get the name from session
+               
+                try {
+                    $mail = new PHPMailer(true);
+                    $mail->isSMTP();
+                    $mail->Host = 'smtp.gmail.com';  // Gmail SMTP server
+                    $mail->SMTPAuth = true;
+                    $mail->Username = 'sweetmiyagi@gmail.com';  
+                    $mail->Password = 'euuy nadj ibmd acau'; 
+                    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS
+                    $mail->addAddress($email); 
+
+                    ob_start();
+                    include 'newDeviceEmail_Template.php';  // Include the template
+                    $emailBody = ob_get_clean();  // Get the output and store it in a variable
+
+                    // Content
+                    $mail->isHTML(true);
+                    $mail->Subject = 'New Device Login Alert';
+                    $mail->Body    = $emailBody;
+
+                    $mail->send();
+
+                } catch (Exception $e) {
+                    $response = 'error'; // Error occurred
+                }
+
             }
 
             // Log the login event in audit logs

@@ -144,6 +144,7 @@ $connection->close();
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Email</th>
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Role</th>
               <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Created At</th>
+              <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Actions</th>
             </tr>
           </thead>
 
@@ -164,18 +165,18 @@ $connection->close();
                 echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['role']) . '</td>';
                 echo '<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">' . htmlspecialchars($row['created_at']) . '</td>';
 
-                //   echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                //   <a href="campusEditEvent.php?event_id=' . $row['event_id'] . '" 
-                //     type="button" 
-                //     class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
-                //     Edit
-                //   </a>
-                //   <button onclick="deleteEvent(' . $row['event_id'] . ')" 
-                //           type="button" 
-                //           class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">
-                //           Delete
-                //   </button>
-                // </td>';
+                echo '<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <a href="usersEdit.php?user_id=' . $row['user_id'] . '" 
+                    type="button" 
+                    class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-none focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+                    Edit
+                  </a>
+                  <button onclick="deleteEvent(' . $row['user_id'] . ')" 
+                          type="button" 
+                          class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-red-600 hover:text-red-800 focus:outline-none focus:text-red-800 disabled:opacity-50 disabled:pointer-events-none">
+                          Delete
+                  </button>
+                </td>';
 
 
                 echo '</tr>';
@@ -214,6 +215,101 @@ $connection->close();
 
 
   </div>
+
+
+  <dialog id="edit_user" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Edit user</h3>
+      <form action="" class="py-4 grid grid-cols-2 gap-3">
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">First Name</label>
+          <div class="relative flex items-center">
+            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter First Name" />
+
+          </div>
+        </div>
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">Last Name</label>
+          <div class="relative flex items-center">
+            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Last Name" />
+
+          </div>
+        </div>
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">Email</label>
+          <div class="relative flex items-center">
+            <input name="email" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter email" />
+
+          </div>
+        </div>
+
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">Role</label>
+          <div class="relative flex items-center">
+            <select name="gender" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+              <option value="" disabled selected>Select role</option>
+              <option value="Admin">Admin</option>
+              <option value="Teacher">Teacher</option>
+              <option value="Student">Student</option>
+
+            </select>
+
+          </div>
+        </div>
+
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">Current Password</label>
+          <div class="relative flex items-center">
+            <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
+            <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
+              <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
+            </button>
+          </div>
+        </div>
+
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">New Password</label>
+          <div class="relative flex items-center">
+            <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
+            <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
+              <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-gray-800 text-sm mb-2 block">Confirm New Password</label>
+          <div class="relative flex items-center">
+            <input id="password" name="password" type="password" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter password" />
+            <button type="button" onclick="togglePassword('password', 'togglePasswordIcon')" class="absolute inset-y-0 right-4 flex items-center">
+              <i id="togglePasswordIcon" class='bx bx-show w-4 h-4 text-gray-400'></i>
+            </button>
+          </div>
+        </div>
+
+
+
+      </form>
+
+
+
+
+      <div class="modal-action">
+        <form method="dialog">
+
+          <button class="btn">Close</button>
+          <button class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Edit User</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
 
 
 
