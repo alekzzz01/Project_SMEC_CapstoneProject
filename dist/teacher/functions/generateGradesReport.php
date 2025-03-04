@@ -90,7 +90,7 @@ if (!empty($student_id)) {
             FROM students s
             JOIN student_enrollment se ON s.student_id = se.student_id
             JOIN sections sec ON se.section = sec.section_id
-            JOIN schedules sch ON sec.section_name = sch.section
+            JOIN schedules sch ON sec.section_id = sch.section_id
             LEFT JOIN subjects sub ON sch.subject_id = sub.subject_id
             LEFT JOIN student_grades sg ON s.student_id = sg.student_id AND sub.subject_id = sg.subject_id AND sg.section_id = ?
             WHERE sec.section_name = ? AND se.status = 'Enrolled' AND s.student_id = ?

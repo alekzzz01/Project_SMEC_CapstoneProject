@@ -327,46 +327,46 @@ $teacher_info = ($teacher_result->num_rows > 0) ? $teacher_result->fetch_assoc()
                 </div>
 
                 <?php
-// Fetch all classes for this teacher
-$classes_query = "SELECT 
-                s.schedule_code,
-                s.subject_id,
-                sub.subject_name,
-                s.section,
-                COUNT(se.enrollment_id) as student_count,
-                s.time_in,
-                s.time_out,
-                CONCAT(
-                    FLOOR(TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in))/3600), 
-                    'hr ', 
-                    FLOOR((TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in)) % 3600) / 60), 
-                    'min'
-                ) as duration,
-                s.day,
-                CASE 
-                    WHEN sec.adviser_id = s.teacher_id THEN 1
-                    ELSE 0
-                END as is_advisory
-            FROM 
-                schedules s
-            LEFT JOIN 
-                subjects sub ON s.subject_id = sub.subject_id
-            LEFT JOIN 
-                student_enrollment se ON s.subject_id = se.subjectEnrolled
-            LEFT JOIN
-                sections sec ON s.section = sec.section_name
-            WHERE 
-                s.teacher_id = ?
-            GROUP BY 
-                s.schedule_code, s.subject_id, sub.subject_name, s.section, s.time_in, s.time_out, s.day, is_advisory
-            ORDER BY 
-                sub.subject_name ASC";
+                    // Fetch all classes for this teacher
+                    $classes_query = "SELECT 
+                                    s.schedule_code,
+                                    s.subject_id,
+                                    sub.subject_name,
+                                    sec.section_name,
+                                    COUNT(se.enrollment_id) as student_count,
+                                    s.time_in,
+                                    s.time_out,
+                                    CONCAT(
+                                        FLOOR(TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in))/3600), 
+                                        'hr ', 
+                                        FLOOR((TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in)) % 3600) / 60), 
+                                        'min'
+                                    ) as duration,
+                                    s.day,
+                                    CASE 
+                                        WHEN sec.adviser_id = s.teacher_id THEN 1
+                                        ELSE 0
+                                    END as is_advisory
+                                FROM 
+                                    schedules s
+                                LEFT JOIN 
+                                    subjects sub ON s.subject_id = sub.subject_id
+                                LEFT JOIN 
+                                    student_enrollment se ON s.subject_id = se.subjectEnrolled
+                                LEFT JOIN
+                                    sections sec ON s.section_id = sec.section_id
+                                WHERE 
+                                    s.teacher_id = ?
+                                GROUP BY 
+                                    s.schedule_code, s.subject_id, sub.subject_name, s.section_id, s.time_in, s.time_out, s.day, is_advisory
+                                ORDER BY 
+                                    sub.subject_name ASC";
 
-$classes_stmt = $connection->prepare($classes_query);
-$classes_stmt->bind_param("i", $teacher_id);
-$classes_stmt->execute();
-$classes_result = $classes_stmt->get_result();
-?>
+                    $classes_stmt = $connection->prepare($classes_query);
+                    $classes_stmt->bind_param("i", $teacher_id);
+                    $classes_stmt->execute();
+                    $classes_result = $classes_stmt->get_result();
+                    ?>
 
 <!-- Replace the existing table with this dynamically populated one -->
 <table class="min-w-full divide-y divide-gray-200 bg-white p-4 rounded-2xl shadow border-gray-300">
@@ -389,7 +389,7 @@ $classes_result = $classes_stmt->get_result();
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['schedule_code']); ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['student_count']); ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['subject_name']); ?></td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['section']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['section_name']); ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['day']); ?></td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
                         <?php echo htmlspecialchars(date('g:i A', strtotime($class['time_in']))); ?> - 

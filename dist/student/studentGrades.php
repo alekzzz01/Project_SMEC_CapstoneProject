@@ -1,77 +1,48 @@
 <?php
+
 session_start();
 
-include '../../config/db.php';
+require_once '../../auth/session.php';
 
-// Ensure the session has user_id
-if (!isset($_SESSION['user_id'])) {
-    die('User ID is not set in the session.');
+
+// Check if user is logged in and otp is verified
+if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
+    // Redirect to OTP page if OTP hasn't been verified yet
+    header('Location: ../../auth/otpAuth.php');
+    exit();
 }
+
+include '../../config/db.php';
 
 $user = $_SESSION['user_id'];
 
 
-$selected_grade_level = isset($_GET['grade_level']) ? strtolower(str_replace(' ', '-', $_GET['grade_level'])) : 'grade-11';
-
-// Initialize default values to avoid undefined variable errors
-$studentDetails = array_fill_keys(['student_id', 'first_name', 'last_name', 'gender', 'dob', 'contact_number', 'grade_level', 'section', 'school_year'], '');
-$grades = [];
-
-// SQL query
-$sql = "
-    SELECT s.student_id, s.user_id, s.student_number, s.first_name, s.last_name, s.date_of_birth, s.gender, s.contact_number,
-           g.grade_level,  g.school_year, sec.section_name,
-           sub.subject_name, g.grade, g.Quarter
-    FROM students s
-    INNER JOIN grades g ON s.student_id = g.student_id
-    INNER JOIN subjects sub ON g.subject_id = sub.subject_id
-    INNER JOIN sections sec ON sec.section_id = g.section_id
-    WHERE s.user_id = ?;
-";
-
-// Prepare statement
+// fetch grades and blob data
+$sql = "SELECT sec.grade_level, sy.school_year, sgr.pdf_blob, sgr.report_date, sgr.report_id
+        FROM student_grade_reports sgr 
+        LEFT JOIN sections sec ON sec.section_id = sgr.section_id
+        LEFT JOIN school_year sy ON sy.school_year_id = sgr.school_year_id
+        WHERE student_id = (SELECT student_id FROM students WHERE user_id = ?)";
 $stmt = $connection->prepare($sql);
-if ($stmt === false) {
-    die('Error preparing statement: ' . $connection->error);
-}
-
-// Bind parameters
 $stmt->bind_param("i", $user);
-
-// Execute statement
-if (!$stmt->execute()) {
-    die('Query execution failed: ' . $stmt->error);
-}
-
-// Get results
+$stmt->execute();
 $result = $stmt->get_result();
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $studentDetails['student_id'] = $row["student_id"];
-        $studentDetails['first_name'] = $row["first_name"];
-        $studentDetails['last_name'] = $row["last_name"];
-        $studentDetails['gender'] = $row["gender"];
-        $studentDetails['dob'] = $row["date_of_birth"];
-        $studentDetails['contact_number'] = $row["contact_number"];
-        $studentDetails['grade_level'] = $row["grade_level"];
-        $studentDetails['section_name'] = $row["section_name"];
-        $studentDetails['school_year'] = $row["school_year"];
 
-        $grades[] = $row; // Collect grade data
-    }
+$grades = [];
+while ($row = $result->fetch_assoc()) {
+    $grades[] = $row;
 }
-
-// print result 
 
 // echo '<pre>';
 // print_r($grades);
 // echo '</pre>';
 
-// Close statement and connection
-$stmt->close();
-$connection->close();
-?>
 
+
+
+
+
+?>
 
 
 
@@ -243,29 +214,30 @@ $connection->close();
 
 
             <div>
-                <table class="min-w-full divide-y divide-gray-200 ">
+                <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">YEAR/SEMESTER</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Grade</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Quarter/Semester</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Status</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Download</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">2021-2022</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Grade 11</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">1st Quarter</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">New</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="#">View PDF</a></td>
-
-                        </tr>
+                        <?php foreach ($grades as $grade): ?>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($grade['school_year']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($grade['grade_level']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">New</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                    <a href="./functions/generate_Report.php?id=<?=urlencode($grade['report_id']) ?>" target="_blank" class="text-blue-600 hover:underline">View PDF</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
-
                 </table>
             </div>
+
 
 
         </div>
