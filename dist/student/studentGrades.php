@@ -1,4 +1,48 @@
+<?php
 
+session_start();
+
+require_once '../../auth/session.php';
+
+
+// Check if user is logged in and otp is verified
+if (!isset($_SESSION['otp_verified']) || !$_SESSION['otp_verified']) {
+    // Redirect to OTP page if OTP hasn't been verified yet
+    header('Location: ../../auth/otpAuth.php');
+    exit();
+}
+
+include '../../config/db.php';
+
+$user = $_SESSION['user_id'];
+
+
+// fetch grades and blob data
+$sql = "SELECT sec.grade_level, sy.school_year, sgr.pdf_blob, sgr.report_date, sgr.report_id
+        FROM student_grade_reports sgr 
+        LEFT JOIN sections sec ON sec.section_id = sgr.section_id
+        LEFT JOIN school_year sy ON sy.school_year_id = sgr.school_year_id
+        WHERE student_id = (SELECT student_id FROM students WHERE user_id = ?)";
+$stmt = $connection->prepare($sql);
+$stmt->bind_param("i", $user);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$grades = [];
+while ($row = $result->fetch_assoc()) {
+    $grades[] = $row;
+}
+
+// echo '<pre>';
+// print_r($grades);
+// echo '</pre>';
+
+
+
+
+
+
+?>
 
 
 
@@ -170,29 +214,30 @@
 
 
             <div>
-                <table class="min-w-full divide-y divide-gray-200 ">
+                <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">YEAR/SEMESTER</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Grade</th>
-                            <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Quarter/Semester</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Status</th>
                             <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-700 uppercase">Download</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">2021-2022</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Grade 11</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">1st Quarter</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">New</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><a href="#">View PDF</a></td>
-
-                        </tr>
+                        <?php foreach ($grades as $grade): ?>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($grade['school_year']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?= htmlspecialchars($grade['grade_level']) ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">New</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                                    <a href="./functions/generate_Report.php?id=<?=urlencode($grade['report_id']) ?>" target="_blank" class="text-blue-600 hover:underline">View PDF</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
-
                 </table>
             </div>
+
 
 
         </div>
