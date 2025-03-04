@@ -40,9 +40,11 @@ $class_result = $class_stmt->get_result();
 $class_count = ($class_result->num_rows > 0) ? $class_result->fetch_assoc()['class_count'] : 0;
 
 // Fetch student count for this teacher's classes
-$student_query = "SELECT SUM(num_students) as student_count 
-                  FROM sections
-                  WHERE adviser_id = ?";
+$student_query = "SELECT COUNT(enrollment_id) as student_count 
+                 FROM student_enrollment
+                 JOIN schedules ON student_enrollment.subjectEnrolled = schedules.subject_id
+                 WHERE schedules.teacher_id = ?";
+
 $student_stmt = $connection->prepare($student_query);
 $student_stmt->bind_param("i", $teacher_id);
 $student_stmt->execute();
@@ -324,31 +326,92 @@ $teacher_info = ($teacher_result->num_rows > 0) ? $teacher_result->fetch_assoc()
 
                 </div>
 
-                <table class="min-w-full divide-y divide-gray-200 bg-white p-4 rounded-2xl shadow border-gray-300">
+                <?php
+// Fetch all classes for this teacher
+$classes_query = "SELECT 
+                s.schedule_code,
+                s.subject_id,
+                sub.subject_name,
+                s.section,
+                COUNT(se.enrollment_id) as student_count,
+                s.time_in,
+                s.time_out,
+                CONCAT(
+                    FLOOR(TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in))/3600), 
+                    'hr ', 
+                    FLOOR((TIME_TO_SEC(TIMEDIFF(s.time_out, s.time_in)) % 3600) / 60), 
+                    'min'
+                ) as duration,
+                s.day,
+                CASE 
+                    WHEN sec.adviser_id = s.teacher_id THEN 1
+                    ELSE 0
+                END as is_advisory
+            FROM 
+                schedules s
+            LEFT JOIN 
+                subjects sub ON s.subject_id = sub.subject_id
+            LEFT JOIN 
+                student_enrollment se ON s.subject_id = se.subjectEnrolled
+            LEFT JOIN
+                sections sec ON s.section = sec.section_name
+            WHERE 
+                s.teacher_id = ?
+            GROUP BY 
+                s.schedule_code, s.subject_id, sub.subject_name, s.section, s.time_in, s.time_out, s.day, is_advisory
+            ORDER BY 
+                sub.subject_name ASC";
 
-                    <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Class</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Students</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Subject</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Section</th>
-                            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Duration</th>
-                        </tr>
-                    </thead>
+$classes_stmt = $connection->prepare($classes_query);
+$classes_stmt->bind_param("i", $teacher_id);
+$classes_stmt->execute();
+$classes_result = $classes_stmt->get_result();
+?>
 
-                    <tbody class="divide-y divide-gray-200">
-
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">UI/UX</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">30</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Design</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">Section 1</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">1hr</td>
-                        </tr>
-
-                    </tbody>
-
-                </table>
+<!-- Replace the existing table with this dynamically populated one -->
+<table class="min-w-full divide-y divide-gray-200 bg-white p-4 rounded-2xl shadow border-gray-300">
+    <thead>
+        <tr>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Class</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Students</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Subject</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Section</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Day</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Schedule</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Duration</th>
+            <th class="px-6 py-3 text-start text-xs font-medium text-gray-500">Advisory Class</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+        <?php if ($classes_result->num_rows > 0): ?>
+            <?php while ($class = $classes_result->fetch_assoc()): ?>
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['schedule_code']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['student_count']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['subject_name']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['section']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['day']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">
+                        <?php echo htmlspecialchars(date('g:i A', strtotime($class['time_in']))); ?> - 
+                        <?php echo htmlspecialchars(date('g:i A', strtotime($class['time_out']))); ?>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800"><?php echo htmlspecialchars($class['duration']); ?></td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
+                        <?php if ($class['is_advisory'] == 1): ?>
+                            <span class="text-green-600">✓</span>
+                        <?php else: ?>
+                            <span class="text-red-600">✗</span>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="8" class="px-6 py-4 text-center text-sm text-gray-500">No classes found</td>
+            </tr>
+        <?php endif; ?>
+    </tbody>
+</table>
 
 
             </div>

@@ -347,7 +347,7 @@ if (empty($student_info)) {
             <div class="relative flex items-center">
                 <input name="full-name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md bg-teal-50" readonly 
                        value="<?php echo htmlspecialchars($student_info['first_name'] . ' ' . 
-                                    ($student_info['middle_initial'] ? $student_info['middle_initial'] . '. ' : '') . 
+                                    ($student_info['middle_initial'] ? $student_info['middle_initial'] . ' ' : '') . 
                                     $student_info['last_name']); ?>" />
             </div>
         </div>
