@@ -6,6 +6,7 @@ $section = isset($_GET['section']) ? $_GET['section'] : '';
 $teacher_id = isset($_POST['teacher_id']) ? $_POST['teacher_id'] : (isset($_GET['teacher_id']) ? $_GET['teacher_id'] : '');
 $section_id = isset($_GET['section_id']) ? $_GET['section_id'] : '';
 $selected_quarter = isset($_POST['selected_quarter']) ? $_POST['selected_quarter'] : (isset($_GET['quarter']) ? $_GET['quarter'] : '1');
+$subject_id = isset($_GET['subject_id']) ? $_GET['subject_id'] : '';
 
 if (empty($section_id) && !empty($section)) {
     $section_id_query = "SELECT section_id FROM sections WHERE section_name = ?";
@@ -29,14 +30,14 @@ $query = "
     SELECT sec.section_name, sec.grade_level, sub.subject_name, sub.subject_id, 
            t.first_name, t.last_name
     FROM sections sec
-    LEFT JOIN schedules sch ON sec.section_name = sch.section  
+    LEFT JOIN schedules sch ON sec.section_id = sch.section_id  
     LEFT JOIN subjects sub ON sch.subject_id = sub.subject_id
     LEFT JOIN teachers t ON sec.adviser_id = t.teacher_id
-    WHERE sec.section_name = ? AND sec.adviser_id = ?
+    WHERE sec.section_name = ? AND sec.adviser_id = ? AND sub.subject_id = ?
 ";
 
 $stmt = $connection->prepare($query);
-$stmt->bind_param("si", $section, $teacher_id);
+$stmt->bind_param("sii", $section, $teacher_id, $subject_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -81,13 +82,13 @@ $student_query = "
     FROM student_enrollment se
     LEFT JOIN students s ON se.student_id = s.student_id
     LEFT JOIN sections sec ON se.section = sec.section_id
-    LEFT JOIN schedules sch ON sec.section_name = sch.section
+    LEFT JOIN schedules sch ON sec.section_id = sch.section_id
     LEFT JOIN subjects sub ON sch.subject_id = sub.subject_id
-    WHERE sec.section_name = ? AND sec.adviser_id = ?
+    WHERE sec.section_name = ? AND sec.adviser_id = ? AND sub.subject_id = ?
 ";
 
 $student_stmt = $connection->prepare($student_query);
-$student_stmt->bind_param("si", $section, $teacher_id);
+$student_stmt->bind_param("sii", $section, $teacher_id, $subject_id);
 $student_stmt->execute();
 $student_result = $student_stmt->get_result();
 
@@ -196,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_grades'])) {
     }
     
     // Redirect to avoid form resubmission
-    header("Location: encodeGrades.php?section=" . urlencode($section) . "&teacher_id=" . urlencode($teacher_id) . "&section_id=" . urlencode($section_id) . "&quarter=" . urlencode($quarter));
+    header("Location: encodeGrades.php?section=" . urlencode($section) . "&teacher_id=" . urlencode($teacher_id) . "&section_id=" . urlencode($section_id) . "&quarter=" . urlencode($quarter) . "&subject_id=" . urlencode($subject_id));
     exit();
 }
 ?>
@@ -334,7 +335,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit_grades'])) {
                             <?php
                                 }
                             } else {
-                                echo "<tr><td colspan='5' class='text-center px-6 py-4 text-gray-500'>All students have already been graded for the " . $selected_quarter . "st Quarter.</td></tr>";
+                                echo "<tr><td colspan='5' class='text-center px-6 py-4 text-gray-500'>All students have already been graded for the " . $selected_quarter . "Quarter.</td></tr>";
                             }
                             ?>
                         </tbody>
