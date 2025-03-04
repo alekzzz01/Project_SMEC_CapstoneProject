@@ -1,4 +1,8 @@
 <?php
+
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+
 session_start();
 
 include '../../config/db.php';
@@ -13,7 +17,16 @@ $customization = $result->fetch_assoc();
 
 
 
-if (isset($_POST['submit'])) {
+// if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//     echo "<pre>";
+//     print_r($_POST);
+//     print_r($_FILES);
+//     echo "</pre>";
+//     exit;
+// }
+
+
+if (isset($_POST['schoolInfo'])) {
     $school_name = $_POST['school-name'];
     $brand_color = $_POST['brand-color'];
 
@@ -172,10 +185,10 @@ if (isset($_POST['removeLogo'])) {
                 </div>
             </div>
 
-            <form class="my-7 grid grid-cols-1 lg:grid-cols-2 gap-4 " method="POST" enctype="multipart/form-data">
+            <div class="my-7 grid grid-cols-1 lg:grid-cols-2 gap-4 ">
 
 
-                <div class="bg-white rounded-md border border-gray-200 p-5 space-y-4">
+                <form method="POST" enctype="multipart/form-data" class="bg-white rounded-md border border-gray-200 p-5 space-y-4">
 
 
                     <p class="font-medium">School Information</p>
@@ -200,7 +213,7 @@ if (isset($_POST['removeLogo'])) {
 
 
                     <div>
-                        <label class="text-sm mb-2 block text-base-content/70">School Name</label>
+                        <label class="text-sm mb-2 block text-base-content/70">Brand Color</label>
 
                         <!-- <input name="school-logo" type="color" class="h-12 text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" id="b" placeholder="# Hex code" /> -->
                         <input
@@ -220,11 +233,15 @@ if (isset($_POST['removeLogo'])) {
                     </div>
 
 
+                    <div>
+                        <button type="submit" name="schoolInfo" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Changes</button>
+
+
+                    </div>
 
 
 
-
-                </div>
+                </form>
 
 
 
@@ -263,14 +280,7 @@ if (isset($_POST['removeLogo'])) {
 
 
 
-
-                <div class="modal-action">
-                    <button type="submit" name="submit" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Changes</button>
-                </div>
-
-
-
-            </form>
+            </div>
 
 
         </div>
@@ -291,18 +301,16 @@ if (isset($_POST['removeLogo'])) {
 </script>
 
 <script>
+    $(document).ready(function() {
+        $('#toggleSidebar').on('click', function() {
+            $('#sidebar').toggleClass('-translate-x-full');
+        });
 
-$(document).ready(function() {
-  $('#toggleSidebar').on('click', function() {
-      $('#sidebar').toggleClass('-translate-x-full');
-  });
-
-   $('#closeSidebar').on('click', function() {
-      $('#sidebar').addClass('-translate-x-full');
-  });
+        $('#closeSidebar').on('click', function() {
+            $('#sidebar').addClass('-translate-x-full');
+        });
 
 
-  
-});
 
+    });
 </script>

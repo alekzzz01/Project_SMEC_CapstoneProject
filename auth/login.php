@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php
                     // Check if the customization array is set and contains a school_logo key
                     if (isset($customization['school_logo']) && !empty($customization['school_logo'])) {
-                        echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-10 h-10 object-cover bg-white rounded-full">';
+                        echo '<img src="' . htmlspecialchars('../dist/admin/' . $customization['school_logo'], ENT_QUOTES, 'UTF-8') . '" class="w-24 h-24 mb-2 object-cover bg-white rounded-full">';
                     } else {
                         // Display a default logo if school_logo is not set or empty
                         echo '<img src="./../assets/images/defaultLogo.png" alt="Default Logo" class="w-20- h-20 object-cover bg-white rounded-full">';
