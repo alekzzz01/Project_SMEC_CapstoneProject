@@ -116,6 +116,10 @@ if (isset($_POST['verifyOtp'])) {
                     $mail->Username = 'sweetmiyagi@gmail.com';  
                     $mail->Password = 'euuy nadj ibmd acau'; 
                     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS
+                    $mail->Port = 587;  // SMTP Port
+
+                    //Recipients
+                    $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
                     $mail->addAddress($email); 
 
                     ob_start();

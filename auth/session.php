@@ -2,6 +2,7 @@
 
 
 if (isset($_SESSION['last_Activity'])) {
+
     if (time() - $_SESSION['last_Activity'] > 20000) { // 30 minutes
         session_unset();
         session_destroy();

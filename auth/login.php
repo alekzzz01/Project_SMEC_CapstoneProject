@@ -134,6 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $mail->Username = 'sweetmiyagi@gmail.com';  
                 $mail->Password = 'euuy nadj ibmd acau'; 
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;  // Use TLS
+                $mail->Port = 587;  // SMTP Port
+                $mail->setFrom('sweetmiyagi@gmail.com', 'Sta. Marta Educational Center');
                 $mail->addAddress($email);  // Recipient's email (the student's email from DB)
 
 
@@ -166,6 +168,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt = $connection->prepare($sql);
                 $stmt->bind_param('s', $email);
                 $stmt->execute();
+
+                // Audit logs
+                $sql = "INSERT INTO audit_logs (user_id, action, resource_type, created_at) VALUES (?, 'Multiple Attempts account is locked'', 'Session', NOW())";
+                $stmt = $connection->prepare($sql);
+                $stmt->bind_param('i', $user['user_id']);
+                $stmt->execute();
+
+
             } else {
                 $new_attempts = $user['login_attempts'] + 1;
 
@@ -173,6 +183,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // Lock the account
                     $sql = "UPDATE users SET login_attempts = ?, lockout = 1 WHERE email = ?";
                     $_SESSION['error'] = "Your account has been locked due to multiple failed login attempts. Please contact IT support.";
+
+                    // audit logs
+                    $sql = "INSERT INTO audit_logs (user_id, action, resource_type, created_at) VALUES (?, 'Account is locked', 'Session', NOW())";
+                    $stmt = $connection->prepare($sql);
+                    $stmt->bind_param('i', $user['user_id']);
+                    $stmt->execute();
+
+
                 } else {
                     // Update attempts count
                     $sql = "UPDATE users SET login_attempts = ? WHERE email = ?";
