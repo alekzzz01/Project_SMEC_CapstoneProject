@@ -1,15 +1,19 @@
-<?php 
+<?php
 session_start();
 include '../../config/db.php';
 
-// Fetch the open school year from the database
-$schoolYearQuery = "SELECT school_year FROM school_year WHERE status = 'open' LIMIT 1";
+// fetch school year for the school year dropdown
+$schoolYearQuery = "SELECT school_year_id, school_year FROM school_year WHERE status = 'Open' LIMIT 1";
 $schoolYearResult = $connection->query($schoolYearQuery);
-$schoolYear = '';
+$schoolyears = [];
 if ($schoolYearResult->num_rows > 0) {
-    $schoolYearRow = $schoolYearResult->fetch_assoc();
-    $schoolYear = $schoolYearRow['school_year']; // Fetch the open school year
+    while ($row = $schoolYearResult->fetch_assoc()) {
+        $schoolyears[] = $row; // Add each school year to the array
+    }
 }
+
+
+
 
 // Fetch teachers for the adviser dropdown
 $teacherSql = "SELECT teacher_id, CONCAT(First_Name, ' ', Last_Name) AS teacher_name FROM teachers";
@@ -50,7 +54,7 @@ $notificationMessage = '';
 // Insert new section if form is submitted
 if (isset($_POST['createSection'])) {
     // Get form values
-    $gradeLevel = $_POST['gradelevel']; 
+    $gradeLevel = $_POST['gradelevel'];
     $formattedGradeLevel = strtolower(str_replace("Grade-", "grade-", $gradeLevel));
 
     // Get the school year ID from the form
@@ -60,7 +64,7 @@ if (isset($_POST['createSection'])) {
         // Get other form values
         $sectionName = $_POST['section_name'];
         $track = $_POST['track'];
-        $adviserId = $_POST['adviser_id']; 
+        $adviserId = $_POST['adviser_id'];
         $numStudents = $_POST['num_students'];
 
         // Insert the data into the database
@@ -92,13 +96,14 @@ $connection->close();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Section List</title>
 
     <link rel="stylesheet" href="../../assets/css/styles.css">
-     
+
     <script src="../../assets/js/script.js"></script>
 
     <!-- Notyf CSS -->
@@ -109,9 +114,9 @@ $connection->close();
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- 
+
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
- 
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
@@ -119,59 +124,62 @@ $connection->close();
 
     <link href="https://cdn.jsdelivr.net/npm/heroicons@1.0.6/dist/heroicons.min.css" rel="stylesheet">
 
- 
+
     <link href='https://unpkg.com/boxicons/css/boxicons.min.css' rel='stylesheet'>
 
-     
-    <html data-theme="light"></html>
-    
+
+    <html data-theme="light">
+
+    </html>
+
 
 
 
 </head>
+
 <body class="flex min-h-screen">
-    
-
-<?php include('./components/sidebar.php'); ?>
 
 
-<div class="flex flex-col w-full">
-
-<?php include('./components/navbar.php'); ?>
+    <?php include('./components/sidebar.php'); ?>
 
 
-    <div class="p-6 bg-[#f2f5f8] h-full">
+    <div class="flex flex-col w-full">
 
-   
-        <div class="flex items-center justify-between flex-wrap gap-6">
+        <?php include('./components/navbar.php'); ?>
 
-            
-            <div>
+
+        <div class="p-6 bg-[#f2f5f8] h-full">
+
+
+            <div class="flex items-center justify-between flex-wrap gap-6">
+
+
+                <div>
                     <h1 class="text-lg font-medium mb-1">Section</h1>
-                
-            </div>
 
-      
-            <div class="flex items-center justify-between gap-1 lg:gap-3 flex-wrap">
-                
+                </div>
+
+
+                <div class="flex items-center justify-between gap-1 lg:gap-3 flex-wrap">
+
                     <select name="sort_order" id="sortOrder" class="select select-bordered select-sm">
                         <option value="ASC" <?php echo isset($_GET['sort_order']) && $_GET['sort_order'] == 'ASC' ? 'selected' : ''; ?>>Sort by Year (Ascending)</option>
                         <option value="DESC" <?php echo isset($_GET['sort_order']) && $_GET['sort_order'] == 'DESC' ? 'selected' : ''; ?>>Sort by Year (Descending)</option>
                     </select>
 
 
-                <div class="border border-r h-6"></div>
+                    <div class="border border-r h-6"></div>
 
-                <button onclick="add_section.showModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
+                    <button onclick="add_section.showModal()" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
 
-                    Add Section
-                </button>
+                        Add Section
+                    </button>
 
-            
-                <!-- 
+
+                    <!-- 
                 <button class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
@@ -196,25 +204,25 @@ $connection->close();
                     Restore
                 </button> -->
 
-            
+
+                </div>
+
             </div>
 
-        </div>
-
-        <div class="my-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <?php 
+            <div class="my-7 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <?php
                 if (!empty($sections)) {
                     // Loop through the sections and display them
                     foreach ($sections as $row) {
                         // Extract the numeric part of the grade_level (e.g., "Grade-11" becomes "11")
                         $gradeLevelParts = explode('-', $row['grade_level']);
-                            if (count($gradeLevelParts) > 1) {
-                                // If there's a hyphen, get the part after it (e.g., "Grade-11" becomes "11")
-                                $gradeLevel = $gradeLevelParts[1];
-                            } else {
-                                // Otherwise, handle cases like "Nursery" or "Kinder"
-                                $gradeLevel = $row['grade_level']; // Or you can handle it differently if needed
-                            }
+                        if (count($gradeLevelParts) > 1) {
+                            // If there's a hyphen, get the part after it (e.g., "Grade-11" becomes "11")
+                            $gradeLevel = $gradeLevelParts[1];
+                        } else {
+                            // Otherwise, handle cases like "Nursery" or "Kinder"
+                            $gradeLevel = $row['grade_level']; // Or you can handle it differently if needed
+                        }
                         echo '<div class="p-6 bg-white rounded-t-md shadow border-b-4 border-green-600">';
                         echo '<p class="font-bold text-lg mb-1">Grade: ' . htmlspecialchars($gradeLevel, ENT_QUOTES, 'UTF-8') . '</p>';  // Display only the number
                         echo '<p class="text-base-content/70 text-sm font-medium mb-6">A.Y. ' . htmlspecialchars($row['school_year'], ENT_QUOTES, 'UTF-8') . '</p>';
@@ -227,8 +235,13 @@ $connection->close();
                 } else {
                     echo "<p>No sections found</p>";
                 }
-            ?>
+                ?>
             </div>
+
+
+
+
+        </div>
 
 
 
@@ -237,12 +250,7 @@ $connection->close();
 
 
 
-
-</div>
-
-
-
-<dialog id="add_section" class="modal modal-bottom sm:modal-middle">
+    <dialog id="add_section" class="modal modal-bottom sm:modal-middle">
         <div class="modal-box">
             <h3 class="text-lg font-bold">Add new section</h3>
 
@@ -252,7 +260,7 @@ $connection->close();
 
             <form action="" class="py-4 grid grid-cols-2 gap-6" method="POST">
 
-            <div>
+                <div>
                     <label class="text-gray-800 text-sm mb-2 block">Grade Level</label>
                     <div class="relative flex items-center">
                         <select name="gradelevel" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
@@ -275,133 +283,124 @@ $connection->close();
                     </div>
                 </div>
 
-                    
-        
-                    <div id="section_name_field" >
-                            <label class="text-gray-800 text-sm mb-2 block">Section Name</label>
-                            <div class="relative flex items-center">
-                            <input name="section_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Section Name" />
-                        
-                            </div>
+
+
+                <div id="section_name_field">
+                    <label class="text-gray-800 text-sm mb-2 block">Section Name</label>
+                    <div class="relative flex items-center">
+                        <input name="section_name" type="text" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Section Name" />
+
                     </div>
-
-                    <div>
-                <label class="text-gray-800 text-sm mb-2 block">Track/Strand</label>
-                <div class="relative flex items-center">
-                    <select name="track" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                        <option value="" disabled selected>Choose Track/Strand</option>
-                        <?php
-                        foreach ($tracks as $track) {
-                            echo "<option value='$track'>$track</option>";
-                        }
-                        ?>
-                    </select>
                 </div>
-            </div>
 
-
-            <div>
-                <label class="text-gray-800 text-sm mb-2 block">Academic Year</label>
-                <div class="relative flex items-center">
-                    <select name="school_year_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                        <option value="" disabled selected>Select School Year</option>
-                        <!-- Populate the open academic year -->
-                        <?php
-                        // Fetch the open school year
-                        $schoolYearQuery = "SELECT school_year_id, school_year FROM school_year WHERE status = 'open' LIMIT 1";
-                        $schoolYearResult = $connection->query($schoolYearQuery);
-
-                        if ($schoolYearResult->num_rows > 0) {
-                            $schoolYearRow = $schoolYearResult->fetch_assoc();
-                            // Display the open academic year and its id
-                            echo "<option value='" . $schoolYearRow['school_year_id'] . "'>" . $schoolYearRow['school_year'] . "</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-            </div>
-
-
-
-                    
-                    <div>
-                        <label class="text-gray-800 text-sm mb-2 block">Class Adviser</label>
-                        <select name="adviser_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
-                            <option value="" disabled selected>Assign Adviser</option>
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Track/Strand</label>
+                    <div class="relative flex items-center">
+                        <select name="track" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <option value="" disabled selected>Choose Track/Strand</option>
                             <?php
-                            foreach ($teachers as $teacher) {
-                                echo "<option value='" . $teacher['teacher_id'] . "'>" . htmlspecialchars($teacher['teacher_name'], ENT_QUOTES, 'UTF-8') . "</option>";
+                            foreach ($tracks as $track) {
+                                echo "<option value='$track'>$track</option>";
                             }
                             ?>
                         </select>
                     </div>
+                </div>
 
-                    <div>
-                        <label class="text-gray-800 text-sm mb-2 block">Number of Students</label>
-                        <div class="relative flex items-center">
-                            <input name="num_students" type="number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Number of Students" />
-                        
-                        </div>
-                    </div>
 
-                    <div class="modal-action col-span-2">
-                        <button type="submit" name="createSection" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Section</button>
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Academic Year</label>
+                    <div class="relative flex items-center">
+                        <select name="school_year_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                            <option value="" disabled selected>Select School Year</option>
+                            <?php
+                            foreach ($schoolyears as $schoolyear) {
+                                echo "<option value='" . $schoolyear['school_year_id'] . "'>" . htmlspecialchars($schoolyear['school_year'], ENT_QUOTES, 'UTF-8') . "</option>";
+                            }
+
+
+                            ?>
+                        </select>
                     </div>
-     
+                </div>
+
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Class Adviser</label>
+                    <select name="adviser_id" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600">
+                        <option value="" disabled selected>Assign Adviser</option>
+                        <?php
+                        foreach ($teachers as $teacher) {
+                            echo "<option value='" . $teacher['teacher_id'] . "'>" . htmlspecialchars($teacher['teacher_name'], ENT_QUOTES, 'UTF-8') . "</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-gray-800 text-sm mb-2 block">Number of Students</label>
+                    <div class="relative flex items-center">
+                        <input name="num_students" type="number" required class="w-full text-gray-800 text-sm border border-slate-900/10 px-3 py-2 rounded-md outline-blue-600" placeholder="Enter Number of Students" />
+
+                    </div>
+                </div>
+
+                <div class="modal-action col-span-2">
+                    <button type="submit" name="createSection" class="btn bg-blue-500 hover:bg-blue-700 text-white border border-blue-500 hover:border-blue-700">Save Section</button>
+                </div>
+
 
             </form>
 
         </div>
-           
-          
-</dialog>
 
-<script>
+
+    </dialog>
+
+    <script>
         // Handle sorting when dropdown value changes
-        document.getElementById('sortOrder').addEventListener('change', function () {
+        document.getElementById('sortOrder').addEventListener('change', function() {
             const sortOrder = this.value;
             window.location.search = `?sort_order=${sortOrder}`;
         });
 
-    
-    $(document).ready(function () {
-        // Show Notyf success notification if section is added
-        <?php if (isset($_SESSION['notificationMessage']) && $_SESSION['notificationMessage']): ?>
-            const notyf = new Notyf({
-                position: {
-                    x: 'right',  // Horizontal position (right)
-                    y: 'top'     // Vertical position (top)
-                },
-                duration: 3000, // Duration of the notification
-                ripple: true    // Optional: adds a ripple effect when the notification appears
+
+        $(document).ready(function() {
+            // Show Notyf success notification if section is added
+            <?php if (isset($_SESSION['notificationMessage']) && $_SESSION['notificationMessage']): ?>
+                const notyf = new Notyf({
+                    position: {
+                        x: 'right', // Horizontal position (right)
+                        y: 'top' // Vertical position (top)
+                    },
+                    duration: 3000, // Duration of the notification
+                    ripple: true // Optional: adds a ripple effect when the notification appears
+                });
+                notyf.success("<?= $_SESSION['notificationMessage'] ?>");
+
+                // Clear the message after showing the notification
+                <?php unset($_SESSION['notificationMessage']); ?>
+            <?php endif; ?>
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#toggleSidebar').on('click', function() {
+                $('#sidebar').toggleClass('-translate-x-full');
             });
-            notyf.success("<?= $_SESSION['notificationMessage'] ?>");
 
-            // Clear the message after showing the notification
-            <?php unset($_SESSION['notificationMessage']); ?>
-        <?php endif; ?>
-    });
-</script>
-
-<script>
-
-$(document).ready(function() {
-  $('#toggleSidebar').on('click', function() {
-      $('#sidebar').toggleClass('-translate-x-full');
-  });
-
-   $('#closeSidebar').on('click', function() {
-      $('#sidebar').addClass('-translate-x-full');
-  });
+            $('#closeSidebar').on('click', function() {
+                $('#sidebar').addClass('-translate-x-full');
+            });
 
 
-  
-});
 
-</script>
+        });
+    </script>
 
 
 
 
 </body>
+
 </html>
